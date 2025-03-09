@@ -1,0 +1,440 @@
+﻿@model IEnumerable<Bus_system_prototype.Models.Bus>
+
+@{
+    ViewData["Title"] = "Bus Fleet";
+}
+
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h1 class="display-5 fw-bold text-primary mb-0">Our Bus Fleet</h1>
+            <p class="text-muted lead">Find the perfect bus for your journey</p>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-md-end gap-2 mt-3 mt-md-0">
+                <div class="input-group">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search buses...">
+                </div>
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filterOptions">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Options (Collapsed by default) -->
+    <div class="collapse mb-4" id="filterOptions">
+        <div class="card card-body bg-light">
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input filter-amenity" type="checkbox" value="TV" id="filterTV">
+                                <label class="form-check-label" for="filterTV">
+                                    <i class="bi bi-tv me-1"></i> TV
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input filter-amenity" type="checkbox" value="AirConditioning" id="filterAC">
+                                <label class="form-check-label" for="filterAC">
+                                    <i class="bi bi-snow me-1"></i> Air Conditioning
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input filter-amenity" type="checkbox" value="WiFi" id="filterWiFi">
+                                <label class="form-check-label" for="filterWiFi">
+                                    <i class="bi bi-wifi me-1"></i> WiFi
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input filter-amenity" type="checkbox" value="Drinks" id="filterDrinks">
+                                <label class="form-check-label" for="filterDrinks">
+                                    <i class="bi bi-cup-straw me-1"></i> Drinks
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input filter-amenity" type="checkbox" value="Snacks" id="filterSnacks">
+                                <label class="form-check-label" for="filterSnacks">
+                                    <i class="bi bi-basket me-1"></i> Snacks
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex justify-content-end align-items-center">
+                    <button id="applyFilters" class="btn btn-sm btn-primary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bus Cards -->
+    <div class="row g-4" id="busContainer">
+        @foreach (var bus in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4 bus-card"
+                 data-tv="@bus.TV.ToString().ToLower()"
+                 data-ac="@bus.AirConditioning.ToString().ToLower()"
+                 data-wifi="@bus.WiFi.ToString().ToLower()"
+                 data-drinks="@bus.Drinks.ToString().ToLower()"
+                 data-snacks="@bus.Snacks.ToString().ToLower()"
+                 data-type="@bus.Type.ToLower()">
+                <div class="card h-100 shadow rounded-4 border-0 overflow-hidden">
+                    <div class="position-relative">
+                        @if (!string.IsNullOrEmpty(bus.ImgURL))
+                        {
+                            <img src="@Url.Content(bus.ImgURL)" class="card-img-top" alt="@bus.Type" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-bus-front display-1 text-muted"></i>
+                            </div>
+                        }
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">ID: @bus.Id</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <!-- Bus Type Header -->
+                        <div class="p-3 border-bottom">
+                            <h4 class="card-title fw-bold mb-0">@bus.Type</h4>
+                        </div>
+
+                        <!-- Amenities Section - Highlighted and More Prominent -->
+                        <div class="amenities-section p-3 bg-light">
+                            <h5 class="amenities-title text-center mb-3">
+                                <i class="bi bi-stars text-warning me-2"></i>
+                                <span>Amenities</span>
+                                <i class="bi bi-stars text-warning ms-2"></i>
+                            </h5>
+
+                            <div class="amenities-grid">
+                                <div class="amenity-item @(bus.TV ? "amenity-available" : "amenity-unavailable")">
+                                    <div class="amenity-icon">
+                                        <i class="bi bi-tv-fill"></i>
+                                    </div>
+                                    <div class="amenity-label">TV</div>
+                                    <div class="amenity-status">
+                                        @if (bus.TV)
+                                        {
+                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="amenity-item @(bus.AirConditioning ? "amenity-available" : "amenity-unavailable")">
+                                    <div class="amenity-icon">
+                                        <i class="bi bi-snow"></i>
+                                    </div>
+                                    <div class="amenity-label">AC</div>
+                                    <div class="amenity-status">
+                                        @if (bus.AirConditioning)
+                                        {
+                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="amenity-item @(bus.WiFi ? "amenity-available" : "amenity-unavailable")">
+                                    <div class="amenity-icon">
+                                        <i class="bi bi-wifi"></i>
+                                    </div>
+                                    <div class="amenity-label">WiFi</div>
+                                    <div class="amenity-status">
+                                        @if (bus.WiFi)
+                                        {
+                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="amenity-item @(bus.Drinks ? "amenity-available" : "amenity-unavailable")">
+                                    <div class="amenity-icon">
+                                        <i class="bi bi-cup-straw"></i>
+                                    </div>
+                                    <div class="amenity-label">Drinks</div>
+                                    <div class="amenity-status">
+                                        @if (bus.Drinks)
+                                        {
+                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="amenity-item @(bus.Snacks ? "amenity-available" : "amenity-unavailable")">
+                                    <div class="amenity-icon">
+                                        <i class="bi bi-basket-fill"></i>
+                                    </div>
+                                    <div class="amenity-label">Snacks</div>
+                                    <div class="amenity-status">
+                                        @if (bus.Snacks)
+                                        {
+                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white pt-3">
+                        <div class="d-flex justify-content-between gap-2">
+                            <a href="@Url.Action("Edit", new { id = bus.Id })" class="btn btn-outline-primary flex-grow-1">
+                                <i class="bi bi-pencil-square me-1"></i> Edit
+                            </a>
+                            <button type="button" class="btn btn-outline-danger flex-grow-1"
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal@(bus.Id)">
+                                <i class="bi bi-trash me-1"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal@(bus.Id)" tabindex="-1" aria-labelledby="deleteModalLabel@(bus.Id)" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel@(bus.Id)">Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete the @bus.Type bus (ID: @bus.Id)?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a href="@Url.Action("Delete", new { id = bus.Id })" class="btn btn-danger">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="text-center py-5 d-none">
+        <i class="bi bi-search display-1 text-muted"></i>
+        <h3 class="mt-3">No buses found</h3>
+        <p class="text-muted">Try adjusting your search or filters</p>
+    </div>
+
+    <!-- Add New Bus Button -->
+    <div class="d-flex justify-content-center mt-5">
+        <a href="@Url.Action("Create")" class="btn btn-success btn-lg px-4 py-2 shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i> Add New Bus
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Card styling */
+    .card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+    /* Amenities section styling */
+    .amenities-section {
+        background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+        border-top: 1px solid rgba(0,0,0,0.1);
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .amenities-title {
+        font-weight: 600;
+        color: #495057;
+        position: relative;
+    }
+
+    /* Amenities grid layout */
+    .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    /* Individual amenity item styling */
+    .amenity-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+        .amenity-item:hover {
+            background-color: rgba(255,255,255,0.7);
+            transform: translateY(-3px);
+        }
+
+    .amenity-available .amenity-icon {
+        color: #28a745;
+        font-size: 1.8rem;
+    }
+
+    .amenity-unavailable .amenity-icon {
+        color: #adb5bd;
+        font-size: 1.8rem;
+    }
+
+    .amenity-label {
+        margin: 5px 0;
+        font-weight: 500;
+    }
+
+    .amenity-available .amenity-label {
+        color: #212529;
+    }
+
+    .amenity-unavailable .amenity-label {
+        color: #6c757d;
+    }
+
+    .amenity-status .badge {
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Button styling */
+    .btn {
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+    /* Color classes */
+    .text-primary {
+        color: #0d6efd !important;
+    }
+
+    .text-success {
+        color: #28a745 !important;
+    }
+
+    .bg-primary {
+        background-color: #0d6efd !important;
+    }
+
+    .bg-success {
+        background-color: #28a745 !important;
+    }
+
+    
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const busCards = document.querySelectorAll('.bus-card');
+        const busContainer = document.getElementById('busContainer');
+        const emptyState = document.getElementById('emptyState');
+
+        searchInput.addEventListener('input', filterBuses);
+
+        // Filter functionality
+        const filterCheckboxes = document.querySelectorAll('.filter-amenity');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+
+        applyFiltersBtn.addEventListener('click', filterBuses);
+
+        function filterBuses() {
+            const searchTerm = searchInput.value.toLowerCase();
+            let visibleCount = 0;
+
+            // Get selected filters
+            const selectedFilters = [];
+            filterCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedFilters.push(checkbox.value);
+                }
+            });
+
+            busCards.forEach(card => {
+                const busType = card.getAttribute('data-type');
+                let matchesSearch = busType.includes(searchTerm);
+                let matchesFilters = true;
+
+                // Check if card matches all selected filters
+                if (selectedFilters.length > 0) {
+                    matchesFilters = selectedFilters.every(filter => {
+                        const attributeName = 'data-' + filter.toLowerCase().replace('airconditioning', 'ac');
+                        return card.getAttribute(attributeName) === 'true';
+                    });
+                }
+
+                if (matchesSearch && matchesFilters) {
+                    card.classList.remove('d-none');
+                    visibleCount++;
+                } else {
+                    card.classList.add('d-none');
+                }
+            });
+
+            // Show/hide empty state
+            if (visibleCount === 0) {
+                emptyState.classList.remove('d-none');
+            } else {
+                emptyState.classList.add('d-none');
+            }
+        }
+
+        // Add animation to amenity items
+        const amenityItems = document.querySelectorAll('.amenity-item');
+        amenityItems.forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.1}s`;
+            item.classList.add('animate__animated', 'animate__fadeIn');
+        });
+    });
+</script>

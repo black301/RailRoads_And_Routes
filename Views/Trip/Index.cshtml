@@ -1,0 +1,890 @@
+﻿@model IEnumerable<Bus_system_prototype.Models.Trip>
+
+@{
+    ViewData["Title"] = "Trip Management";
+}
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1 class="dashboard-title">Trip Management</h1>
+            <p class="dashboard-subtitle">Manage and monitor all bus trips in the system</p>
+        </div>
+        <div class="header-actions">
+            <a href="@Url.Action("Create", "Trip")" class="btn-create">
+                <i class="fas fa-plus-circle me-2"></i> Create New Trip
+            </a>
+        </div>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary-soft">
+                <i class="fas fa-route"></i>
+            </div>
+            <div class="stat-details">
+                <h3 class="stat-value">@(Model?.Count() ?? 0)</h3>
+                <p class="stat-label">Total Trips</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-success-soft">
+                <i class="fas fa-bus"></i>
+            </div>
+            <div class="stat-details">
+                <h3 class="stat-value">@(Enumerable.Count(ViewBag.Buses)?? 100)</h3>
+                <p class="stat-label">Active Buses</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-info-soft">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="stat-details">
+                <h3 class="stat-value">@(Enumerable.Count(ViewBag.Stations)??100)</h3>
+                <p class="stat-label">Stations</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <div class="header-left">
+                <h2 class="card-title"><i class="fas fa-list me-2"></i>All Trips</h2>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search trips...">
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table" id="tripsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bus</th>
+                        <th>From Station</th>
+                        <th>To Station</th>
+                        <th>Trip Date</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var trip in Model)
+                        {
+                            <tr>
+                                <td class="fw-medium">#@trip.Id</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle bg-primary-soft me-2">
+                                            <i class="fas fa-bus text-primary"></i>
+                                        </div>
+                                        <span>@(trip.Bus?.Type ?? "N/A")</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="station-badge origin">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        @(trip.FromStation?.Name ?? "N/A")
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="station-badge destination">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        @(trip.TOStation?.Name ?? "N/A")
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="date-time">
+                                        <div class="date">@trip.TripDate.ToString("MMM dd, yyyy")</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="@Url.Action("Edit", "Trip", new { id = trip.Id })"
+                                           class="btn-action btn-edit">
+                                            <i class="fas fa-pen me-2"></i> Edit
+                                        </a>
+                                        <button type="button"
+                                                class="btn-action btn-delete delete-trip"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal"
+                                                data-trip-id="@trip.Id"
+                                                data-trip-info="Trip #@trip.Id: @trip.FromStation?.Name to @trip.TOStation?.Name">
+                                            <i class="fas fa-trash-alt me-2"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-bus-alt"></i>
+                                    </div>
+                                    <h4>No trips found</h4>
+                                    <p>There are no trips matching your criteria</p>
+                                    <a href="@Url.Action("Create", "Trip")" class="btn-create-sm">
+                                        <i class="fas fa-plus me-1"></i> Add New Trip
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="warning-content">
+                        <h4>Are you sure?</h4>
+                        <p>You are about to delete this trip:</p>
+                        <p id="tripToDelete" class="trip-info"></p>
+                        <p class="warning-text">This action cannot be undone and all data associated with this trip will be permanently removed.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button type="submit" class="btn-confirm-delete">
+                        <i class="fas fa-trash-alt me-1"></i> Delete Trip
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Modern Color Palette */
+    :root {
+        --primary: #4361ee;
+        --primary-light: #4895ef;
+        --primary-dark: #3f37c9;
+        --primary-soft: rgba(67, 97, 238, 0.1);
+        --secondary: #6c757d;
+        --secondary-soft: rgba(108, 117, 125, 0.1);
+        --success: #4CAF50;
+        --success-soft: rgba(76, 175, 80, 0.1);
+        --info: #3abff8;
+        --info-soft: rgba(58, 191, 248, 0.1);
+        --warning: #f59e0b;
+        --warning-soft: rgba(245, 158, 11, 0.1);
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.1);
+        --light: #f8f9fa;
+        --dark: #212529;
+        --background: #f9fafb;
+        --card-bg: #ffffff;
+        --border-color: #e5e7eb;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Base Styles */
+    body {
+        background-color: var(--background);
+        color: var(--text-primary);
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-container {
+        padding: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Dashboard Header */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .dashboard-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .dashboard-subtitle {
+        color: var(--text-secondary);
+        margin: 0.25rem 0 0 0;
+        font-size: 0.95rem;
+    }
+
+    .btn-create {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        box-shadow: var(--shadow-md);
+    }
+
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+        }
+
+    /* Stats Cards */
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+    .stat-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .bg-primary-soft {
+        background-color: var(--primary-soft);
+        color: var(--primary);
+    }
+
+    .bg-success-soft {
+        background-color: var(--success-soft);
+        color: var(--success);
+    }
+
+    .bg-info-soft {
+        background-color: var(--info-soft);
+        color: var(--info);
+    }
+
+    .bg-warning-soft {
+        background-color: var(--warning-soft);
+        color: var(--warning);
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text-primary);
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+    /* Content Card */
+    .content-card {
+        background-color: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--card-bg);
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-primary);
+    }
+
+    .header-right {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--light);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+        .btn-icon:hover {
+            background-color: var(--primary-soft);
+            color: var(--primary);
+        }
+
+    /* Filter Section */
+    .filter-section {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .search-container {
+        position: relative;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+        background-color: var(--light);
+        transition: all 0.2s ease;
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
+    .filter-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .filter-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .filter-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+    }
+
+    .filter-select, .filter-date {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border-color);
+        background-color: var(--light);
+        min-width: 180px;
+        transition: all 0.2s ease;
+    }
+
+        .filter-select:focus, .filter-date:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
+    .date-picker-container {
+        position: relative;
+    }
+
+    .date-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .btn-clear-filter {
+        background-color: var(--light);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .btn-clear-filter:hover {
+            background-color: var(--secondary-soft);
+            color: var(--secondary);
+        }
+
+    /* Table Styles */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .data-table th {
+            background-color: var(--light);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem 1.5rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: var(--primary-soft);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .icon-circle {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+
+    .station-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .origin {
+        background-color: var(--success-soft);
+        color: var(--success);
+    }
+
+    .destination {
+        background-color: var(--info-soft);
+        color: var(--info);
+    }
+
+    .date-time {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .date {
+        font-weight: 500;
+    }
+
+    .time {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        font-size: 0.875rem;
+    }
+
+    .btn-view {
+        background-color: var(--primary-soft);
+        color: var(--primary);
+    }
+
+        .btn-view:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+    .btn-edit {
+        background-color: var(--warning-soft);
+        color: var(--warning);
+    }
+
+        .btn-edit:hover {
+            background-color: var(--warning);
+            color: white;
+        }
+
+    .btn-delete {
+        background-color: var(--danger-soft);
+        color: var(--danger);
+    }
+
+        .btn-delete:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+
+    /* Empty State */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-primary);
+    }
+
+    .empty-state p {
+        margin: 0 0 1.5rem 0;
+        color: var(--text-secondary);
+    }
+
+    .btn-create-sm {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+
+        .btn-create-sm:hover {
+            background-color: var(--primary-dark);
+        }
+
+    /* Table Footer */
+    .table-footer {
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .showing-entries {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .pagination-container {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+    }
+
+    .pagination-btn {
+        min-width: 2rem;
+        height: 2rem;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--light);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+        .pagination-btn:hover:not(:disabled):not(.active) {
+            background-color: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .pagination-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+    .pagination-ellipsis {
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 0.5rem;
+    }
+
+    /* Delete Modal */
+    .modal-content {
+        border-radius: 1rem;
+        border: none;
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .delete-warning {
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+
+    .warning-icon {
+        width: 3rem;
+        height: 3rem;
+        background-color: var(--danger-soft);
+        color: var(--danger);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .warning-content h4 {
+        margin: 0 0 1rem 0;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .warning-content p {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-secondary);
+    }
+
+    .trip-info {
+        font-weight: 600;
+        color: var(--text-primary);
+        background-color: var(--light);
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        margin: 0.5rem 0 1rem 0;
+    }
+
+    .warning-text {
+        color: var(--danger);
+        font-size: 0.875rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-color);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    .btn-cancel {
+        background-color: var(--light);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+        .btn-cancel:hover {
+            background-color: var(--secondary-soft);
+        }
+
+    .btn-confirm-delete {
+        background-color: var(--danger);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+        .btn-confirm-delete:hover {
+            background-color: #d32f2f;
+        }
+
+   
+   
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Search functionality
+            $("#searchInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#tripsTable tbody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+                updateTripCount();
+            });
+
+            // Date filter
+            $("#filterDate").on("change", function () {
+                applyFilters();
+            });
+
+            // Station filter
+            $("#filterStation").on("change", function () {
+                applyFilters();
+            });
+
+            // Clear filters
+            $("#clearFilters").on("click", function() {
+                $("#searchInput").val("");
+                $("#filterDate").val("");
+                $("#filterStation").val("");
+                $("#tripsTable tbody tr").show();
+                updateTripCount();
+            });
+
+            // Refresh button
+            $("#refreshBtn").on("click", function() {
+                $(this).addClass("fa-spin");
+                setTimeout(function() {
+                    $("#refreshBtn").removeClass("fa-spin");
+                    $("#clearFilters").click();
+                }, 1000);
+            });
+
+            // Delete modal setup
+            $('.delete-trip').on('click', function () {
+                var tripId = $(this).data('trip-id');
+                var tripInfo = $(this).data('trip-info');
+
+                $('#tripToDelete').text(tripInfo);
+                $('#deleteForm').attr('action', '@Url.Action("Delete", "Trip")/' + tripId);
+            });
+        });
+    </script>
+}

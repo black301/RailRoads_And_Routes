@@ -1,0 +1,99 @@
+﻿@model Bus_system_prototype.Models.Station
+
+@{
+    ViewData["Title"] = "Create Station";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0">Create New Station</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Station Name</label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter station name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Location" class="form-label">Location</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                <input asp-for="Location" class="form-control" placeholder="Enter station location (e.g., City, Address)" />
+                            </div>
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ImgURL" class="form-label">Image URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-image"></i></span>
+                                <input asp-for="ImgURL" class="form-control" id="imgUrlInput" placeholder="Enter URL for station image" />
+                            </div>
+                            <div class="form-text">Enter a URL for the station image or leave blank to use a default image.</div>
+                            <span asp-validation-for="ImgURL" class="text-danger"></span>
+                        </div>
+
+                        <div id="imagePreviewContainer" class="mb-3 d-none">
+                            <label class="form-label">Image Preview</label>
+                            <div class="text-center p-3 border rounded">
+                                <img id="imagePreview" src="/placeholder.svg" alt="Preview" class="img-fluid" style="max-height: 200px;" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Create Station
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            $('#imgUrlInput').on('change', function() {
+                let url = $(this).val().trim();
+
+                // Fix "~/" paths (used in ASP.NET, but not recognized by browsers)
+                url = url.replace(/^~\//, '/');
+
+                // Ensure the URL is root-relative if it's not an absolute URL
+                if (url && !url.startsWith('http') && !url.startsWith('/')) {
+                    url = '/' + url;
+                }
+
+                if (url) {
+                    if ($('#currentImage').length) {
+                        $('#currentImage').attr('src', url);
+                    } else {
+                        const imgPreview = `
+                            <div class="mb-3">
+                                <label class="form-label">Image Preview</label>
+                                <div class="text-center p-3 border rounded">
+                                    <img src="${url}" id="currentImage" alt="Preview" class="img-fluid" style="max-height: 200px;" />
+                                </div>
+                            </div>`;
+                        $(this).closest('.mb-3').after(imgPreview);
+                    }
+                }
+            });
+        });
+    </script>
+}
