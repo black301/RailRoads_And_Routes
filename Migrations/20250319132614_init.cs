@@ -20,6 +20,7 @@ namespace Bus_system_prototype.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NumberOfSeats = table.Column<int>(type: "int", nullable: false),
                     TV = table.Column<bool>(type: "bit", nullable: false),
                     AirConditioning = table.Column<bool>(type: "bit", nullable: false),
                     WiFi = table.Column<bool>(type: "bit", nullable: false),
@@ -54,6 +55,9 @@ namespace Bus_system_prototype.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BusId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false),
+                    NumberOfSeats = table.Column<int>(type: "int", nullable: false),
+                    AvailableSeats = table.Column<int>(type: "int", nullable: false),
                     TOStationId = table.Column<int>(type: "int", nullable: false),
                     FromStationId = table.Column<int>(type: "int", nullable: false),
                     TripDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -81,13 +85,13 @@ namespace Bus_system_prototype.Migrations
 
             migrationBuilder.InsertData(
                 table: "Buses",
-                columns: new[] { "Id", "AirConditioning", "Drinks", "ImgURL", "Snacks", "TV", "Type", "WiFi" },
+                columns: new[] { "Id", "AirConditioning", "Drinks", "ImgURL", "NumberOfSeats", "Snacks", "TV", "Type", "WiFi" },
                 values: new object[,]
                 {
-                    { 1, true, true, "~/uploads/bus1.jpeg", true, true, "Luxury", true },
-                    { 2, true, false, "~/uploads/bus2.jpeg", false, false, "Standard", false },
-                    { 3, true, true, "~/uploads/bus3.jpeg", true, true, "Comfort", false },
-                    { 4, true, true, "~/uploads/bus4.jpeg", false, true, "Premium", true }
+                    { 1, true, true, "~/uploads/bus1.jpeg", 10, true, true, "Luxury", true },
+                    { 2, true, false, "~/uploads/bus2.jpeg", 50, false, false, "Standard", false },
+                    { 3, true, true, "~/uploads/bus3.jpeg", 30, true, true, "Comfort", false },
+                    { 4, true, true, "~/uploads/bus4.jpeg", 20, false, true, "Premium", true }
                 });
 
             migrationBuilder.InsertData(
@@ -104,13 +108,13 @@ namespace Bus_system_prototype.Migrations
 
             migrationBuilder.InsertData(
                 table: "Trips",
-                columns: new[] { "Id", "BusId", "FromStationId", "TOStationId", "TripDate" },
+                columns: new[] { "Id", "AvailableSeats", "BusId", "FromStationId", "NumberOfSeats", "Price", "TOStationId", "TripDate" },
                 values: new object[,]
                 {
-                    { 1, 1, 1, 3, new DateTime(2025, 3, 14, 10, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 2, 3, 5, new DateTime(2025, 3, 15, 12, 30, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, 3, 2, 4, new DateTime(2025, 3, 16, 14, 45, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, 4, 5, 1, new DateTime(2025, 3, 17, 16, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, 10, 1, 1, 10, 300, 3, new DateTime(2025, 3, 14, 10, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 50, 2, 3, 50, 300, 5, new DateTime(2025, 3, 15, 12, 30, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 30, 3, 2, 30, 300, 4, new DateTime(2025, 3, 16, 14, 45, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, 20, 4, 5, 20, 300, 1, new DateTime(2025, 3, 17, 16, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(

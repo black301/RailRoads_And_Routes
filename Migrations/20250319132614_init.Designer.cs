@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bus_system_prototype.Migrations
 {
     [DbContext(typeof(context))]
-    [Migration("20250307145745_init")]
+    [Migration("20250319132614_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -43,6 +43,9 @@ namespace Bus_system_prototype.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberOfSeats")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Snacks")
                         .HasColumnType("bit");
 
@@ -67,6 +70,7 @@ namespace Bus_system_prototype.Migrations
                             AirConditioning = true,
                             Drinks = true,
                             ImgURL = "~/uploads/bus1.jpeg",
+                            NumberOfSeats = 10,
                             Snacks = true,
                             TV = true,
                             Type = "Luxury",
@@ -78,6 +82,7 @@ namespace Bus_system_prototype.Migrations
                             AirConditioning = true,
                             Drinks = false,
                             ImgURL = "~/uploads/bus2.jpeg",
+                            NumberOfSeats = 50,
                             Snacks = false,
                             TV = false,
                             Type = "Standard",
@@ -89,6 +94,7 @@ namespace Bus_system_prototype.Migrations
                             AirConditioning = true,
                             Drinks = true,
                             ImgURL = "~/uploads/bus3.jpeg",
+                            NumberOfSeats = 30,
                             Snacks = true,
                             TV = true,
                             Type = "Comfort",
@@ -100,6 +106,7 @@ namespace Bus_system_prototype.Migrations
                             AirConditioning = true,
                             Drinks = true,
                             ImgURL = "~/uploads/bus4.jpeg",
+                            NumberOfSeats = 20,
                             Snacks = false,
                             TV = true,
                             Type = "Premium",
@@ -177,10 +184,19 @@ namespace Bus_system_prototype.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AvailableSeats")
+                        .HasColumnType("int");
+
                     b.Property<int>("BusId")
                         .HasColumnType("int");
 
                     b.Property<int>("FromStationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfSeats")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
                         .HasColumnType("int");
 
                     b.Property<int>("TOStationId")
@@ -203,32 +219,44 @@ namespace Bus_system_prototype.Migrations
                         new
                         {
                             Id = 1,
+                            AvailableSeats = 10,
                             BusId = 1,
                             FromStationId = 1,
+                            NumberOfSeats = 10,
+                            Price = 300,
                             TOStationId = 3,
                             TripDate = new DateTime(2025, 3, 14, 10, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2,
+                            AvailableSeats = 50,
                             BusId = 2,
                             FromStationId = 3,
+                            NumberOfSeats = 50,
+                            Price = 300,
                             TOStationId = 5,
                             TripDate = new DateTime(2025, 3, 15, 12, 30, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 3,
+                            AvailableSeats = 30,
                             BusId = 3,
                             FromStationId = 2,
+                            NumberOfSeats = 30,
+                            Price = 300,
                             TOStationId = 4,
                             TripDate = new DateTime(2025, 3, 16, 14, 45, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 4,
+                            AvailableSeats = 20,
                             BusId = 4,
                             FromStationId = 5,
+                            NumberOfSeats = 20,
+                            Price = 300,
                             TOStationId = 1,
                             TripDate = new DateTime(2025, 3, 17, 16, 0, 0, 0, DateTimeKind.Unspecified)
                         });

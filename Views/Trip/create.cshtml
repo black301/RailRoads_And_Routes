@@ -117,6 +117,51 @@
 
                 <div class="form-divider"></div>
 
+                <!-- New Trip Details Section -->
+                <div class="form-section">
+                    <h3 class="section-title">Trip Details</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Price" class="form-label">Price <span class="required">*</span></label>
+                            <div class="input-container">
+                                <input type="number" id="Price" name="Price" class="form-input" required min="1">
+                                <div class="input-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                            </div>
+                            <div class="form-text">Ticket price for this trip</div>
+                            <span class="field-validation-valid text-danger" data-valmsg-for="Price" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="NumberOfSeats" class="form-label">Number of Seats <span class="required">*</span></label>
+                            <div class="input-container">
+                                <input type="number" id="NumberOfSeats" name="NumberOfSeats" class="form-input" required min="1">
+                                <div class="input-icon">
+                                    <i class="fas fa-chair"></i>
+                                </div>
+                            </div>
+                            <div class="form-text">Total number of seats available on the bus</div>
+                            <span class="field-validation-valid text-danger" data-valmsg-for="NumberOfSeats" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="AvailableSeats" class="form-label">Available Seats <span class="required">*</span></label>
+                            <div class="input-container">
+                                <input type="number" id="AvailableSeats" name="AvailableSeats" class="form-input" required min="0">
+                                <div class="input-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="form-text">Number of seats currently available for booking</div>
+                            <span class="field-validation-valid text-danger" data-valmsg-for="AvailableSeats" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-divider"></div>
+
                 <div class="form-section">
                     <h3 class="section-title">Schedule Information</h3>
 
@@ -137,7 +182,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-cancel" onclick="location.href='@Url.Action("Index", "Admin")'">
+                <button type="button" class="btn-cancel" onclick="location.href='@Url.Action("Index", "Trip")'">
                     Cancel
                 </button>
                 <button type="submit" class="btn-submit" id="submitButton">
@@ -574,8 +619,6 @@
         .btn-primary:hover {
             background-color: var(--primary-dark);
         }
-
-   
 </style>
 
 @section Scripts {
@@ -618,12 +661,50 @@
                     $("[data-valmsg-for='TOStationId']").text("Departure and destination stations must be different.");
                 }
 
+                // Validate Price
+                if (!$("#Price").val()) {
+                    isValid = false;
+                    errors.push("Please enter a price");
+                    $("[data-valmsg-for='Price']").text("The Price field is required.");
+                } else if (parseInt($("#Price").val()) < 1) {
+                    isValid = false;
+                    errors.push("Price must be greater than zero");
+                    $("[data-valmsg-for='Price']").text("Price must be greater than zero.");
+                }
+
+                // Validate Number of Seats
+                if (!$("#NumberOfSeats").val()) {
+                    isValid = false;
+                    errors.push("Please enter the number of seats");
+                    $("[data-valmsg-for='NumberOfSeats']").text("The Number of Seats field is required.");
+                } else if (parseInt($("#NumberOfSeats").val()) < 1) {
+                    isValid = false;
+                    errors.push("Number of seats must be at least 1");
+                    $("[data-valmsg-for='NumberOfSeats']").text("Number of seats must be at least 1.");
+                }
+
+                // Validate Available Seats
+                if (!$("#AvailableSeats").val()) {
+                    isValid = false;
+                    errors.push("Please enter the available seats");
+                    $("[data-valmsg-for='AvailableSeats']").text("The Available Seats field is required.");
+                } else if (parseInt($("#AvailableSeats").val()) < 0) {
+                    isValid = false;
+                    errors.push("Available seats cannot be negative");
+                    $("[data-valmsg-for='AvailableSeats']").text("Available seats cannot be negative.");
+                } else if ($("#NumberOfSeats").val() && parseInt($("#AvailableSeats").val()) > parseInt($("#NumberOfSeats").val())) {
+                    isValid = false;
+                    errors.push("Available seats cannot exceed total number of seats");
+                    $("[data-valmsg-for='AvailableSeats']").text("Available seats cannot exceed total number of seats.");
+                }
+
                 // Validate Trip Date
                 if (!$("#TripDate").val()) {
                     isValid = false;
                     errors.push("Please select a trip date");
                     $("[data-valmsg-for='TripDate']").text("The Trip Date field is required.");
                 }
+
                 // If validation fails, show modal
                 if (!isValid) {
                     e.preventDefault();
@@ -697,6 +778,13 @@
             // Set min date for trip date to today
             var today = new Date().toISOString().split('T')[0];
             $("#TripDate").attr('min', today);
+
+            // Auto-populate available seats when number of seats changes
+            $("#NumberOfSeats").on("change", function() {
+                if ($(this).val()) {
+                    $("#AvailableSeats").val($(this).val());
+                }
+            });
 
             // Initialize tooltips if any
             if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {

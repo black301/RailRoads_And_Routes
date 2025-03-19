@@ -16,7 +16,7 @@
             </a>
         </div>
     </div>
-    
+
     <div class="content-card">
         <div class="card-header">
             <div class="header-left">
@@ -29,25 +29,28 @@
                 </span>
             </div>
         </div>
-        
+
         <form id="editTripForm" method="post" action="@Url.Action("Edit", "Trip", new { id = Model.Id })">
             @Html.AntiForgeryToken()
             <input type="hidden" name="Id" value="@Model.Id" />
-            
+
             <div class="form-container">
                 <div class="form-section">
                     <h3 class="section-title">Bus Information</h3>
-                    
+
                     <div class="form-group">
                         <label for="BusId" class="form-label">Select Bus <span class="required">*</span></label>
                         <div class="select-container">
                             <select id="BusId" name="BusId" class="form-select" required>
                                 @foreach (var bus in ViewBag.Buses ?? new List<Bus>())
                                 {
-                                    if (Model.BusId == bus.Id){
+                                    if (Model.BusId == bus.Id)
+                                    {
                                         <option value="@bus.Id" selected>@bus.Type </option>
-                                    }else{
-                                    <option value="@bus.Id"> @bus.Type </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@bus.Id"> @bus.Type </option>
                                     }
                                 }
                             </select>
@@ -59,12 +62,12 @@
                         <span class="field-validation-valid text-danger" data-valmsg-for="BusId" data-valmsg-replace="true"></span>
                     </div>
                 </div>
-                
+
                 <div class="form-divider"></div>
-                
+
                 <div class="form-section">
                     <h3 class="section-title">Route Information</h3>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="FromStationId" class="form-label">From Station <span class="required">*</span></label>
@@ -89,7 +92,7 @@
                             <div class="form-text">Departure station for this trip</div>
                             <span class="field-validation-valid text-danger" data-valmsg-for="FromStationId" data-valmsg-replace="true"></span>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="TOStationId" class="form-label">To Station <span class="required">*</span></label>
                             <div class="select-container">
@@ -114,7 +117,7 @@
                             <span class="field-validation-valid text-danger" data-valmsg-for="TOStationId" data-valmsg-replace="true"></span>
                         </div>
                     </div>
-                    
+
                     <div class="route-visualization">
                         <div class="route-station origin">
                             <div class="station-icon">
@@ -136,12 +139,57 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-divider"></div>
-                
+
+                <!-- New Trip Details Section -->
+                <div class="form-section">
+                    <h3 class="section-title">Trip Details</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="Price" class="form-label">Price <span class="required">*</span></label>
+                            <div class="input-container">
+                                <input type="number" id="Price" name="Price" class="form-input" required min="1" value="@Model.Price">
+                                <div class="input-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                            </div>
+                            <div class="form-text">Ticket price for this trip</div>
+                            <span class="field-validation-valid text-danger" data-valmsg-for="Price" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="NumberOfSeats" class="form-label">Number of Seats <span class="required">*</span></label>
+                            <div class="input-container">
+                                <input type="number" id="NumberOfSeats" name="NumberOfSeats" class="form-input" required min="1" value="@Model.NumberOfSeats">
+                                <div class="input-icon">
+                                    <i class="fas fa-chair"></i>
+                                </div>
+                            </div>
+                            <div class="form-text">Total number of seats available on the bus</div>
+                            <span class="field-validation-valid text-danger" data-valmsg-for="NumberOfSeats" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="AvailableSeats" class="form-label">Available Seats <span class="required">*</span></label>
+                            <div class="input-container">
+                                <input type="number" id="AvailableSeats" name="AvailableSeats" class="form-input" required min="0" value="@Model.AvailableSeats">
+                                <div class="input-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="form-text">Number of seats currently available for booking</div>
+                            <span class="field-validation-valid text-danger" data-valmsg-for="AvailableSeats" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-divider"></div>
+
                 <div class="form-section">
                     <h3 class="section-title">Schedule Information</h3>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="TripDate" class="form-label">Trip Date <span class="required">*</span></label>
@@ -156,10 +204,10 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-divider"></div>
             </div>
-            
+
             <div class="form-actions">
                 <div class="action-left">
                     <button type="button" class="btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
@@ -167,7 +215,7 @@
                     </button>
                 </div>
                 <div class="action-right">
-                    <button type="button" class="btn-cancel" onclick="location.href='@Url.Action("Index", "Admin")'">
+                    <button type="button" class="btn-cancel" onclick="location.href='@Url.Action("Index", "Trip")'">
                         Cancel
                     </button>
                     <button type="submit" class="btn-submit" id="submitButton">
@@ -252,52 +300,43 @@
         --primary-light: #4895ef;
         --primary-dark: #3f37c9;
         --primary-soft: rgba(67, 97, 238, 0.1);
-        
         --secondary: #6c757d;
         --secondary-soft: rgba(108, 117, 125, 0.1);
-        
         --success: #4CAF50;
         --success-soft: rgba(76, 175, 80, 0.1);
-        
         --info: #3abff8;
         --info-soft: rgba(58, 191, 248, 0.1);
-        
         --warning: #f59e0b;
         --warning-soft: rgba(245, 158, 11, 0.1);
-        
         --danger: #ef4444;
         --danger-soft: rgba(239, 68, 68, 0.1);
-        
         --light: #f8f9fa;
         --dark: #212529;
-        
         --background: #f9fafb;
         --card-bg: #ffffff;
         --border-color: #e5e7eb;
-        
         --text-primary: #1e293b;
         --text-secondary: #64748b;
         --text-muted: #94a3b8;
-        
         --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
-    
+
     /* Base Styles */
     body {
         background-color: var(--background);
         color: var(--text-primary);
         font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    
+
     .dashboard-container {
         padding: 1.5rem;
         max-width: 1200px;
         margin: 0 auto;
     }
-    
+
     /* Dashboard Header */
     .dashboard-header {
         display: flex;
@@ -307,20 +346,20 @@
         flex-wrap: wrap;
         gap: 1rem;
     }
-    
+
     .dashboard-title {
         font-size: 1.75rem;
         font-weight: 700;
         color: var(--text-primary);
         margin: 0;
     }
-    
+
     .dashboard-subtitle {
         color: var(--text-secondary);
         margin: 0.25rem 0 0 0;
         font-size: 0.95rem;
     }
-    
+
     .btn-secondary {
         background-color: var(--light);
         color: var(--text-secondary);
@@ -333,14 +372,14 @@
         transition: all 0.3s ease;
         text-decoration: none;
     }
-    
-    .btn-secondary:hover {
-        background-color: var(--secondary-soft);
-        color: var(--secondary);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow);
-    }
-    
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-soft);
+            color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
     /* Content Card */
     .content-card {
         background-color: var(--card-bg);
@@ -350,7 +389,7 @@
         overflow: hidden;
         margin-bottom: 2rem;
     }
-    
+
     .card-header {
         padding: 1.25rem 1.5rem;
         border-bottom: 1px solid var(--border-color);
@@ -359,14 +398,14 @@
         align-items: center;
         background-color: var(--card-bg);
     }
-    
+
     .card-title {
         font-size: 1.25rem;
         font-weight: 600;
         margin: 0;
         color: var(--text-primary);
     }
-    
+
     .trip-status {
         display: inline-flex;
         align-items: center;
@@ -375,30 +414,30 @@
         font-weight: 500;
         font-size: 0.875rem;
     }
-    
+
     .status-upcoming {
         background-color: var(--primary-soft);
         color: var(--primary);
     }
-    
+
     .status-past {
         background-color: var(--success-soft);
         color: var(--success);
     }
-    
+
     .trip-status i {
         margin-right: 0.5rem;
     }
-    
+
     /* Form Styles */
     .form-container {
         padding: 1.5rem;
     }
-    
+
     .form-section {
         margin-bottom: 1.5rem;
     }
-    
+
     .section-title {
         font-size: 1.125rem;
         font-weight: 600;
@@ -407,39 +446,39 @@
         display: flex;
         align-items: center;
     }
-    
+
     .form-divider {
         height: 1px;
         background-color: var(--border-color);
         margin: 2rem 0;
     }
-    
+
     .form-row {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 1.5rem;
     }
-    
+
     .form-group {
         margin-bottom: 1.5rem;
     }
-    
+
     .form-label {
         display: block;
         margin-bottom: 0.5rem;
         font-weight: 500;
         color: var(--text-primary);
     }
-    
+
     .required {
         color: var(--danger);
         margin-left: 0.25rem;
     }
-    
+
     .select-container, .input-container {
         position: relative;
     }
-    
+
     .form-select, .form-input, .form-textarea {
         width: 100%;
         padding: 0.75rem 1rem;
@@ -451,19 +490,19 @@
         transition: all 0.2s ease;
         font-size: 0.95rem;
     }
-    
+
     .form-textarea {
         padding-right: 1rem;
         resize: vertical;
         min-height: 100px;
     }
-    
-    .form-select:focus, .form-input:focus, .form-textarea:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-soft);
-    }
-    
+
+        .form-select:focus, .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
     .select-icon, .input-icon {
         position: absolute;
         right: 1rem;
@@ -472,21 +511,21 @@
         color: var(--text-muted);
         pointer-events: none;
     }
-    
+
     .origin-icon {
         color: var(--success);
     }
-    
+
     .destination-icon {
         color: var(--info);
     }
-    
+
     .form-text {
         font-size: 0.875rem;
         color: var(--text-secondary);
         margin-top: 0.5rem;
     }
-    
+
     /* Route Visualization */
     .route-visualization {
         display: flex;
@@ -496,7 +535,7 @@
         background-color: var(--light);
         border-radius: 0.75rem;
     }
-    
+
     .route-station {
         display: flex;
         flex-direction: column;
@@ -504,7 +543,7 @@
         text-align: center;
         width: 150px;
     }
-    
+
     .station-icon {
         width: 3rem;
         height: 3rem;
@@ -515,22 +554,22 @@
         font-size: 1.25rem;
         margin-bottom: 0.75rem;
     }
-    
+
     .origin .station-icon {
         background-color: var(--success-soft);
         color: var(--success);
     }
-    
+
     .destination .station-icon {
         background-color: var(--info-soft);
         color: var(--info);
     }
-    
+
     .station-name {
         font-weight: 500;
         color: var(--text-primary);
     }
-    
+
     .route-path {
         flex: 1;
         position: relative;
@@ -538,7 +577,7 @@
         background-color: var(--border-color);
         margin: 0 1rem;
     }
-    
+
     .route-line {
         position: absolute;
         top: 0;
@@ -548,7 +587,7 @@
         background-color: var(--primary);
         transition: width 0.5s ease;
     }
-    
+
     .route-bus {
         position: absolute;
         top: 50%;
@@ -565,33 +604,33 @@
         font-size: 1rem;
         transition: left 0.5s ease;
     }
-    
+
     /* History Timeline */
     .history-timeline {
         position: relative;
         padding-left: 2rem;
         margin-top: 1.5rem;
     }
-    
-    .history-timeline:before {
-        content: '';
-        position: absolute;
-        left: 0.75rem;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background-color: var(--border-color);
-    }
-    
+
+        .history-timeline:before {
+            content: '';
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+
     .timeline-item {
         position: relative;
         padding-bottom: 1.5rem;
     }
-    
-    .timeline-item:last-child {
-        padding-bottom: 0;
-    }
-    
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
     .timeline-icon {
         position: absolute;
         left: -2rem;
@@ -606,30 +645,30 @@
         font-size: 0.875rem;
         z-index: 1;
     }
-    
+
     .timeline-content {
         background-color: var(--light);
         border-radius: 0.5rem;
         padding: 1rem;
     }
-    
-    .timeline-content h4 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-    
+
+        .timeline-content h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
     .timeline-date {
         color: var(--text-secondary);
         font-size: 0.875rem;
         margin: 0 0 0.5rem 0;
     }
-    
+
     .timeline-content p:last-child {
         margin-bottom: 0;
     }
-    
+
     /* Form Actions */
     .form-actions {
         padding: 1.5rem;
@@ -638,12 +677,12 @@
         justify-content: space-between;
         align-items: center;
     }
-    
+
     .action-right {
         display: flex;
         gap: 1rem;
     }
-    
+
     .btn-cancel {
         background-color: var(--light);
         border: 1px solid var(--border-color);
@@ -654,11 +693,11 @@
         transition: all 0.2s ease;
         cursor: pointer;
     }
-    
-    .btn-cancel:hover {
-        background-color: var(--secondary-soft);
-    }
-    
+
+        .btn-cancel:hover {
+            background-color: var(--secondary-soft);
+        }
+
     .btn-submit {
         background: linear-gradient(135deg, var(--primary), var(--primary-dark));
         color: white;
@@ -671,13 +710,13 @@
         transition: all 0.3s ease;
         cursor: pointer;
     }
-    
-    .btn-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-        background: linear-gradient(135deg, var(--primary-light), var(--primary));
-    }
-    
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+        }
+
     .btn-danger {
         background-color: var(--danger-soft);
         color: var(--danger);
@@ -690,19 +729,19 @@
         transition: all 0.2s ease;
         cursor: pointer;
     }
-    
-    .btn-danger:hover {
-        background-color: var(--danger);
-        color: white;
-    }
-    
+
+        .btn-danger:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+
     /* Validation Modal */
     .validation-warning {
         display: flex;
         gap: 1.5rem;
         align-items: flex-start;
     }
-    
+
     .warning-icon {
         width: 3rem;
         height: 3rem;
@@ -715,18 +754,18 @@
         font-size: 1.5rem;
         flex-shrink: 0;
     }
-    
+
     .warning-content h4 {
         margin: 0 0 1rem 0;
         color: var(--text-primary);
         font-weight: 600;
     }
-    
+
     .warning-content p {
         margin: 0 0 0.5rem 0;
         color: var(--text-secondary);
     }
-    
+
     .validation-list {
         background-color: var(--light);
         border-radius: 0.5rem;
@@ -734,15 +773,15 @@
         margin: 0.5rem 0 0 0;
         color: var(--danger);
     }
-    
-    .validation-list li {
-        margin-bottom: 0.5rem;
-    }
-    
-    .validation-list li:last-child {
-        margin-bottom: 0;
-    }
-    
+
+        .validation-list li {
+            margin-bottom: 0.5rem;
+        }
+
+            .validation-list li:last-child {
+                margin-bottom: 0;
+            }
+
     .btn-primary {
         background-color: var(--primary);
         color: white;
@@ -755,18 +794,18 @@
         transition: all 0.2s ease;
         cursor: pointer;
     }
-    
-    .btn-primary:hover {
-        background-color: var(--primary-dark);
-    }
-    
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
     /* Delete Modal */
     .delete-warning {
         display: flex;
         gap: 1.5rem;
         align-items: flex-start;
     }
-    
+
     .trip-info {
         font-weight: 600;
         color: var(--text-primary);
@@ -775,12 +814,12 @@
         border-radius: 0.5rem;
         margin: 0.5rem 0 1rem 0;
     }
-    
+
     .warning-text {
         color: var(--danger);
         font-size: 0.875rem;
     }
-    
+
     .btn-confirm-delete {
         background-color: var(--danger);
         color: white;
@@ -793,12 +832,10 @@
         transition: all 0.2s ease;
         cursor: pointer;
     }
-    
-    .btn-confirm-delete:hover {
-        background-color: #d32f2f;
-    }
-    
-  
+
+        .btn-confirm-delete:hover {
+            background-color: #d32f2f;
+        }
 </style>
 
 @section Scripts {
@@ -808,39 +845,76 @@
             $("#editTripForm").on("submit", function (e) {
                 var isValid = true;
                 var errors = [];
-                
+
                 // Clear previous validation
                 $(".text-danger").text("");
-                
+
                 // Validate Bus
                 if (!$("#BusId").val()) {
                     isValid = false;
                     errors.push("Please select a bus");
                     $("[data-valmsg-for='BusId']").text("The Bus field is required.");
                 }
-                
+
                 // Validate From Station
                 if (!$("#FromStationId").val()) {
                     isValid = false;
                     errors.push("Please select a departure station");
                     $("[data-valmsg-for='FromStationId']").text("The From Station field is required.");
                 }
-                
+
                 // Validate To Station
                 if (!$("#TOStationId").val()) {
                     isValid = false;
                     errors.push("Please select a destination station");
                     $("[data-valmsg-for='TOStationId']").text("The To Station field is required.");
                 }
-                
+
                 // Validate stations are different
-                if ($("#FromStationId").val() && $("#TOStationId").val() && 
+                if ($("#FromStationId").val() && $("#TOStationId").val() &&
                     $("#FromStationId").val() === $("#TOStationId").val()) {
                     isValid = false;
                     errors.push("Departure and destination stations cannot be the same");
                     $("[data-valmsg-for='TOStationId']").text("Departure and destination stations must be different.");
                 }
-                
+
+                // Validate Price
+                if (!$("#Price").val()) {
+                    isValid = false;
+                    errors.push("Please enter a price");
+                    $("[data-valmsg-for='Price']").text("The Price field is required.");
+                } else if (parseInt($("#Price").val()) < 1) {
+                    isValid = false;
+                    errors.push("Price must be greater than zero");
+                    $("[data-valmsg-for='Price']").text("Price must be greater than zero.");
+                }
+
+                // Validate Number of Seats
+                if (!$("#NumberOfSeats").val()) {
+                    isValid = false;
+                    errors.push("Please enter the number of seats");
+                    $("[data-valmsg-for='NumberOfSeats']").text("The Number of Seats field is required.");
+                } else if (parseInt($("#NumberOfSeats").val()) < 1) {
+                    isValid = false;
+                    errors.push("Number of seats must be at least 1");
+                    $("[data-valmsg-for='NumberOfSeats']").text("Number of seats must be at least 1.");
+                }
+
+                // Validate Available Seats
+                if (!$("#AvailableSeats").val()) {
+                    isValid = false;
+                    errors.push("Please enter the available seats");
+                    $("[data-valmsg-for='AvailableSeats']").text("The Available Seats field is required.");
+                } else if (parseInt($("#AvailableSeats").val()) < 0) {
+                    isValid = false;
+                    errors.push("Available seats cannot be negative");
+                    $("[data-valmsg-for='AvailableSeats']").text("Available seats cannot be negative.");
+                } else if ($("#NumberOfSeats").val() && parseInt($("#AvailableSeats").val()) > parseInt($("#NumberOfSeats").val())) {
+                    isValid = false;
+                    errors.push("Available seats cannot exceed total number of seats");
+                    $("[data-valmsg-for='AvailableSeats']").text("Available seats cannot exceed total number of seats.");
+                }
+
                 // Validate Trip Date
                 if (!$("#TripDate").val()) {
                     isValid = false;
@@ -850,27 +924,27 @@
                 // If validation fails, show modal
                 if (!isValid) {
                     e.preventDefault();
-                    
+
                     // Populate errors in modal
                     var errorList = $("#validationErrors");
                     errorList.empty();
-                    
+
                     errors.forEach(function(error) {
                         errorList.append("<li>" + error + "</li>");
                     });
-                    
+
                     // Show modal
                     var validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
                     validationModal.show();
-                    
+
                     return false;
                 }
-                
+
                 // If validation passes, combine date and time
                 if (isValid) {
                     var tripDate = $("#TripDate").val();
                     var tripTime = $("#TripTime").val();
-                    
+
                     // Create a hidden input for the combined datetime
                     $("<input>")
                         .attr("type", "hidden")
@@ -878,32 +952,32 @@
                         .val(tripDate + "T" + tripTime + ":00")
                         .appendTo("#editTripForm");
                 }
-                
+
                 return isValid;
             });
-            
+
             // Update route visualization
             function updateRouteVisualization() {
                 var fromStation = $("#FromStationId option:selected").text();
                 var toStation = $("#TOStationId option:selected").text();
-                
+
                 if (fromStation && fromStation !== "-- Select Departure Station --") {
                     $("#originDisplay").text(fromStation);
                 } else {
                     $("#originDisplay").text("Select departure station");
                 }
-                
+
                 if (toStation && toStation !== "-- Select Destination Station --") {
                     $("#destinationDisplay").text(toStation);
                 } else {
                     $("#destinationDisplay").text("Select destination station");
                 }
-                
+
                 // Animate route line and bus if both stations are selected
-                if (fromStation && toStation && 
-                    fromStation !== "-- Select Departure Station --" && 
+                if (fromStation && toStation &&
+                    fromStation !== "-- Select Departure Station --" &&
                     toStation !== "-- Select Destination Station --") {
-                    
+
                     $(".route-line").css("width", "100%");
                     $(".route-bus").css("left", "50%");
                 } else {
@@ -911,12 +985,12 @@
                     $(".route-bus").css("left", "0%");
                 }
             }
-            
+
             // Update visualization when stations change
             $("#FromStationId, #TOStationId").on("change", function() {
                 updateRouteVisualization();
             });
-            
+
             // Initialize tooltips if any
             if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
                 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

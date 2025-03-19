@@ -32,7 +32,7 @@
                 <i class="fas fa-bus"></i>
             </div>
             <div class="stat-details">
-                <h3 class="stat-value">@(Enumerable.Count(ViewBag.Buses)?? 100)</h3>
+                <h3 class="stat-value">@(Enumerable.Count(ViewBag.Buses) ?? 100)</h3>
                 <p class="stat-label">Active Buses</p>
             </div>
         </div>
@@ -41,11 +41,11 @@
                 <i class="fas fa-map-marker-alt"></i>
             </div>
             <div class="stat-details">
-                <h3 class="stat-value">@(Enumerable.Count(ViewBag.Stations)??100)</h3>
+                <h3 class="stat-value">@(Enumerable.Count(ViewBag.Stations) ?? 100)</h3>
                 <p class="stat-label">Stations</p>
             </div>
         </div>
-        
+
     </div>
 
     <div class="content-card">
@@ -72,6 +72,9 @@
                         <th>Bus</th>
                         <th>From Station</th>
                         <th>To Station</th>
+                        <th>Price</th>
+                        <th>Seats</th>
+                        <th>Available</th>
                         <th>Trip Date</th>
                         <th class="text-center">Actions</th>
                     </tr>
@@ -104,6 +107,24 @@
                                     </div>
                                 </td>
                                 <td>
+                                    <div class="price-badge">
+                                        <i class="fas fa-dollar-sign me-1"></i>
+                                        @trip.Price
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="seats-badge">
+                                        <i class="fas fa-chair me-1"></i>
+                                        @trip.NumberOfSeats
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="available-badge @(trip.AvailableSeats == 0 ? "sold-out" : "")">
+                                        <i class="fas fa-users me-1"></i>
+                                        @trip.AvailableSeats
+                                    </div>
+                                </td>
+                                <td>
                                     <div class="date-time">
                                         <div class="date">@trip.TripDate.ToString("MMM dd, yyyy")</div>
                                     </div>
@@ -130,7 +151,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="9" class="text-center py-5">
                                 <div class="empty-state">
                                     <div class="empty-icon">
                                         <i class="fas fa-bus-alt"></i>
@@ -543,7 +564,7 @@
         font-size: 0.875rem;
     }
 
-    .station-badge {
+    .station-badge, .price-badge, .seats-badge, .available-badge {
         display: inline-flex;
         align-items: center;
         padding: 0.375rem 0.75rem;
@@ -560,6 +581,26 @@
     .destination {
         background-color: var(--info-soft);
         color: var(--info);
+    }
+
+    .price-badge {
+        background-color: var(--warning-soft);
+        color: var(--warning);
+    }
+
+    .seats-badge {
+        background-color: var(--primary-soft);
+        color: var(--primary);
+    }
+
+    .available-badge {
+        background-color: var(--success-soft);
+        color: var(--success);
+    }
+
+    .sold-out {
+        background-color: var(--danger-soft);
+        color: var(--danger);
     }
 
     .date-time {
@@ -826,9 +867,6 @@
         .btn-confirm-delete:hover {
             background-color: #d32f2f;
         }
-
-   
-   
 </style>
 
 @section Scripts {

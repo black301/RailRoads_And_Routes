@@ -21,6 +21,15 @@
                             <span asp-validation-for="Type" class="text-danger"></span>
                         </div>
 
+                        <div class="mb-3">
+                            <label asp-for="NumberOfSeats" class="form-label">Number of Seats</label>
+                            <div class="seat-selector">
+                                <div class="seat-input-container">
+                                    <input asp-for="NumberOfSeats" type="number" min="1" max="100" class="form-control seat-input" value="30" />
+                                 </div>
+                            </div>
+                        </div>
+                          <br>      
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="card h-100">
@@ -101,8 +110,237 @@
     </div>
 </div>
 
+<style>
+    /* Seat Selector Styles */
+    .seat-selector {
+        position: relative;
+    }
+
+    .seat-input-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .seat-input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .seat-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 38px;
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-left: none;
+        border-top-right-radius: 0.375rem;
+        border-bottom-right-radius: 0.375rem;
+        cursor: pointer;
+    }
+
+        .seat-toggle:hover {
+            background-color: #e9ecef;
+        }
+
+    .seat-dropdown {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        z-index: 10;
+        display: none;
+    }
+
+        .seat-dropdown.show {
+            display: block;
+        }
+
+    .seat-options-header {
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #64748b;
+        background-color: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .seat-options {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .seat-option {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+        .seat-option:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+    .seat-option-icon {
+        width: 36px;
+        height: 36px;
+        background-color: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border-radius: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        font-size: 1.125rem;
+    }
+
+    .seat-option-details {
+        flex: 1;
+    }
+
+    .seat-option-name {
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: #1e293b;
+    }
+
+    .seat-option-count {
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+
+    .seat-custom {
+        padding: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .seat-custom-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .seat-control-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 0.375rem;
+        border: 1px solid #e5e7eb;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+        .seat-control-btn:hover {
+            background-color: #e9ecef;
+        }
+
+    .seat-custom-count {
+        width: 60px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.125rem;
+        margin: 0 0.75rem;
+    }
+
+    .seat-apply-btn {
+        width: 100%;
+        padding: 0.5rem;
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+        .seat-apply-btn:hover {
+            background-color: #2563eb;
+        }
+</style>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Seat selector functionality
+            const seatInput = document.querySelector('.seat-input');
+            const seatToggle = document.getElementById('seatToggle');
+            const seatDropdown = document.getElementById('seatDropdown');
+            const seatOptions = document.querySelectorAll('.seat-option');
+            const decrementBtn = document.getElementById('decrementSeats');
+            const incrementBtn = document.getElementById('incrementSeats');
+            const customSeatCount = document.getElementById('customSeatCount');
+            const applyCustomSeatsBtn = document.getElementById('applyCustomSeats');
+
+            // Initialize custom seat count
+            customSeatCount.textContent = seatInput.value;
+
+            // Toggle dropdown
+            seatToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                seatDropdown.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!seatToggle.contains(e.target) && !seatDropdown.contains(e.target)) {
+                    seatDropdown.classList.remove('show');
+                }
+            });
+
+            // Seat options
+            seatOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const seatCount = this.getAttribute('data-seats');
+                    seatInput.value = seatCount;
+                    customSeatCount.textContent = seatCount;
+                    seatDropdown.classList.remove('show');
+                });
+            });
+
+            // Decrement seats
+            decrementBtn.addEventListener('click', function() {
+                let count = parseInt(customSeatCount.textContent);
+                if (count > 1) {
+                    count--;
+                    customSeatCount.textContent = count;
+                }
+            });
+
+            // Increment seats
+            incrementBtn.addEventListener('click', function() {
+                let count = parseInt(customSeatCount.textContent);
+                if (count < 100) {
+                    count++;
+                    customSeatCount.textContent = count;
+                }
+            });
+
+            // Apply custom seats
+            applyCustomSeatsBtn.addEventListener('click', function() {
+                seatInput.value = customSeatCount.textContent;
+                seatDropdown.classList.remove('show');
+            });
+
+            // Update custom count when input changes
+            seatInput.addEventListener('input', function() {
+                let value = parseInt(this.value);
+                if (value < 1) value = 1;
+                if (value > 100) value = 100;
+                customSeatCount.textContent = value;
+            });
+        });
+    </script>
 }

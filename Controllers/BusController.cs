@@ -40,6 +40,7 @@ namespace Bus_system_prototype.Controllers
             if (ModelState.IsValid)
             {
                 EditedBus.Type = Bus.Type;
+                EditedBus.NumberOfSeats = Bus.NumberOfSeats;
                 EditedBus.TV = Bus.TV;
                 EditedBus.AirConditioning = Bus.AirConditioning;
                 EditedBus.WiFi = Bus.WiFi;

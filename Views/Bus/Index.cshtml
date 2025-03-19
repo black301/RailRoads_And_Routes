@@ -1,242 +1,238 @@
 ﻿@model IEnumerable<Bus_system_prototype.Models.Bus>
 
 @{
-    ViewData["Title"] = "Bus Fleet";
+    ViewData["Title"] = "Bus Fleet Management";
 }
 
-<div class="container py-5">
-    <!-- Header Section -->
-    <div class="row mb-4 align-items-center">
-        <div class="col-md-6">
-            <h1 class="display-5 fw-bold text-primary mb-0">Our Bus Fleet</h1>
-            <p class="text-muted lead">Find the perfect bus for your journey</p>
+<div class="fleet-dashboard">
+    <!-- Compact Header Section -->
+    <div class="compact-header">
+        <div class="header-content">
+            <h1 class="header-title">Bus Fleet Management</h1>
+            <p class="header-subtitle">Manage your fleet of buses and their specifications</p>
         </div>
-        <div class="col-md-6">
-            <div class="d-flex justify-content-md-end gap-2 mt-3 mt-md-0">
-                <div class="input-group">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search buses...">
-                </div>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filterOptions">
-                    <i class="bi bi-funnel"></i> Filter
-                </button>
+        <div class="header-actions">
+            <a href="@Url.Action("Create")" class="btn-create-bus">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span>Create New Bus</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="bi bi-bus-front"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value">@Model.Count()</h3>
+                <p class="stat-label">Total Buses</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-value">@Model.Sum(b => b.NumberOfSeats)</h3>
+                <p class="stat-label">Total Capacity</p>
             </div>
         </div>
     </div>
 
-    <!-- Filter Options (Collapsed by default) -->
-    <div class="collapse mb-4" id="filterOptions">
-        <div class="card card-body bg-light">
-            <div class="row">
-                <div class="col-md-10">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input filter-amenity" type="checkbox" value="TV" id="filterTV">
-                                <label class="form-check-label" for="filterTV">
-                                    <i class="bi bi-tv me-1"></i> TV
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input filter-amenity" type="checkbox" value="AirConditioning" id="filterAC">
-                                <label class="form-check-label" for="filterAC">
-                                    <i class="bi bi-snow me-1"></i> Air Conditioning
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input filter-amenity" type="checkbox" value="WiFi" id="filterWiFi">
-                                <label class="form-check-label" for="filterWiFi">
-                                    <i class="bi bi-wifi me-1"></i> WiFi
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input filter-amenity" type="checkbox" value="Drinks" id="filterDrinks">
-                                <label class="form-check-label" for="filterDrinks">
-                                    <i class="bi bi-cup-straw me-1"></i> Drinks
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input filter-amenity" type="checkbox" value="Snacks" id="filterSnacks">
-                                <label class="form-check-label" for="filterSnacks">
-                                    <i class="bi bi-basket me-1"></i> Snacks
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2 d-flex justify-content-end align-items-center">
-                    <button id="applyFilters" class="btn btn-sm btn-primary">Apply Filters</button>
-                </div>
+    <!-- Search and Sort Bar -->
+    <div class="search-sort-container">
+        <div class="search-box">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search buses by type...">
+            <button id="clearSearch" class="clear-search" type="button">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="sort-container">
+            <button id="sortToggle" class="sort-toggle">
+                <i class="bi bi-sort-down"></i>
+                <span>Sort</span>
+            </button>
+            <div class="sort-dropdown" id="sortDropdown">
+                <div class="sort-option" data-sort="id">ID (Default)</div>
+                <div class="sort-option" data-sort="type">Bus Type</div>
+                <div class="sort-option" data-sort="seats">Number of Seats</div>
             </div>
         </div>
     </div>
 
-    <!-- Bus Cards -->
-    <div class="row g-4" id="busContainer">
+    <!-- Bus Grid -->
+    <div class="bus-grid" id="busContainer">
         @foreach (var bus in Model)
         {
-            <div class="col-md-6 col-lg-4 mb-4 bus-card"
+            <div class="bus-card"
                  data-tv="@bus.TV.ToString().ToLower()"
                  data-ac="@bus.AirConditioning.ToString().ToLower()"
                  data-wifi="@bus.WiFi.ToString().ToLower()"
                  data-drinks="@bus.Drinks.ToString().ToLower()"
                  data-snacks="@bus.Snacks.ToString().ToLower()"
-                 data-type="@bus.Type.ToLower()">
-                <div class="card h-100 shadow rounded-4 border-0 overflow-hidden">
-                    <div class="position-relative">
+                 data-type="@bus.Type.ToLower()"
+                 data-seats="@bus.NumberOfSeats"
+                 data-id="@bus.Id">
+                <div class="card-header">
+                    <div class="bus-image">
                         @if (!string.IsNullOrEmpty(bus.ImgURL))
                         {
-                            <img src="@Url.Content(bus.ImgURL)" class="card-img-top" alt="@bus.Type" style="height: 200px; object-fit: cover;">
+                            <img src="@Url.Content(bus.ImgURL)" alt="@bus.Type" loading="lazy">
                         }
                         else
                         {
-                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="bi bi-bus-front display-1 text-muted"></i>
+                            <div class="placeholder-image">
+                                <i class="bi bi-bus-front"></i>
                             </div>
                         }
-                        <div class="position-absolute top-0 end-0 p-2">
-                            <span class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">ID: @bus.Id</span>
+                        <div class="bus-id">#@bus.Id</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="bus-info">
+                        <h3 class="bus-type">@bus.Type</h3>
+                        <div class="capacity-badge">
+                            <i class="bi bi-person-seat"></i>
+                            <span>@bus.NumberOfSeats Seats</span>
                         </div>
                     </div>
-
-                    <div class="card-body p-0">
-                        <!-- Bus Type Header -->
-                        <div class="p-3 border-bottom">
-                            <h4 class="card-title fw-bold mb-0">@bus.Type</h4>
-                        </div>
-
-                        <!-- Amenities Section - Highlighted and More Prominent -->
-                        <div class="amenities-section p-3 bg-light">
-                            <h5 class="amenities-title text-center mb-3">
-                                <i class="bi bi-stars text-warning me-2"></i>
-                                <span>Amenities</span>
-                                <i class="bi bi-stars text-warning ms-2"></i>
-                            </h5>
-
-                            <div class="amenities-grid">
-                                <div class="amenity-item @(bus.TV ? "amenity-available" : "amenity-unavailable")">
-                                    <div class="amenity-icon">
-                                        <i class="bi bi-tv-fill"></i>
-                                    </div>
-                                    <div class="amenity-label">TV</div>
-                                    <div class="amenity-status">
-                                        @if (bus.TV)
-                                        {
-                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
-                                        }
-                                    </div>
-                                </div>
-
-                                <div class="amenity-item @(bus.AirConditioning ? "amenity-available" : "amenity-unavailable")">
-                                    <div class="amenity-icon">
-                                        <i class="bi bi-snow"></i>
-                                    </div>
-                                    <div class="amenity-label">AC</div>
-                                    <div class="amenity-status">
-                                        @if (bus.AirConditioning)
-                                        {
-                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
-                                        }
-                                    </div>
-                                </div>
-
-                                <div class="amenity-item @(bus.WiFi ? "amenity-available" : "amenity-unavailable")">
-                                    <div class="amenity-icon">
-                                        <i class="bi bi-wifi"></i>
-                                    </div>
-                                    <div class="amenity-label">WiFi</div>
-                                    <div class="amenity-status">
-                                        @if (bus.WiFi)
-                                        {
-                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
-                                        }
-                                    </div>
-                                </div>
-
-                                <div class="amenity-item @(bus.Drinks ? "amenity-available" : "amenity-unavailable")">
-                                    <div class="amenity-icon">
-                                        <i class="bi bi-cup-straw"></i>
-                                    </div>
-                                    <div class="amenity-label">Drinks</div>
-                                    <div class="amenity-status">
-                                        @if (bus.Drinks)
-                                        {
-                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
-                                        }
-                                    </div>
-                                </div>
-
-                                <div class="amenity-item @(bus.Snacks ? "amenity-available" : "amenity-unavailable")">
-                                    <div class="amenity-icon">
-                                        <i class="bi bi-basket-fill"></i>
-                                    </div>
-                                    <div class="amenity-label">Snacks</div>
-                                    <div class="amenity-status">
-                                        @if (bus.Snacks)
-                                        {
-                                            <span class="badge bg-success rounded-circle"><i class="bi bi-check"></i></span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary rounded-circle"><i class="bi bi-x"></i></span>
-                                        }
-                                    </div>
-                                </div>
+                    <div class="amenities-container">
+                        <h4 class="amenities-title">
+                            <i class="bi bi-gear-fill me-2"></i>Amenities
+                        </h4>
+                        <div class="amenities-list">
+                            <div class="amenity-item @(bus.TV ? "on" : "off")">
+                                <i class="bi bi-tv-fill amenity-icon"></i>
+                                <span class="amenity-label">TV</span>
+                                <span class="status-indicator">
+                                    @if (bus.TV)
+                                    {
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    }
+                                </span>
+                            </div>
+                            <div class="amenity-item @(bus.AirConditioning ? "on" : "off")">
+                                <i class="bi bi-snow amenity-icon"></i>
+                                <span class="amenity-label">AC</span>
+                                <span class="status-indicator">
+                                    @if (bus.AirConditioning)
+                                    {
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    }
+                                </span>
+                            </div>
+                            <div class="amenity-item @(bus.WiFi ? "on" : "off")">
+                                <i class="bi bi-wifi amenity-icon"></i>
+                                <span class="amenity-label">WiFi</span>
+                                <span class="status-indicator">
+                                    @if (bus.WiFi)
+                                    {
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    }
+                                </span>
+                            </div>
+                            <div class="amenity-item @(bus.Drinks ? "on" : "off")">
+                                <i class="bi bi-cup-straw amenity-icon"></i>
+                                <span class="amenity-label">Drinks</span>
+                                <span class="status-indicator">
+                                    @if (bus.Drinks)
+                                    {
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    }
+                                </span>
+                            </div>
+                            <div class="amenity-item @(bus.Snacks ? "on" : "off")">
+                                <i class="bi bi-basket-fill amenity-icon"></i>
+                                <span class="amenity-label">Snacks</span>
+                                <span class="status-indicator">
+                                    @if (bus.Snacks)
+                                    {
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    }
+                                </span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="card-footer bg-white pt-3">
-                        <div class="d-flex justify-content-between gap-2">
-                            <a href="@Url.Action("Edit", new { id = bus.Id })" class="btn btn-outline-primary flex-grow-1">
-                                <i class="bi bi-pencil-square me-1"></i> Edit
-                            </a>
-                            <button type="button" class="btn btn-outline-danger flex-grow-1"
-                                    data-bs-toggle="modal" data-bs-target="#deleteModal@(bus.Id)">
-                                <i class="bi bi-trash me-1"></i> Delete
-                            </button>
-                        </div>
-                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("Edit", new { id = bus.Id })" class="btn-edit">
+                        <i class="bi bi-pencil"></i>
+                        <span>Edit</span>
+                    </a>
+                    <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal@(bus.Id)">
+                        <i class="bi bi-trash"></i>
+                        <span>Delete</span>
+                    </button>
                 </div>
             </div>
 
             <!-- Delete Confirmation Modal -->
             <div class="modal fade" id="deleteModal@(bus.Id)" tabindex="-1" aria-labelledby="deleteModalLabel@(bus.Id)" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel@(bus.Id)">Confirm Delete</h5>
+                            <h5 class="modal-title" id="deleteModalLabel@(bus.Id)">
+                                <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+                                Confirm Deletion
+                            </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            Are you sure you want to delete the @bus.Type bus (ID: @bus.Id)?
+                            <div class="delete-confirmation">
+                                <div class="bus-preview">
+                                    @if (!string.IsNullOrEmpty(bus.ImgURL))
+                                    {
+                                        <img src="@Url.Content(bus.ImgURL)" alt="@bus.Type" class="bus-thumbnail">
+                                    }
+                                    else
+                                    {
+                                        <div class="bus-thumbnail placeholder-thumbnail">
+                                            <i class="bi bi-bus-front"></i>
+                                        </div>
+                                    }
+                                    <div class="bus-details">
+                                        <h4>@bus.Type</h4>
+                                        <p>ID: #@bus.Id</p>
+                                        <p><i class="bi bi-person-seat me-2"></i>@bus.NumberOfSeats Seats</p>
+                                    </div>
+                                </div>
+                                <div class="warning-message">
+                                    <p>Are you sure you want to delete this bus? This action cannot be undone.</p>
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <span>Deleting this bus may affect scheduled trips and reservations.</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <a href="@Url.Action("Delete", new { id = bus.Id })" class="btn btn-danger">Delete</a>
+                            <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                            <a href="@Url.Action("Delete", new { id = bus.Id })" class="btn-confirm-delete">
+                                <i class="bi bi-trash me-2"></i>Delete Bus
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -245,180 +241,756 @@
     </div>
 
     <!-- Empty State -->
-    <div id="emptyState" class="text-center py-5 d-none">
-        <i class="bi bi-search display-1 text-muted"></i>
-        <h3 class="mt-3">No buses found</h3>
-        <p class="text-muted">Try adjusting your search or filters</p>
-    </div>
-
-    <!-- Add New Bus Button -->
-    <div class="d-flex justify-content-center mt-5">
-        <a href="@Url.Action("Create")" class="btn btn-success btn-lg px-4 py-2 shadow-sm">
-            <i class="bi bi-plus-circle me-2"></i> Add New Bus
-        </a>
+    <div id="emptyState" class="empty-state d-none">
+        <div class="empty-icon">
+            <i class="bi bi-search"></i>
+        </div>
+        <h3>No buses found</h3>
+        <p>Try adjusting your search criteria</p>
+        <button id="clearFiltersBtn" class="btn-clear-filters">
+            <i class="bi bi-arrow-counterclockwise me-2"></i>Clear Search
+        </button>
     </div>
 </div>
 
 <style>
-    /* Card styling */
-    .card {
-        transition: all 0.3s ease;
-        border-radius: 12px;
+    /* Modern Color Palette */
+    :root {
+        --primary: #3a86ff;
+        --primary-light: #4895ef;
+        --primary-dark: #2563eb;
+        --primary-soft: rgba(58, 134, 255, 0.1);
+        --secondary: #6c757d;
+        --secondary-soft: rgba(108, 117, 125, 0.1);
+        --success: #22c55e;
+        --success-soft: rgba(34, 197, 94, 0.1);
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.1);
+        --warning: #f59e0b;
+        --warning-soft: rgba(245, 158, 11, 0.1);
+        --info: #3abff8;
+        --info-soft: rgba(58, 191, 248, 0.1);
+        --light: #f8f9fa;
+        --dark: #212529;
+        --background: #f9fafb;
+        --card-bg: #ffffff;
+        --border-color: #e5e7eb;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --border-radius-sm: 0.375rem;
+        --border-radius: 0.5rem;
+        --border-radius-lg: 0.75rem;
+        --border-radius-xl: 1rem;
     }
 
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        }
-
-    /* Amenities section styling */
-    .amenities-section {
-        background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-        border-top: 1px solid rgba(0,0,0,0.1);
-        border-bottom: 1px solid rgba(0,0,0,0.1);
+    /* Base Layout */
+    body {
+        background-color: var(--background);
+        color: var(--text-primary);
+        font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        line-height: 1.5;
     }
 
-    .amenities-title {
-        font-weight: 600;
-        color: #495057;
+    .fleet-dashboard {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
         position: relative;
     }
 
-    /* Amenities grid layout */
-    .amenities-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+    /* Compact Header */
+    .compact-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        border-radius: var(--border-radius);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-md);
     }
 
-    /* Individual amenity item styling */
-    .amenity-item {
+    .header-content {
+        color: white;
+    }
+
+    .header-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .header-subtitle {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        margin: 0.25rem 0 0 0;
+    }
+
+    .header-actions {
         display: flex;
-        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-create-bus {
+        display: flex;
         align-items: center;
-        padding: 10px;
-        border-radius: 8px;
+        gap: 0.5rem;
+        background-color: white;
+        color: var(--primary-dark);
+        padding: 0.625rem 1.25rem;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-decoration: none;
+        box-shadow: var(--shadow);
         transition: all 0.2s ease;
     }
 
-        .amenity-item:hover {
-            background-color: rgba(255,255,255,0.7);
-            transform: translateY(-3px);
+        .btn-create-bus:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background-color: #f0f9ff;
         }
 
-    .amenity-available .amenity-icon {
-        color: #28a745;
-        font-size: 1.8rem;
+        .btn-create-bus i {
+            font-size: 1rem;
+        }
+
+    /* Stats Row */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
-    .amenity-unavailable .amenity-icon {
-        color: #adb5bd;
-        font-size: 1.8rem;
+    .stat-card {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
     }
 
-    .amenity-label {
-        margin: 5px 0;
-        font-weight: 500;
+    .stat-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        background-color: var(--primary-soft);
+        color: var(--primary);
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.25rem;
     }
 
-    .amenity-available .amenity-label {
-        color: #212529;
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--text-primary);
     }
 
-    .amenity-unavailable .amenity-label {
-        color: #6c757d;
+    .stat-label {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
     }
 
-    .amenity-status .badge {
-        width: 20px;
-        height: 20px;
-        padding: 0;
+    /* Search and Sort Bar */
+    .search-sort-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 250px;
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.75rem;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+        background-color: var(--card-bg);
+        font-size: 0.875rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
+        }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 1rem;
+    }
+
+    .clear-search {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    /* Button styling */
-    .btn {
-        border-radius: 6px;
+    .search-input:not(:placeholder-shown) + .clear-search {
+        opacity: 1;
+    }
+
+    .clear-search:hover {
+        background-color: var(--secondary-soft);
+        color: var(--secondary);
+    }
+
+    .sort-container {
+        position: relative;
+    }
+
+    .sort-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        font-size: 0.875rem;
+    }
+
+        .sort-toggle:hover {
+            background-color: var(--primary-soft);
+            color: var(--primary);
+            border-color: var(--primary-soft);
+        }
+
+    .sort-dropdown {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        width: 180px;
+        z-index: 10;
+        overflow: hidden;
+        display: none;
+    }
+
+        .sort-dropdown.show {
+            display: block;
+        }
+
+    .sort-option {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+        .sort-option:hover {
+            background-color: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .sort-option.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+    /* Bus Grid */
+    .bus-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .bus-card {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform-origin: center;
+    }
+
+        .bus-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            z-index: 1;
+        }
+
+    .card-header {
+        position: relative;
+    }
+
+    .bus-image {
+        height: 160px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .bus-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+    .bus-card:hover .bus-image img {
+        transform: scale(1.1);
+    }
+
+    .placeholder-image {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary-soft), #e0f2fe);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: var(--primary);
+    }
+
+    .bus-id {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background-color: var(--primary);
+        color: white;
+        padding: 0.25rem 0.625rem;
+        border-radius: var(--border-radius);
+        font-weight: 600;
+        font-size: 0.75rem;
+        box-shadow: var(--shadow);
+    }
+
+    .card-body {
+        padding: 1.25rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bus-info {
+        margin-bottom: 1.25rem;
+    }
+
+    .bus-type {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        color: var(--text-primary);
+    }
+
+    .capacity-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.625rem;
+        background-color: var(--primary-soft);
+        color: var(--primary);
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        font-size: 0.75rem;
+    }
+
+    .amenities-container {
+        flex: 1;
+    }
+
+    .amenities-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+    }
+
+    .amenities-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .amenity-item {
+        display: flex;
+        align-items: center;
+        padding: 0.625rem;
+        border-radius: var(--border-radius);
+        position: relative;
+        border: 1px solid var(--border-color);
+        transition: all 0.2s ease;
+    }
+
+        .amenity-item.on {
+            background-color: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .amenity-item.off {
+            background-color: rgba(239, 68, 68, 0.05);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+    .amenity-icon {
+        font-size: 1rem;
+        margin-right: 0.5rem;
+    }
+
+    .on .amenity-icon {
+        color: var(--success);
+    }
+
+    .off .amenity-icon {
+        color: var(--text-muted);
+    }
+
+    .amenity-label {
+        font-size: 0.8125rem;
         font-weight: 500;
     }
 
-    .btn-success {
-        background-color: #28a745;
-        border-color: #28a745;
+    .on .amenity-label {
+        color: var(--text-primary);
     }
 
-        .btn-success:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
+    .off .amenity-label {
+        color: var(--text-muted);
+    }
+
+    .status-indicator {
+        margin-left: auto;
+        font-size: 0.875rem;
+    }
+
+    .on .status-indicator {
+        color: var(--success);
+    }
+
+    .off .status-indicator {
+        color: var(--danger);
+    }
+
+    .card-footer {
+        display: flex;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .btn-edit, .btn-delete {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.375rem;
+        padding: 0.625rem;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.8125rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-edit {
+        background-color: var(--warning-soft);
+        color: var(--warning);
+        border: none;
+    }
+
+        .btn-edit:hover {
+            background-color: var(--warning);
+            color: white;
+            transform: translateY(-2px);
         }
 
-    /* Color classes */
-    .text-primary {
-        color: #0d6efd !important;
+    .btn-delete {
+        background-color: var(--danger-soft);
+        color: var(--danger);
+        border: none;
     }
 
-    .text-success {
-        color: #28a745 !important;
+        .btn-delete:hover {
+            background-color: var(--danger);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
     }
 
-    .bg-primary {
-        background-color: #0d6efd !important;
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--text-muted);
+        margin-bottom: 1.25rem;
     }
 
-    .bg-success {
-        background-color: #28a745 !important;
+    .empty-state h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
     }
 
-    
+    .empty-state p {
+        color: var(--text-secondary);
+        margin-bottom: 1.25rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-clear-filters {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.625rem 1.25rem;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+        .btn-clear-filters:hover {
+            background-color: var(--primary-dark);
+        }
+
+    /* Delete Modal */
+    .modal-content {
+        border: none;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+    }
+
+    .delete-confirmation {
+        padding: 1rem 0;
+    }
+
+    .bus-preview {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+        padding: 1rem;
+        background-color: var(--light);
+        border-radius: var(--border-radius);
+    }
+
+    .bus-thumbnail {
+        width: 70px;
+        height: 70px;
+        border-radius: var(--border-radius);
+        object-fit: cover;
+    }
+
+    .placeholder-thumbnail {
+        background-color: var(--primary-soft);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+
+    .bus-details h4 {
+        margin: 0 0 0.375rem 0;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .bus-details p {
+        margin: 0 0 0.25rem 0;
+        color: var(--text-secondary);
+        font-size: 0.8125rem;
+    }
+
+    .warning-message {
+        color: var(--text-primary);
+    }
+
+    .alert-warning {
+        background-color: var(--warning-soft);
+        color: var(--warning);
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 0.875rem;
+        margin-top: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-color);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    .btn-cancel {
+        padding: 0.625rem 1.25rem;
+        background-color: var(--light);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+        .btn-cancel:hover {
+            background-color: var(--secondary-soft);
+        }
+
+    .btn-confirm-delete {
+        padding: 0.625rem 1.25rem;
+        background-color: var(--danger);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        font-size: 0.875rem;
+    }
+
+        .btn-confirm-delete:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+        }
 </style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Search functionality
         const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
         const busCards = document.querySelectorAll('.bus-card');
-        const busContainer = document.getElementById('busContainer');
         const emptyState = document.getElementById('emptyState');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+        const sortToggle = document.getElementById('sortToggle');
+        const sortDropdown = document.getElementById('sortDropdown');
+        const sortOptions = document.querySelectorAll('.sort-option');
 
+        // Search input event
         searchInput.addEventListener('input', filterBuses);
 
-        // Filter functionality
-        const filterCheckboxes = document.querySelectorAll('.filter-amenity');
-        const applyFiltersBtn = document.getElementById('applyFilters');
+        // Clear search button
+        clearSearchBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterBuses();
+        });
 
-        applyFiltersBtn.addEventListener('click', filterBuses);
+        // Clear filters button in empty state
+        clearFiltersBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            filterBuses();
+        });
 
+        // Sort functionality
+        sortToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sortDropdown.classList.toggle('show');
+        });
+
+        // Close sort dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!sortToggle.contains(e.target)) {
+                sortDropdown.classList.remove('show');
+            }
+        });
+
+        // Sort options
+        sortOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const sortBy = this.getAttribute('data-sort');
+                sortBuses(sortBy);
+
+                // Update active class
+                sortOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+
+                // Close dropdown
+                sortDropdown.classList.remove('show');
+            });
+        });
+
+        // Filter buses function
         function filterBuses() {
             const searchTerm = searchInput.value.toLowerCase();
             let visibleCount = 0;
 
-            // Get selected filters
-            const selectedFilters = [];
-            filterCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    selectedFilters.push(checkbox.value);
-                }
-            });
-
             busCards.forEach(card => {
                 const busType = card.getAttribute('data-type');
                 let matchesSearch = busType.includes(searchTerm);
-                let matchesFilters = true;
 
-                // Check if card matches all selected filters
-                if (selectedFilters.length > 0) {
-                    matchesFilters = selectedFilters.every(filter => {
-                        const attributeName = 'data-' + filter.toLowerCase().replace('airconditioning', 'ac');
-                        return card.getAttribute(attributeName) === 'true';
-                    });
-                }
-
-                if (matchesSearch && matchesFilters) {
-                    card.classList.remove('d-none');
+                if (matchesSearch) {
+                    card.style.display = '';
                     visibleCount++;
                 } else {
-                    card.classList.add('d-none');
+                    card.style.display = 'none';
                 }
             });
 
@@ -430,11 +1002,29 @@
             }
         }
 
-        // Add animation to amenity items
-        const amenityItems = document.querySelectorAll('.amenity-item');
-        amenityItems.forEach((item, index) => {
-            item.style.animationDelay = `${index * 0.1}s`;
-            item.classList.add('animate__animated', 'animate__fadeIn');
-        });
+        // Sort buses function
+        function sortBuses(sortBy) {
+            const busContainer = document.getElementById('busContainer');
+            const cards = Array.from(busCards);
+
+            cards.sort((a, b) => {
+                if (sortBy === 'id') {
+                    return parseInt(a.getAttribute('data-id')) - parseInt(b.getAttribute('data-id'));
+                } else if (sortBy === 'type') {
+                    return a.getAttribute('data-type').localeCompare(b.getAttribute('data-type'));
+                } else if (sortBy === 'seats') {
+                    return parseInt(b.getAttribute('data-seats')) - parseInt(a.getAttribute('data-seats'));
+                }
+                return 0;
+            });
+
+            // Reorder DOM
+            cards.forEach(card => {
+                busContainer.appendChild(card);
+            });
+        }
+
+        // Initialize with default sort (ID)
+        document.querySelector('.sort-option[data-sort="id"]').classList.add('active');
     });
 </script>

@@ -51,6 +51,9 @@ namespace Bus_system_prototype.Controllers
             if (ModelState.IsValid)
             {
                 EditedTrip.BusId = Trip.BusId;
+                EditedTrip.Price = Trip.Price;
+                EditedTrip.NumberOfSeats = Trip.NumberOfSeats;
+                EditedTrip.AvailableSeats = Trip.AvailableSeats;
                 EditedTrip.TOStationId = Trip.TOStationId;
                 EditedTrip.TripDate = Trip.TripDate;
                 data.SaveChanges();

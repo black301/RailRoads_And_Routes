@@ -17,10 +17,21 @@
 
                         <input type="hidden" asp-for="Id" />
 
-                        <div class="mb-3">
-                            <label asp-for="Type" class="form-label">Bus Type</label>
-                            <input asp-for="Type" class="form-control" placeholder="Enter bus type (e.g., Executive Coach, Mini Bus)" />
-                            <span asp-validation-for="Type" class="text-danger"></span>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Type" class="form-label">Bus Type</label>
+                                    <input asp-for="Type" class="form-control" placeholder="Enter bus type (e.g., Executive Coach, Mini Bus)" />
+                                    <span asp-validation-for="Type" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="NumberOfSeats" class="form-label">Number of Seats</label>
+                                    <input asp-for="NumberOfSeats" type="number" class="form-control" min="1" placeholder="Enter number of seats" />
+                                    <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row mb-3">
@@ -93,7 +104,7 @@
                             <div class="mb-3">
                                 <label class="form-label">Current Image</label>
                                 <div class="text-center p-3 border rounded">
-                                   <img src="@Url.Content(Model.ImgURL)" id="currentImage" alt="@Model.Type" class="img-fluid" style="max-height: 200px;" />
+                                    <img src="@Url.Content(Model.ImgURL)" id="currentImage" alt="@Model.Type" class="img-fluid" style="max-height: 200px;" />
                                 </div>
                             </div>
                         }
@@ -150,6 +161,4 @@
             });
         });
     </script>
-
-
 }

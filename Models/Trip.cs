@@ -8,6 +8,13 @@ namespace Bus_system_prototype.Models
         public int Id { get; set; }
         [ForeignKey("Bus")]
         public int BusId { get; set;}
+
+        //added 
+        public int Price { get; set; }
+        public int NumberOfSeats { get; set; }
+        public int AvailableSeats { get; set; }
+        //--------------------------------
+
         [ForeignKey("TOStation")]
         public int TOStationId { get; set;}
         [ForeignKey("FromStation")]
