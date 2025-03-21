@@ -1,4 +1,4 @@
-﻿@model Bus_system_prototype.Models.Trip
+﻿@model Transport_system_prototype.Models.Trip
 
 @{
     ViewData["Title"] = "Create Trip";
@@ -8,7 +8,7 @@
     <div class="dashboard-header">
         <div class="header-content">
             <h1 class="dashboard-title">Create New Trip</h1>
-            <p class="dashboard-subtitle">Schedule a new bus trip in the system</p>
+            <p class="dashboard-subtitle">Schedule a new vehicle trip in the system</p>
         </div>
         <div class="header-actions">
             <a href="@Url.Action("Index", "Trip")" class="btn-secondary">
@@ -29,24 +29,25 @@
 
             <div class="form-container">
                 <div class="form-section">
-                    <h3 class="section-title">Bus Information</h3>
-
+                    <h3 class="section-title">Vehicle Information</h3>
                     <div class="form-group">
-                        <label for="BusId" class="form-label">Select Bus <span class="required">*</span></label>
+                        <label for="VehicleId" class="form-label">Select Vehicle <span class="required">*</span></label>
                         <div class="select-container">
-                            <select id="BusId" name="BusId" class="form-select" required>
-                                <option value="">-- Select a Bus --</option>
-                                @foreach (var bus in ViewBag.Buses ?? new List<Bus>())
+                            <select id="VehicleId" name="VehicleId" class="form-select" required>
+                                <option value="">-- Select a Vehicle --</option>
+                                @foreach (var vehicle in ViewBag.Vehicles ?? new List<vehicle>())
                                 {
-                                    <option value="@bus.Id">@bus.Type</option>
+                                    <option value="@vehicle.Id" data-type="@vehicle.Type" data-seats="@vehicle.NumberOfSeats">
+                                        @(vehicle.Type != null ? $"{vehicle.Type}: " : "")@vehicle.Name
+                                    </option>
                                 }
                             </select>
-                            <div class="select-icon">
+                            <div class="select-icon vehicle-icon">
                                 <i class="fas fa-bus"></i>
                             </div>
                         </div>
-                        <div class="form-text">Choose the bus that will operate this trip</div>
-                        <span class="field-validation-valid text-danger" data-valmsg-for="BusId" data-valmsg-replace="true"></span>
+                        <div class="form-text">Choose the vehicle that will operate this trip</div>
+                        <span class="field-validation-valid text-danger" data-valmsg-for="VehicleId" data-valmsg-replace="true"></span>
                     </div>
                 </div>
 
@@ -102,7 +103,7 @@
                         </div>
                         <div class="route-path">
                             <div class="route-line"></div>
-                            <div class="route-bus">
+                            <div class="route-vehicle" id="routeVehicle">
                                 <i class="fas fa-bus"></i>
                             </div>
                         </div>
@@ -117,7 +118,7 @@
 
                 <div class="form-divider"></div>
 
-                <!-- New Trip Details Section -->
+                <!-- Trip Details Section -->
                 <div class="form-section">
                     <h3 class="section-title">Trip Details</h3>
 
@@ -142,7 +143,7 @@
                                     <i class="fas fa-chair"></i>
                                 </div>
                             </div>
-                            <div class="form-text">Total number of seats available on the bus</div>
+                            <div class="form-text">Total number of seats available on the vehicle</div>
                             <span class="field-validation-valid text-danger" data-valmsg-for="NumberOfSeats" data-valmsg-replace="true"></span>
                         </div>
 
@@ -496,7 +497,7 @@
         transition: width 0.5s ease;
     }
 
-    .route-bus {
+    .route-vehicle {
         position: absolute;
         top: 50%;
         left: 0%;
@@ -632,11 +633,13 @@
                 // Clear previous validation
                 $(".text-danger").text("");
 
-                // Validate Bus
-                if (!$("#BusId").val()) {
+                
+
+                // Validate Vehicle
+                if (!$("#VehicleId").val()) {
                     isValid = false;
-                    errors.push("Please select a bus");
-                    $("[data-valmsg-for='BusId']").text("The Bus field is required.");
+                    errors.push("Please select a vehicle");
+                    $("[data-valmsg-for='VehicleId']").text("The Vehicle field is required.");
                 }
 
                 // Validate From Station
@@ -730,11 +733,13 @@
                     var tripTime = $("#TripTime").val();
 
                     // Create a hidden input for the combined datetime
-                    $("<input>")
-                        .attr("type", "hidden")
-                        .attr("name", "TripDate")
-                        .val(tripDate + "T" + tripTime + ":00")
-                        .appendTo("#createTripForm");
+                    if (tripTime) {
+                        $("<input>")
+                            .attr("type", "hidden")
+                            .attr("name", "TripDate")
+                            .val(tripDate + "T" + tripTime + ":00")
+                            .appendTo("#createTripForm");
+                    }
                 }
 
                 return isValid;
@@ -757,16 +762,14 @@
                     $("#destinationDisplay").text("Select destination station");
                 }
 
-                // Animate route line and bus if both stations are selected
+                // Animate route line and vehicle if both stations are selected
                 if (fromStation && toStation &&
                     fromStation !== "-- Select Departure Station --" &&
                     toStation !== "-- Select Destination Station --") {
-
                     $(".route-line").css("width", "100%");
-                    $(".route-bus").css("left", "50%");
+                    $(".route-vehicle").css("left", "50%");
                 } else {
                     $(".route-line").css("width", "0%");
-                    $(".route-bus").css("left", "0%");
                 }
             }
 
@@ -785,6 +788,61 @@
                     $("#AvailableSeats").val($(this).val());
                 }
             });
+
+            // Filter vehicles based on selected vehicle type
+            $("#Type").on("change", function() {
+                var selectedType = $(this).val();
+                var vehicleSelect = $("#VehicleId");
+
+                // Reset vehicle selection
+                vehicleSelect.val("");
+
+                // Show/hide options based on vehicle type
+                $("#VehicleId option").each(function() {
+                    if ($(this).val() === "") {
+                        // Always show the placeholder option
+                        $(this).show();
+                    } else if (!selectedType || $(this).data("type") === selectedType) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // Update vehicle icon
+                updateVehicleIcon(selectedType);
+            });
+
+            // Update vehicle icon in route visualization
+            $("#VehicleId").on("change", function() {
+                var selectedOption = $("#VehicleId option:selected");
+                var Type = selectedOption.data("type");
+
+                if (Type) {
+                    updateVehicleIcon(Type);
+
+                    // Auto-populate number of seats from selected vehicle
+                    var seats = selectedOption.data("seats");
+                    if (seats) {
+                        $("#NumberOfSeats").val(seats);
+                        $("#AvailableSeats").val(seats);
+                    }
+                }
+            });
+
+            // Function to update vehicle icon
+            function updateVehicleIcon(Type) {
+                var vehicleIcon = $(".vehicle-icon i");
+                var routeVehicle = $("#routeVehicle i");
+
+                if (Type === "Train") {
+                    vehicleIcon.removeClass("fas fa-bus").addClass("fas fa-train");
+                    routeVehicle.removeClass("fas fa-bus").addClass("fas fa-train");
+                } else {
+                    vehicleIcon.removeClass("fas fa-train").addClass("fas fa-bus");
+                    routeVehicle.removeClass("fas fa-train").addClass("fas fa-bus");
+                }
+            }
 
             // Initialize tooltips if any
             if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {

@@ -1,10 +1,11 @@
-﻿namespace Bus_system_prototype.Models
+﻿namespace Transport_system_prototype.Models
 {
-    public class Bus
+    public class vehicle
     {
         public int Id { get; set; }
-        public string Type { get; set; }
         //added
+        public string Name { get; set; }
+        public string Type { get; set; }
         public int NumberOfSeats { get; set; }
         //--------------------------------
         public bool TV { get; set; }

@@ -1,7 +1,7 @@
-﻿@model Bus_system_prototype.Models.Bus
+﻿@model Transport_system_prototype.Models.vehicle
 
 @{
-    ViewData["Title"] = "Add New Bus";
+    ViewData["Title"] = "Add New Vehicle";
 }
 
 <div class="container mt-4">
@@ -9,15 +9,25 @@
         <div class="col-md-8 offset-md-2">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">Add New Bus</h2>
+                    <h2 class="mb-0">Add New Vehicle</h2>
                 </div>
                 <div class="card-body">
                     <form asp-action="Create" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <div class="mb-3">
-                            <label asp-for="Type" class="form-label">Bus Type</label>
-                            <input asp-for="Type" class="form-control" placeholder="Enter bus type (e.g., Executive Coach, Mini Bus)" />
+                            <label asp-for="Type" class="form-label">Vehicle Type</label>
+                            <select asp-for="Type" class="form-select">
+                                <option value="">-- Select Vehicle Type --</option>
+                                <option value="Bus">Bus</option>
+                                <option value="Train">Train</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label">Vehicle Class</label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter class (e.g., Luxury, Comfort, Express)" />
                             <span asp-validation-for="Type" class="text-danger"></span>
                         </div>
 
@@ -26,10 +36,10 @@
                             <div class="seat-selector">
                                 <div class="seat-input-container">
                                     <input asp-for="NumberOfSeats" type="number" min="1" max="100" class="form-control seat-input" value="30" />
-                                 </div>
+                                </div>
                             </div>
                         </div>
-                          <br>      
+                        <br>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="card h-100">
@@ -89,9 +99,9 @@
                             <label asp-for="ImgURL" class="form-label">Image URL</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-image"></i></span>
-                                <input asp-for="ImgURL" class="form-control" placeholder="Enter URL for bus image" />
+                                <input asp-for="ImgURL" class="form-control" placeholder="Enter URL for vehicle image" />
                             </div>
-                            <div class="form-text">Enter a URL for the bus image or leave blank to use a default image.</div>
+                            <div class="form-text">Enter a URL for the vehicle image or leave blank to use a default image.</div>
                             <span asp-validation-for="ImgURL" class="text-danger"></span>
                         </div>
 
@@ -100,7 +110,7 @@
                                 <i class="bi bi-arrow-left"></i> Back to List
                             </a>
                             <button type="submit" class="btn btn-success">
-                                <i class="bi bi-plus-circle"></i> Create Bus
+                                <i class="bi bi-plus-circle"></i> Create Vehicle
                             </button>
                         </div>
                     </form>
@@ -285,61 +295,77 @@
             const applyCustomSeatsBtn = document.getElementById('applyCustomSeats');
 
             // Initialize custom seat count
-            customSeatCount.textContent = seatInput.value;
+            if (customSeatCount) {
+                customSeatCount.textContent = seatInput.value;
+            }
 
             // Toggle dropdown
-            seatToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                seatDropdown.classList.toggle('show');
-            });
+            if (seatToggle) {
+                seatToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    seatDropdown.classList.toggle('show');
+                });
+            }
 
             // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!seatToggle.contains(e.target) && !seatDropdown.contains(e.target)) {
-                    seatDropdown.classList.remove('show');
-                }
-            });
+            if (seatDropdown) {
+                document.addEventListener('click', function(e) {
+                    if (!seatToggle.contains(e.target) && !seatDropdown.contains(e.target)) {
+                        seatDropdown.classList.remove('show');
+                    }
+                });
+            }
 
             // Seat options
-            seatOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    const seatCount = this.getAttribute('data-seats');
-                    seatInput.value = seatCount;
-                    customSeatCount.textContent = seatCount;
-                    seatDropdown.classList.remove('show');
+            if (seatOptions.length > 0) {
+                seatOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const seatCount = this.getAttribute('data-seats');
+                        seatInput.value = seatCount;
+                        customSeatCount.textContent = seatCount;
+                        seatDropdown.classList.remove('show');
+                    });
                 });
-            });
+            }
 
             // Decrement seats
-            decrementBtn.addEventListener('click', function() {
-                let count = parseInt(customSeatCount.textContent);
-                if (count > 1) {
-                    count--;
-                    customSeatCount.textContent = count;
-                }
-            });
+            if (decrementBtn) {
+                decrementBtn.addEventListener('click', function() {
+                    let count = parseInt(customSeatCount.textContent);
+                    if (count > 1) {
+                        count--;
+                        customSeatCount.textContent = count;
+                    }
+                });
+            }
 
             // Increment seats
-            incrementBtn.addEventListener('click', function() {
-                let count = parseInt(customSeatCount.textContent);
-                if (count < 100) {
-                    count++;
-                    customSeatCount.textContent = count;
-                }
-            });
+            if (incrementBtn) {
+                incrementBtn.addEventListener('click', function() {
+                    let count = parseInt(customSeatCount.textContent);
+                    if (count < 100) {
+                        count++;
+                        customSeatCount.textContent = count;
+                    }
+                });
+            }
 
             // Apply custom seats
-            applyCustomSeatsBtn.addEventListener('click', function() {
-                seatInput.value = customSeatCount.textContent;
-                seatDropdown.classList.remove('show');
-            });
+            if (applyCustomSeatsBtn) {
+                applyCustomSeatsBtn.addEventListener('click', function() {
+                    seatInput.value = customSeatCount.textContent;
+                    seatDropdown.classList.remove('show');
+                });
+            }
 
             // Update custom count when input changes
             seatInput.addEventListener('input', function() {
                 let value = parseInt(this.value);
                 if (value < 1) value = 1;
                 if (value > 100) value = 100;
-                customSeatCount.textContent = value;
+                if (customSeatCount) {
+                    customSeatCount.textContent = value;
+                }
             });
         });
     </script>

@@ -1,4 +1,4 @@
-namespace Bus_system_prototype
+namespace Transport_system_prototype
 {
     public class Program
     {

@@ -1,7 +1,7 @@
-﻿@model Bus_system_prototype.Models.Bus
+﻿@model Transport_system_prototype.Models.vehicle
 
 @{
-    ViewData["Title"] = "Edit Bus";
+    ViewData["Title"] = "Edit Vehicle";
 }
 
 <div class="container mt-4">
@@ -9,7 +9,7 @@
         <div class="col-md-8 offset-md-2">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">Edit Bus</h2>
+                    <h2 class="mb-0">Edit Vehicle</h2>
                 </div>
                 <div class="card-body">
                     <form method="post">
@@ -20,18 +20,28 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="Type" class="form-label">Bus Type</label>
-                                    <input asp-for="Type" class="form-control" placeholder="Enter bus type (e.g., Executive Coach, Mini Bus)" />
+                                    <label asp-for="Type" class="form-label">Vehicle Type</label>
+                                    <select asp-for="Type" class="form-select">
+                                        <option value="">-- Select Vehicle Type --</option>
+                                        <option value="Bus">Bus</option>
+                                        <option value="Train">Train</option>
+                                    </select>
                                     <span asp-validation-for="Type" class="text-danger"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label asp-for="NumberOfSeats" class="form-label">Number of Seats</label>
-                                    <input asp-for="NumberOfSeats" type="number" class="form-control" min="1" placeholder="Enter number of seats" />
-                                    <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
+                                    <label asp-for="Name" class="form-label">Vehicle Class</label>
+                                    <input asp-for="Name" class="form-control" placeholder="Enter class (e.g., Luxury, Comfort, Express)" />
+                                    <span asp-validation-for="Type" class="text-danger"></span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="NumberOfSeats" class="form-label">Number of Seats</label>
+                            <input asp-for="NumberOfSeats" type="number" class="form-control" min="1" placeholder="Enter number of seats" />
+                            <span asp-validation-for="NumberOfSeats" class="text-danger"></span>
                         </div>
 
                         <div class="row mb-3">
@@ -93,9 +103,9 @@
                             <label asp-for="ImgURL" class="form-label">Image URL</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-image"></i></span>
-                                <input asp-for="ImgURL" class="form-control" id="imgUrlInput" placeholder="Enter URL for bus image" />
+                                <input asp-for="ImgURL" class="form-control" id="imgUrlInput" placeholder="Enter URL for vehicle image" />
                             </div>
-                            <div class="form-text">Enter a URL for the bus image or leave blank to use a default image.</div>
+                            <div class="form-text">Enter a URL for the vehicle image or leave blank to use a default image.</div>
                             <span asp-validation-for="ImgURL" class="text-danger"></span>
                         </div>
 

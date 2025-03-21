@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Bus_system_prototype.Migrations
+namespace Transport__system_prototype.Migrations
 {
     /// <inheritdoc />
     public partial class init : Migration
@@ -13,26 +13,6 @@ namespace Bus_system_prototype.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Buses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NumberOfSeats = table.Column<int>(type: "int", nullable: false),
-                    TV = table.Column<bool>(type: "bit", nullable: false),
-                    AirConditioning = table.Column<bool>(type: "bit", nullable: false),
-                    WiFi = table.Column<bool>(type: "bit", nullable: false),
-                    Drinks = table.Column<bool>(type: "bit", nullable: false),
-                    Snacks = table.Column<bool>(type: "bit", nullable: false),
-                    ImgURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Buses", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Stations",
                 columns: table => new
@@ -49,12 +29,33 @@ namespace Bus_system_prototype.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "vehicles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NumberOfSeats = table.Column<int>(type: "int", nullable: false),
+                    TV = table.Column<bool>(type: "bit", nullable: false),
+                    AirConditioning = table.Column<bool>(type: "bit", nullable: false),
+                    WiFi = table.Column<bool>(type: "bit", nullable: false),
+                    Drinks = table.Column<bool>(type: "bit", nullable: false),
+                    Snacks = table.Column<bool>(type: "bit", nullable: false),
+                    ImgURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_vehicles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Trips",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BusId = table.Column<int>(type: "int", nullable: false),
+                    vehicleId = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false),
                     NumberOfSeats = table.Column<int>(type: "int", nullable: false),
                     AvailableSeats = table.Column<int>(type: "int", nullable: false),
@@ -66,11 +67,6 @@ namespace Bus_system_prototype.Migrations
                 {
                     table.PrimaryKey("PK_Trips", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Trips_Buses_BusId",
-                        column: x => x.BusId,
-                        principalTable: "Buses",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Trips_Stations_FromStationId",
                         column: x => x.FromStationId,
                         principalTable: "Stations",
@@ -81,17 +77,11 @@ namespace Bus_system_prototype.Migrations
                         principalTable: "Stations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Buses",
-                columns: new[] { "Id", "AirConditioning", "Drinks", "ImgURL", "NumberOfSeats", "Snacks", "TV", "Type", "WiFi" },
-                values: new object[,]
-                {
-                    { 1, true, true, "~/uploads/bus1.jpeg", 10, true, true, "Luxury", true },
-                    { 2, true, false, "~/uploads/bus2.jpeg", 50, false, false, "Standard", false },
-                    { 3, true, true, "~/uploads/bus3.jpeg", 30, true, true, "Comfort", false },
-                    { 4, true, true, "~/uploads/bus4.jpeg", 20, false, true, "Premium", true }
+                    table.ForeignKey(
+                        name: "FK_Trips_vehicles_vehicleId",
+                        column: x => x.vehicleId,
+                        principalTable: "vehicles",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -107,20 +97,26 @@ namespace Bus_system_prototype.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Trips",
-                columns: new[] { "Id", "AvailableSeats", "BusId", "FromStationId", "NumberOfSeats", "Price", "TOStationId", "TripDate" },
+                table: "vehicles",
+                columns: new[] { "Id", "AirConditioning", "Drinks", "ImgURL", "Name", "NumberOfSeats", "Snacks", "TV", "Type", "WiFi" },
                 values: new object[,]
                 {
-                    { 1, 10, 1, 1, 10, 300, 3, new DateTime(2025, 3, 14, 10, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 50, 2, 3, 50, 300, 5, new DateTime(2025, 3, 15, 12, 30, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, 30, 3, 2, 30, 300, 4, new DateTime(2025, 3, 16, 14, 45, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, 20, 4, 5, 20, 300, 1, new DateTime(2025, 3, 17, 16, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, true, true, "~/uploads/bus1.jpeg", "Luxury", 150, true, true, "Train", true },
+                    { 2, true, false, "~/uploads/bus2.jpeg", "Standard", 200, false, false, "Train", false },
+                    { 3, true, true, "~/uploads/bus3.jpeg", "Comfort", 30, true, true, "Bus", false },
+                    { 4, true, true, "~/uploads/bus4.jpeg", "Premium", 55, false, true, "Bus", true }
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Trips_BusId",
+            migrationBuilder.InsertData(
                 table: "Trips",
-                column: "BusId");
+                columns: new[] { "Id", "AvailableSeats", "FromStationId", "NumberOfSeats", "Price", "TOStationId", "TripDate", "vehicleId" },
+                values: new object[,]
+                {
+                    { 1, 10, 1, 10, 300, 3, new DateTime(2025, 3, 14, 10, 0, 0, 0, DateTimeKind.Unspecified), 1 },
+                    { 2, 50, 3, 50, 300, 5, new DateTime(2025, 3, 15, 12, 30, 0, 0, DateTimeKind.Unspecified), 2 },
+                    { 3, 30, 2, 30, 300, 4, new DateTime(2025, 3, 16, 14, 45, 0, 0, DateTimeKind.Unspecified), 3 },
+                    { 4, 20, 5, 20, 300, 1, new DateTime(2025, 3, 17, 16, 0, 0, 0, DateTimeKind.Unspecified), 4 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trips_FromStationId",
@@ -131,6 +127,11 @@ namespace Bus_system_prototype.Migrations
                 name: "IX_Trips_TOStationId",
                 table: "Trips",
                 column: "TOStationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_vehicleId",
+                table: "Trips",
+                column: "vehicleId");
         }
 
         /// <inheritdoc />
@@ -140,10 +141,10 @@ namespace Bus_system_prototype.Migrations
                 name: "Trips");
 
             migrationBuilder.DropTable(
-                name: "Buses");
+                name: "Stations");
 
             migrationBuilder.DropTable(
-                name: "Stations");
+                name: "vehicles");
         }
     }
 }

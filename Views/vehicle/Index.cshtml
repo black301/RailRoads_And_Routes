@@ -1,20 +1,20 @@
-﻿@model IEnumerable<Bus_system_prototype.Models.Bus>
+﻿@model IEnumerable<Transport_system_prototype.Models.vehicle>
 
 @{
-    ViewData["Title"] = "Bus Fleet Management";
+    ViewData["Title"] = "Vehicle Fleet Management";
 }
 
 <div class="fleet-dashboard">
     <!-- Compact Header Section -->
     <div class="compact-header">
         <div class="header-content">
-            <h1 class="header-title">Bus Fleet Management</h1>
-            <p class="header-subtitle">Manage your fleet of buses and their specifications</p>
+            <h1 class="header-title">Vehicle Fleet Management</h1>
+            <p class="header-subtitle">Manage your fleet of buses and trains and their specifications</p>
         </div>
         <div class="header-actions">
             <a href="@Url.Action("Create")" class="btn-create-bus">
                 <i class="bi bi-plus-circle-fill"></i>
-                <span>Create New Bus</span>
+                <span>Add New Vehicle</span>
             </a>
         </div>
     </div>
@@ -27,7 +27,7 @@
             </div>
             <div class="stat-content">
                 <h3 class="stat-value">@Model.Count()</h3>
-                <p class="stat-label">Total Buses</p>
+                <p class="stat-label">Total Vehicles</p>
             </div>
         </div>
         <div class="stat-card">
@@ -45,7 +45,7 @@
     <div class="search-sort-container">
         <div class="search-box">
             <i class="bi bi-search search-icon"></i>
-            <input type="text" id="searchInput" class="search-input" placeholder="Search buses by type...">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search vehicles by Name...">
             <button id="clearSearch" class="clear-search" type="button">
                 <i class="bi bi-x"></i>
             </button>
@@ -57,58 +57,78 @@
             </button>
             <div class="sort-dropdown" id="sortDropdown">
                 <div class="sort-option" data-sort="id">ID (Default)</div>
-                <div class="sort-option" data-sort="type">Bus Type</div>
+                <div class="sort-option" data-sort="Type">Vehicle Name</div>
                 <div class="sort-option" data-sort="seats">Number of Seats</div>
             </div>
         </div>
     </div>
 
-    <!-- Bus Grid -->
+    <!-- Vehicle Grid -->
     <div class="bus-grid" id="busContainer">
-        @foreach (var bus in Model)
+        @foreach (var vehicle in Model)
         {
             <div class="bus-card"
-                 data-tv="@bus.TV.ToString().ToLower()"
-                 data-ac="@bus.AirConditioning.ToString().ToLower()"
-                 data-wifi="@bus.WiFi.ToString().ToLower()"
-                 data-drinks="@bus.Drinks.ToString().ToLower()"
-                 data-snacks="@bus.Snacks.ToString().ToLower()"
-                 data-type="@bus.Type.ToLower()"
-                 data-seats="@bus.NumberOfSeats"
-                 data-id="@bus.Id">
+                 data-tv="@vehicle.TV.ToString().ToLower()"
+                 data-ac="@vehicle.AirConditioning.ToString().ToLower()"
+                 data-wifi="@vehicle.WiFi.ToString().ToLower()"
+                 data-drinks="@vehicle.Drinks.ToString().ToLower()"
+                 data-snacks="@vehicle.Snacks.ToString().ToLower()"
+                 data-type="@vehicle.Name.ToLower()"
+                 data-Type="@(vehicle.Type?.ToLower() ?? "")"
+                 data-seats="@vehicle.NumberOfSeats"
+                 data-id="@vehicle.Id">
                 <div class="card-header">
                     <div class="bus-image">
-                        @if (!string.IsNullOrEmpty(bus.ImgURL))
+                        @if (!string.IsNullOrEmpty(vehicle.ImgURL))
                         {
-                            <img src="@Url.Content(bus.ImgURL)" alt="@bus.Type" loading="lazy">
+                            <img src="@Url.Content(vehicle.ImgURL)" alt="@vehicle.Type" loading="lazy">
                         }
                         else
                         {
                             <div class="placeholder-image">
-                                <i class="bi bi-bus-front"></i>
+                                @if (vehicle.Type?.ToLower() == "train")
+                                {
+                                    <i class="bi bi-train-front"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-bus-front"></i>
+                                }
                             </div>
                         }
-                        <div class="bus-id">#@bus.Id</div>
+                        <div class="bus-id">#@vehicle.Id</div>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="bus-info">
-                        <h3 class="bus-type">@bus.Type</h3>
+                        <div class="vehicle-type-badge">
+                            @if (vehicle.Type?.ToLower() == "train")
+                            {
+                                <i class="bi bi-train-front"></i>
+                                <span>Train</span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-bus-front"></i>
+                                <span>Bus</span>
+                            }
+                        </div>
                         <div class="capacity-badge">
                             <i class="bi bi-person-seat"></i>
-                            <span>@bus.NumberOfSeats Seats</span>
+                            <span>@vehicle.NumberOfSeats Seats</span>
                         </div>
+                        <h3 class="bus-type">@vehicle.Name</h3>
                     </div>
                     <div class="amenities-container">
                         <h4 class="amenities-title">
                             <i class="bi bi-gear-fill me-2"></i>Amenities
                         </h4>
                         <div class="amenities-list">
-                            <div class="amenity-item @(bus.TV ? "on" : "off")">
+                            <div class="amenity-item @(vehicle.TV ? "on" : "off")">
                                 <i class="bi bi-tv-fill amenity-icon"></i>
                                 <span class="amenity-label">TV</span>
                                 <span class="status-indicator">
-                                    @if (bus.TV)
+                                    @if (vehicle.TV)
                                     {
                                         <i class="bi bi-check-circle-fill"></i>
                                     }
@@ -118,11 +138,11 @@
                                     }
                                 </span>
                             </div>
-                            <div class="amenity-item @(bus.AirConditioning ? "on" : "off")">
+                            <div class="amenity-item @(vehicle.AirConditioning ? "on" : "off")">
                                 <i class="bi bi-snow amenity-icon"></i>
                                 <span class="amenity-label">AC</span>
                                 <span class="status-indicator">
-                                    @if (bus.AirConditioning)
+                                    @if (vehicle.AirConditioning)
                                     {
                                         <i class="bi bi-check-circle-fill"></i>
                                     }
@@ -132,11 +152,11 @@
                                     }
                                 </span>
                             </div>
-                            <div class="amenity-item @(bus.WiFi ? "on" : "off")">
+                            <div class="amenity-item @(vehicle.WiFi ? "on" : "off")">
                                 <i class="bi bi-wifi amenity-icon"></i>
                                 <span class="amenity-label">WiFi</span>
                                 <span class="status-indicator">
-                                    @if (bus.WiFi)
+                                    @if (vehicle.WiFi)
                                     {
                                         <i class="bi bi-check-circle-fill"></i>
                                     }
@@ -146,11 +166,11 @@
                                     }
                                 </span>
                             </div>
-                            <div class="amenity-item @(bus.Drinks ? "on" : "off")">
+                            <div class="amenity-item @(vehicle.Drinks ? "on" : "off")">
                                 <i class="bi bi-cup-straw amenity-icon"></i>
                                 <span class="amenity-label">Drinks</span>
                                 <span class="status-indicator">
-                                    @if (bus.Drinks)
+                                    @if (vehicle.Drinks)
                                     {
                                         <i class="bi bi-check-circle-fill"></i>
                                     }
@@ -160,11 +180,11 @@
                                     }
                                 </span>
                             </div>
-                            <div class="amenity-item @(bus.Snacks ? "on" : "off")">
+                            <div class="amenity-item @(vehicle.Snacks ? "on" : "off")">
                                 <i class="bi bi-basket-fill amenity-icon"></i>
                                 <span class="amenity-label">Snacks</span>
                                 <span class="status-indicator">
-                                    @if (bus.Snacks)
+                                    @if (vehicle.Snacks)
                                     {
                                         <i class="bi bi-check-circle-fill"></i>
                                     }
@@ -178,11 +198,11 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <a href="@Url.Action("Edit", new { id = bus.Id })" class="btn-edit">
+                    <a href="@Url.Action("Edit", new { id = vehicle.Id })" class="btn-edit">
                         <i class="bi bi-pencil"></i>
                         <span>Edit</span>
                     </a>
-                    <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal@(bus.Id)">
+                    <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal@(vehicle.Id)">
                         <i class="bi bi-trash"></i>
                         <span>Delete</span>
                     </button>
@@ -190,11 +210,11 @@
             </div>
 
             <!-- Delete Confirmation Modal -->
-            <div class="modal fade" id="deleteModal@(bus.Id)" tabindex="-1" aria-labelledby="deleteModalLabel@(bus.Id)" aria-hidden="true">
+            <div class="modal fade" id="deleteModal@(vehicle.Id)" tabindex="-1" aria-labelledby="deleteModalLabel@(vehicle.Id)" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel@(bus.Id)">
+                            <h5 class="modal-title" id="deleteModalLabel@(vehicle.Id)">
                                 <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
                                 Confirm Deletion
                             </h5>
@@ -203,35 +223,54 @@
                         <div class="modal-body">
                             <div class="delete-confirmation">
                                 <div class="bus-preview">
-                                    @if (!string.IsNullOrEmpty(bus.ImgURL))
+                                    @if (!string.IsNullOrEmpty(vehicle.ImgURL))
                                     {
-                                        <img src="@Url.Content(bus.ImgURL)" alt="@bus.Type" class="bus-thumbnail">
+                                        <img src="@Url.Content(vehicle.ImgURL)" alt="@vehicle.Type" class="bus-thumbnail">
                                     }
                                     else
                                     {
                                         <div class="bus-thumbnail placeholder-thumbnail">
-                                            <i class="bi bi-bus-front"></i>
+                                            @if (vehicle.Type?.ToLower() == "train")
+                                            {
+                                                <i class="bi bi-train-front"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-bus-front"></i>
+                                            }
                                         </div>
                                     }
                                     <div class="bus-details">
-                                        <h4>@bus.Type</h4>
-                                        <p>ID: #@bus.Id</p>
-                                        <p><i class="bi bi-person-seat me-2"></i>@bus.NumberOfSeats Seats</p>
+                                        <h4>@vehicle.Type</h4>
+                                        <p>ID: #@vehicle.Id</p>
+                                        <p>
+                                            @if (vehicle.Type?.ToLower() == "train")
+                                            {
+                                                <i class="bi bi-train-front me-2"></i>
+                                                <span>Train</span>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-bus-front me-2"></i>
+                                                <span>Bus</span>
+                                            }
+                                        </p>
+                                        <p><i class="bi bi-person-seat me-2"></i>@vehicle.NumberOfSeats Seats</p>
                                     </div>
                                 </div>
                                 <div class="warning-message">
-                                    <p>Are you sure you want to delete this bus? This action cannot be undone.</p>
+                                    <p>Are you sure you want to delete this @(vehicle.Type?.ToLower() == "train" ? "train" : "bus")? This action cannot be undone.</p>
                                     <div class="alert alert-warning">
                                         <i class="bi bi-exclamation-triangle me-2"></i>
-                                        <span>Deleting this bus may affect scheduled trips and reservations.</span>
+                                        <span>Deleting this @(vehicle.Type?.ToLower() == "train" ? "train" : "bus") may affect scheduled trips and reservations.</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
-                            <a href="@Url.Action("Delete", new { id = bus.Id })" class="btn-confirm-delete">
-                                <i class="bi bi-trash me-2"></i>Delete Bus
+                            <a href="@Url.Action("Delete", new { id = vehicle.Id })" class="btn-confirm-delete">
+                                <i class="bi bi-trash me-2"></i>Delete @(vehicle.Type?.ToLower() == "train" ? "Train" : "Bus")
                             </a>
                         </div>
                     </div>
@@ -245,7 +284,7 @@
         <div class="empty-icon">
             <i class="bi bi-search"></i>
         </div>
-        <h3>No buses found</h3>
+        <h3>No vehicles found</h3>
         <p>Try adjusting your search criteria</p>
         <button id="clearFiltersBtn" class="btn-clear-filters">
             <i class="bi bi-arrow-counterclockwise me-2"></i>Clear Search
@@ -612,6 +651,19 @@
         margin-bottom: 1.25rem;
     }
 
+    .vehicle-type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.625rem;
+        background-color: var(--info-soft);
+        color: var(--info);
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
     .bus-type {
         font-size: 1.125rem;
         font-weight: 700;
@@ -920,6 +972,8 @@
             background-color: #dc2626;
             transform: translateY(-2px);
         }
+
+   
 </style>
 
 <script>
@@ -984,7 +1038,8 @@
 
             busCards.forEach(card => {
                 const busType = card.getAttribute('data-type');
-                let matchesSearch = busType.includes(searchTerm);
+                const Type = card.getAttribute('data-Type');
+                let matchesSearch = busType.includes(searchTerm) || Type.includes(searchTerm);
 
                 if (matchesSearch) {
                     card.style.display = '';
@@ -1012,6 +1067,8 @@
                     return parseInt(a.getAttribute('data-id')) - parseInt(b.getAttribute('data-id'));
                 } else if (sortBy === 'type') {
                     return a.getAttribute('data-type').localeCompare(b.getAttribute('data-type'));
+                } else if (sortBy === 'Type') {
+                    return a.getAttribute('data-Type').localeCompare(b.getAttribute('data-Type'));
                 } else if (sortBy === 'seats') {
                     return parseInt(b.getAttribute('data-seats')) - parseInt(a.getAttribute('data-seats'));
                 }

@@ -1,7 +1,7 @@
-﻿using Bus_system_prototype.Models;
+﻿using Transport_system_prototype.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bus_system_prototype.Controllers
+namespace Transport_system_prototype.Controllers
 {
     public class TripController : Controller
     {
@@ -9,7 +9,7 @@ namespace Bus_system_prototype.Controllers
         public IActionResult Index()
         {
             ViewData["Stations"] = data.Stations.ToList();  
-            ViewData["Buses"] = data.Buses.ToList();
+            ViewData["vehicles"] = data.vehicles.ToList();
             return View(data.Trips.ToList());
         }
         //create
@@ -17,7 +17,7 @@ namespace Bus_system_prototype.Controllers
         {
             //take a list of stations and buses and pass it to the view
             ViewData["Stations"] = data.Stations.ToList();
-            ViewData["Buses"]    = data.Buses.ToList();
+            ViewData["vehicles"]    = data.vehicles.ToList();
             return View();
         }
         [ValidateAntiForgeryToken]
@@ -25,7 +25,7 @@ namespace Bus_system_prototype.Controllers
         public IActionResult create(Trip Trip)
         {
             ViewData["Stations"] = data.Stations.ToList();
-            ViewData["Buses"]    = data.Buses.ToList();
+            ViewData["vehicles"]    = data.vehicles.ToList();
             if (ModelState.IsValid)
             {
                 data.Trips.Add(Trip);
@@ -38,7 +38,7 @@ namespace Bus_system_prototype.Controllers
         public IActionResult Edit(int id)
         {
             ViewData["Stations"] = data.Stations.ToList();
-            ViewData["Buses"]    = data.Buses.ToList();
+            ViewData["vehicles"]    = data.vehicles.ToList();
             return View(data.Trips.Find(id));
         }
         [ValidateAntiForgeryToken]
@@ -46,11 +46,11 @@ namespace Bus_system_prototype.Controllers
         public IActionResult Edit(Trip Trip)
         {
             ViewData["Stations"] = data.Stations.ToList();
-            ViewData["Buses"]    = data.Buses.ToList();
+            ViewData["vehicles"]    = data.vehicles.ToList();
             Trip EditedTrip = data.Trips.Find(Trip.Id);
             if (ModelState.IsValid)
             {
-                EditedTrip.BusId = Trip.BusId;
+                EditedTrip.vehicleId = Trip.vehicleId;
                 EditedTrip.Price = Trip.Price;
                 EditedTrip.NumberOfSeats = Trip.NumberOfSeats;
                 EditedTrip.AvailableSeats = Trip.AvailableSeats;

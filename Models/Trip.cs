@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Bus_system_prototype.Models
+namespace Transport_system_prototype.Models
 {
     public class Trip
     {
         public int Id { get; set; }
-        [ForeignKey("Bus")]
-        public int BusId { get; set;}
-
+        [ForeignKey("vehicle")]
+        public int vehicleId { get; set;}
         //added 
         public int Price { get; set; }
         public int NumberOfSeats { get; set; }
@@ -21,7 +20,7 @@ namespace Bus_system_prototype.Models
         public int FromStationId { get; set;}
 
         public DateTime TripDate { get; set; }
-        public Bus ? Bus { get; set; }
+        public vehicle ? vehicle { get; set; }
         public Station? TOStation { get; set; }
         public Station? FromStation { get; set; }
     }

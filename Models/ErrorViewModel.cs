@@ -1,4 +1,4 @@
-namespace Bus_system_prototype.Models
+namespace Transport_system_prototype.Models
 {
     public class ErrorViewModel
     {

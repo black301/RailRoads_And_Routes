@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Bus_system_prototype.Models.Trip>
+﻿@model IEnumerable<Transport_system_prototype.Models.Trip>
 
 @{
     ViewData["Title"] = "Trip Management";
@@ -8,7 +8,7 @@
     <div class="dashboard-header">
         <div class="header-content">
             <h1 class="dashboard-title">Trip Management</h1>
-            <p class="dashboard-subtitle">Manage and monitor all bus trips in the system</p>
+            <p class="dashboard-subtitle">Manage and monitor all vehicle trips in the system</p>
         </div>
         <div class="header-actions">
             <a href="@Url.Action("Create", "Trip")" class="btn-create">
@@ -28,24 +28,14 @@
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon bg-success-soft">
-                <i class="fas fa-bus"></i>
-            </div>
-            <div class="stat-details">
-                <h3 class="stat-value">@(Enumerable.Count(ViewBag.Buses) ?? 100)</h3>
-                <p class="stat-label">Active Buses</p>
-            </div>
-        </div>
-        <div class="stat-card">
             <div class="stat-icon bg-info-soft">
                 <i class="fas fa-map-marker-alt"></i>
             </div>
             <div class="stat-details">
-                <h3 class="stat-value">@(Enumerable.Count(ViewBag.Stations) ?? 100)</h3>
+                <h3 class="stat-value">@(ViewBag.Stations?.Count ?? 0)</h3>
                 <p class="stat-label">Stations</p>
             </div>
         </div>
-
     </div>
 
     <div class="content-card">
@@ -61,6 +51,15 @@
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" id="searchInput" class="search-input" placeholder="Search trips...">
                 </div>
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <select id="filterVehicleType" class="filter-select">
+                            <option value="">All Vehicle Types</option>
+                            <option value="Bus">Buses</option>
+                            <option value="Train">Trains</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -69,7 +68,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Bus</th>
+                        <th>Vehicle</th>
                         <th>From Station</th>
                         <th>To Station</th>
                         <th>Price</th>
@@ -84,14 +83,21 @@
                     {
                         foreach (var trip in Model)
                         {
-                            <tr>
+                            <tr data-vehicle-type="@(trip.vehicle?.Type ?? "")">
                                 <td class="fw-medium">#@trip.Id</td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="icon-circle bg-primary-soft me-2">
-                                            <i class="fas fa-bus text-primary"></i>
+                                            @if (trip.vehicle?.Type == "Train")
+                                            {
+                                                <i class="fas fa-train text-primary"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-bus text-primary"></i>
+                                            }
                                         </div>
-                                        <span>@(trip.Bus?.Type ?? "N/A")</span>
+                                        <span>@(trip.vehicle.Type != null ? $"{trip.vehicle.Type}: " : "")@trip.vehicle.Name</span>
                                     </div>
                                 </td>
                                 <td>
@@ -140,7 +146,8 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#deleteModal"
                                                 data-trip-id="@trip.Id"
-                                                data-trip-info="Trip #@trip.Id: @trip.FromStation?.Name to @trip.TOStation?.Name">
+                                                data-trip-info="Trip #@trip.Id: @trip.FromStation?.Name to @trip.TOStation?.Name"
+                                                data-vehicle-type="@(trip.vehicle?.Type ?? "Vehicle")">
                                             <i class="fas fa-trash-alt me-2"></i> Delete
                                         </button>
                                     </div>
@@ -154,7 +161,7 @@
                             <td colspan="9" class="text-center py-5">
                                 <div class="empty-state">
                                     <div class="empty-icon">
-                                        <i class="fas fa-bus-alt"></i>
+                                        <i class="fas fa-route"></i>
                                     </div>
                                     <h4>No trips found</h4>
                                     <p>There are no trips matching your criteria</p>
@@ -198,7 +205,7 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="_method" value="DELETE" />
                     <button type="submit" class="btn-confirm-delete">
-                        <i class="fas fa-trash-alt me-1"></i> Delete Trip
+                        <i class="fas fa-trash-alt me-2"></i> Delete Trip
                     </button>
                 </form>
             </div>
@@ -887,41 +894,89 @@
                 updateTripCount();
             });
 
-            // Date filter
-            $("#filterDate").on("change", function () {
-                applyFilters();
-            });
+            // Vehicle type filter
+            $("#filterVehicleType").on("change", function() {
+                var selectedType = $(this).val().toLowerCase();
 
-            // Station filter
-            $("#filterStation").on("change", function () {
-                applyFilters();
+                if (selectedType === "") {
+                    // Show all rows if no filter is selected
+                    $("#tripsTable tbody tr").show();
+                } else {
+                    // Hide all rows first
+                    $("#tripsTable tbody tr").hide();
+
+                    // Show only rows matching the selected vehicle type
+                    $("#tripsTable tbody tr").filter(function() {
+                        return $(this).data("vehicle-type").toLowerCase() === selectedType;
+                    }).show();
+                }
+
+                updateTripCount();
             });
 
             // Clear filters
             $("#clearFilters").on("click", function() {
                 $("#searchInput").val("");
-                $("#filterDate").val("");
-                $("#filterStation").val("");
+                $("#filterVehicleType").val("");
                 $("#tripsTable tbody tr").show();
                 updateTripCount();
             });
 
-            // Refresh button
-            $("#refreshBtn").on("click", function() {
-                $(this).addClass("fa-spin");
-                setTimeout(function() {
-                    $("#refreshBtn").removeClass("fa-spin");
-                    $("#clearFilters").click();
-                }, 1000);
-            });
+            // Update trip count function
+            function updateTripCount() {
+                var visibleRows = $("#tripsTable tbody tr:visible").length;
+                var totalRows = $("#tripsTable tbody tr").length;
+
+                // If you have a counter element, update it here
+                // $("#tripCounter").text(visibleRows + " of " + totalRows);
+
+                // Show empty state if no trips are visible
+                if (visibleRows === 0 && totalRows > 0) {
+                    // If there are trips but none are visible due to filters
+                    if ($("#emptyFilterState").length === 0) {
+                        // Create and append empty filter state if it doesn't exist
+                        var emptyState = `
+                            <tr id="emptyFilterState">
+                                <td colspan="9" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <div class="empty-icon">
+                                            <i class="fas fa-filter"></i>
+                                        </div>
+                                        <h4>No matching trips</h4>
+                                        <p>No trips match your current filter criteria</p>
+                                        <button id="clearFiltersBtn" class="btn-create-sm">
+                                            <i class="fas fa-times me-1"></i> Clear Filters
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        $("#tripsTable tbody").append(emptyState);
+
+                        // Add click handler for the clear filters button
+                        $("#clearFiltersBtn").on("click", function() {
+                            $("#clearFilters").click();
+                        });
+                    } else {
+                        $("#emptyFilterState").show();
+                    }
+                } else {
+                    // Hide empty state if trips are visible
+                    $("#emptyFilterState").hide();
+                }
+            }
 
             // Delete modal setup
             $('.delete-trip').on('click', function () {
                 var tripId = $(this).data('trip-id');
                 var tripInfo = $(this).data('trip-info');
+                var vehicleType = $(this).data('vehicle-type');
 
                 $('#tripToDelete').text(tripInfo);
                 $('#deleteForm').attr('action', '@Url.Action("Delete", "Trip")/' + tripId);
+
+                // Update delete button text based on vehicle type
+                var deleteButtonText = "Delete " + (vehicleType === "Train" ? "Train Trip" : "Bus Trip");
+                $('.btn-confirm-delete').html('<i class="fas fa-trash-alt me-1"></i> ' + deleteButtonText);
             });
         });
     </script>

@@ -1,7 +1,7 @@
-﻿using Bus_system_prototype.Models;
+﻿using Transport_system_prototype.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bus_system_prototype.Controllers
+namespace Transport_system_prototype.Controllers
 {
     public class StationController : Controller
     {
