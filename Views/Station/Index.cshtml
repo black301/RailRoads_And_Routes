@@ -5,6 +5,15 @@
 }
 
 <div class="container py-5">
+    <!-- Error Alert -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <!-- Header Section -->
     <div class="row mb-4 align-items-center">
         <div class="col-md-6">
@@ -102,7 +111,6 @@
 </div>
 
 <style>
-    /* Card styling */
     .card {
         transition: all 0.3s ease;
         border-radius: 12px;
@@ -113,7 +121,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
         }
 
-    /* Button styling */
     .btn {
         border-radius: 6px;
         font-weight: 500;
@@ -129,12 +136,10 @@
             border-color: #1e7e34;
         }
 
-    /* Badge styling */
     .badge {
         font-weight: 500;
     }
 
-    /* Color classes */
     .text-primary {
         color: #0d6efd !important;
     }
@@ -153,26 +158,19 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Search functionality
+    document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('searchInput');
         const stationCards = document.querySelectorAll('.station-card');
-        const stationContainer = document.getElementById('stationContainer');
         const emptyState = document.getElementById('emptyState');
 
-        searchInput.addEventListener('input', filterStations);
-
-        function filterStations() {
+        searchInput.addEventListener('input', () => {
             const searchTerm = searchInput.value.toLowerCase();
             let visibleCount = 0;
 
             stationCards.forEach(card => {
                 const stationName = card.dataset.name;
                 const stationLocation = card.dataset.location;
-
-                // Check if station matches search term
-                const matchesSearch = stationName.includes(searchTerm) ||
-                                     stationLocation.includes(searchTerm);
+                const matchesSearch = stationName.includes(searchTerm) || stationLocation.includes(searchTerm);
 
                 if (matchesSearch) {
                     card.style.display = '';
@@ -182,12 +180,7 @@
                 }
             });
 
-            // Show/hide empty state
-            if (visibleCount === 0) {
-                emptyState.classList.remove('d-none');
-            } else {
-                emptyState.classList.add('d-none');
-            }
-        }
+            emptyState.classList.toggle('d-none', visibleCount !== 0);
+        });
     });
 </script>
