@@ -6,10 +6,15 @@ namespace Transport_system_prototype.Controllers
 {
     public class vehicleController : Controller
     {
-        context Data = new context();
+        private readonly context data;
+
+        public vehicleController(context db) // 👈 DI gives you the configured DbContext
+        {
+            data = db;
+        }
         public IActionResult Index()
         {
-            return View(Data.vehicles.ToList());
+            return View(data.vehicles.ToList());
         }
         public IActionResult create()
         {
@@ -21,8 +26,8 @@ namespace Transport_system_prototype.Controllers
 
             if (ModelState.IsValid)
             {
-                Data.vehicles.Add(vehicle);
-                Data.SaveChanges();
+                data.vehicles.Add(vehicle);
+                data.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(vehicle);
@@ -30,13 +35,13 @@ namespace Transport_system_prototype.Controllers
         //update
         public IActionResult Edit(int id)
         {
-            return View(Data.vehicles.Find(id));
+            return View(data.vehicles.Find(id));
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult Edit(vehicle vehicle)
         {
-            vehicle Editedvehicle = Data.vehicles.Find(vehicle.Id);
+            vehicle Editedvehicle = data.vehicles.Find(vehicle.Id);
             if (ModelState.IsValid)
             {
                 Editedvehicle.Type = vehicle.Type;
@@ -48,7 +53,7 @@ namespace Transport_system_prototype.Controllers
                 Editedvehicle.Drinks = vehicle.Drinks;
                 Editedvehicle.Snacks = vehicle.Snacks;
                 Editedvehicle.ImgURL = vehicle.ImgURL;
-                Data.SaveChanges();
+                data.SaveChanges();
                 return RedirectToAction("Index");
             }
             else
@@ -58,10 +63,25 @@ namespace Transport_system_prototype.Controllers
         }
         public IActionResult Delete(int id)
         {
-            Data.vehicles.Remove(Data.vehicles.Find(id));
-            Data.SaveChanges();
+            var vehicle = data.vehicles.Find(id);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            bool isUsedInTrip = data.Trips.Any(t => t.vehicleId == id);
+
+            if (isUsedInTrip)
+            {
+                TempData["ErrorMessage"] = "Cannot delete this vehicle because it is used in one or more trips.";
+                return RedirectToAction("Index");
+            }
+
+            data.vehicles.Remove(vehicle);
+            data.SaveChanges();
             return RedirectToAction("Index");
         }
+
     }
 }
 

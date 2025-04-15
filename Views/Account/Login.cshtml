@@ -1,0 +1,697 @@
+﻿@model Transport__system_prototype.Models.LoginVM
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="login-wrapper">
+    <div class="login-container">
+        <!-- Left Panel - Image/Branding -->
+        <div class="login-image-panel">
+            <div class="overlay"></div>
+            <div class="brand-content">
+                <div class="logo-container">
+                    <i class="fas fa-train logo-icon"></i>
+                    <h1 class="brand-name">RailRoads & Routes</h1>
+                </div>
+                <p class="brand-tagline">Your journey begins with a single click</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <i class="fas fa-map-marked-alt feature-icon"></i>
+                        <span>Explore destinations across the country</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-ticket-alt feature-icon"></i>
+                        <span>Book tickets with ease</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-clock feature-icon"></i>
+                        <span>Real-time schedule updates</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Login Form -->
+        <div class="login-form-panel">
+            <div class="form-container">
+                <div class="login-header">
+                    <h2 class="welcome-text">Welcome Back</h2>
+                    <p class="login-subtext">Sign in to access your account</p>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="social-btn google-btn">
+                        <i class="fab fa-google"></i>
+                        <span>Continue with Google</span>
+                    </button>
+                    <button type="button" class="social-btn facebook-btn">
+                        <i class="fab fa-facebook-f"></i>
+                        <span>Continue with Facebook</span>
+                    </button>
+                </div>
+
+                <div class="divider">
+                    <span>or sign in with email</span>
+                </div>
+
+                <form asp-action="Login" method="post" id="loginForm" class="needs-validation" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger validation-summary"></div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" id="email" required />
+                        <label asp-for="Email">Email address</label>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="Email"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="password-input-group">
+                            <div class="form-floating">
+                                <input asp-for="Password" class="form-control" id="password" required />
+                                <label asp-for="Password">Password</label>
+                            </div>
+                            <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility">
+                                <i class="fas fa-eye" id="togglePassword"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback">
+                            <span asp-validation-for="Password"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe" name="RememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Remember me
+                            </label>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary login-btn">
+                        <span class="btn-text">Sign In</span>
+                        <i class="fas fa-arrow-right btn-icon"></i>
+                    </button>
+                </form>
+
+                <div class="register-prompt">
+                    <span>Don't have an account?</span>
+                    <a asp-action="Register" asp-controller="Account" class="register-link">Create account</a>
+                </div>
+
+                <div class="security-badges">
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Secure Login</span>
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-lock"></i>
+                        <span>Encrypted</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Login Page Styles */
+        :root {
+            --primary: #0052cc;
+            --primary-dark: #003d99;
+            --primary-light: #4d94ff;
+            --primary-lighter: #e6f0ff;
+            --secondary: #00a3bf;
+            --accent: #ff5630;
+            --success: #36b37e;
+            --warning: #ffab00;
+            --danger: #ff5630;
+            --dark: #172b4d;
+            --light: #f4f5f7;
+            --gray: #6b778c;
+            --gray-light: #dfe1e6;
+            --gray-lighter: #f4f5f7;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.2s ease;
+        }
+
+        /* Login wrapper to properly integrate with layout */
+        .login-wrapper {
+            padding: 2rem 0;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .login-container {
+            display: flex;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            margin: 0 auto;
+            max-width: 1200px;
+            min-height: 600px;
+        }
+
+        /* Left Panel - Image/Branding */
+        .login-image-panel {
+            flex: 1;
+            background-image: url('/images/train-station.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 82, 204, 0.8), rgba(0, 163, 191, 0.8));
+            z-index: 1;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+        }
+
+        .brand-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .brand-tagline {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        .features-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(5px);
+            transition: var(--transition);
+        }
+
+            .feature-item:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                transform: translateY(-3px);
+            }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .image-attribution {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            z-index: 2;
+        }
+
+            .image-attribution a {
+                color: white;
+                text-decoration: underline;
+            }
+
+        /* Right Panel - Login Form */
+        .login-form-panel {
+            flex: 1;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 450px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtext {
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        /* Social Login */
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-light);
+            background-color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+            .social-btn i {
+                margin-right: 0.75rem;
+                font-size: 1.25rem;
+            }
+
+        .google-btn i {
+            color: #DB4437;
+        }
+
+        .facebook-btn i {
+            color: #4267B2;
+        }
+
+        .social-btn:hover {
+            background-color: var(--gray-lighter);
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: var(--gray);
+        }
+
+            .divider::before,
+            .divider::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid var(--gray-light);
+            }
+
+            .divider span {
+                padding: 0 1rem;
+                font-size: 0.875rem;
+            }
+
+        /* Form Styles */
+        .form-floating {
+            position: relative;
+        }
+
+        .form-control {
+            height: 58px;
+            border-color: var(--gray-light);
+            transition: var(--transition);
+        }
+
+            .form-control:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 0.25rem rgba(0, 82, 204, 0.25);
+            }
+
+        /* Password input group with separate toggle button */
+        .password-input-group {
+            display: flex;
+            align-items: stretch;
+        }
+
+            .password-input-group .form-floating {
+                flex: 1;
+            }
+
+            .password-input-group .form-control {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+        .password-toggle-btn {
+            width: 50px;
+            background-color: var(--light);
+            border: 1px solid var(--gray-light);
+            border-left: none;
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            color: var(--gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+            .password-toggle-btn:hover {
+                background-color: var(--gray-lighter);
+                color: var(--primary);
+            }
+
+            .password-toggle-btn:focus {
+                outline: none;
+                box-shadow: 0 0 0 0.25rem rgba(0, 82, 204, 0.25);
+            }
+
+        /* Form Options */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+            .forgot-password:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
+            }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary);
+            border-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+            .login-btn:hover {
+                background-color: var(--primary-dark);
+                border-color: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: var(--box-shadow);
+            }
+
+        .btn-icon {
+            transition: transform 0.2s ease;
+        }
+
+        .login-btn:hover .btn-icon {
+            transform: translateX(4px);
+        }
+
+        /* Register Prompt */
+        .register-prompt {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--gray);
+        }
+
+        .register-link {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 0.5rem;
+            transition: var(--transition);
+        }
+
+            .register-link:hover {
+                color: var(--primary-dark);
+                text-decoration: underline;
+            }
+
+        /* Security Badges */
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+            .security-badge i {
+                margin-right: 0.5rem;
+                color: var(--success);
+            }
+
+        /* Validation Styles */
+        .validation-summary {
+            display: none;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            font-size: 0.875rem;
+        }
+
+            .validation-summary ul {
+                margin-bottom: 0;
+                padding-left: 1.25rem;
+            }
+
+            .validation-summary.show {
+                display: block;
+                animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            }
+
+        .invalid-feedback {
+            font-size: 0.8125rem;
+        }
+
+        /* Animations */
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes shake {
+            10%, 90% {
+                transform: translateX(-1px);
+            }
+
+            20%, 80% {
+                transform: translateX(2px);
+            }
+
+            30%, 50%, 70% {
+                transform: translateX(-4px);
+            }
+
+            40%, 60% {
+                transform: translateX(4px);
+            }
+        }
+
+        /* Responsive Styles */
+        @@media (max-width: 991.98px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 600px;
+            }
+
+            .login-image-panel {
+                min-height: 250px;
+            }
+
+            .brand-content {
+                max-width: 100%;
+            }
+
+            .login-form-panel {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @@media (max-width: 767.98px) {
+            .login-wrapper {
+                padding: 1rem 0;
+            }
+
+            .login-container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .login-image-panel {
+                min-height: 200px;
+                padding: 1.5rem;
+            }
+
+            .brand-name {
+                font-size: 2rem;
+            }
+
+            .brand-tagline {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .features-list {
+                display: none;
+            }
+
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .security-badges {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
+        }
+
+        @@media (max-width: 575.98px) {
+            .login-wrapper {
+                padding: 0;
+            }
+
+            .login-image-panel {
+                min-height: 180px;
+            }
+
+            .welcome-text {
+                font-size: 1.75rem;
+            }
+
+            .login-subtext {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Password visibility toggle
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+
+            togglePassword.addEventListener('click', function () {
+                // Toggle type attribute
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                // Toggle icon
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+
+            // Form validation
+            const form = document.getElementById('loginForm');
+
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    // Show validation summary with animation
+                    const validationSummary = document.querySelector('.validation-summary');
+                    if (validationSummary && validationSummary.innerHTML.trim() !== '') {
+                        validationSummary.classList.add('show');
+                    }
+                }
+
+                form.classList.add('was-validated');
+            });
+
+            // Social login buttons (placeholder functionality)
+            const socialButtons = document.querySelectorAll('.social-btn');
+
+            socialButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // This would be replaced with actual social login logic
+                    alert('Social login functionality would be implemented here.');
+                });
+            });
+        });
+    </script>
+}

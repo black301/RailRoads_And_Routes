@@ -1,11 +1,17 @@
-﻿using Transport_system_prototype.Models;
+﻿using Transport__system_prototype.Models;
+using Transport_system_prototype.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Transport_system_prototype.Controllers
 {
     public class StationController : Controller
     {
-        context data = new context(); 
+        private readonly context data;
+
+        public StationController(context db) 
+        {
+            data = db;
+        }
         public IActionResult Index()
         {
             return View(data.Stations.ToList());
@@ -51,9 +57,24 @@ namespace Transport_system_prototype.Controllers
         }
         public IActionResult Delete(int id)
         {
-            data.Stations.Remove(data.Stations.Find(id));
+            var station = data.Stations.Find(id);
+            if (station == null)
+            {
+                return NotFound();
+            }
+
+            bool isUsedInTrip = data.Trips.Any(t => t.FromStationId == id || t.TOStationId == id);
+
+            if (isUsedInTrip)
+            {
+                TempData["ErrorMessage"] = "Cannot delete this station because it is used in one or more trips.";
+                return RedirectToAction("Index");
+            }
+
+            data.Stations.Remove(station);
             data.SaveChanges();
             return RedirectToAction("Index");
         }
+
     }
 }

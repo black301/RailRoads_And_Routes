@@ -1,25 +1,26 @@
-﻿using Microsoft.EntityFrameworkCore;
-
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.EntityFrameworkCore;
+using System;
+using Transport__system_prototype.Models;
 namespace Transport_system_prototype.Models
 {
-    public class context : DbContext
+    public class context : IdentityDbContext<User>
     {
-        public context() : base()
-        {
+        public context(DbContextOptions<context> options) : base(options) { }
 
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Data Source=MY-BOY;Initial Catalog=SystemPrototype;Integrated Security=True;TrustServerCertificate=True");
-            
-            base.OnConfiguring(optionsBuilder);
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Trip>()
                 .HasOne(t => t.FromStation)
                 .WithMany()
                 .HasForeignKey(t => t.FromStationId)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            modelBuilder.Entity<Trip>()
+                .HasOne(t => t.TOStation)
+                .WithMany()
+                .HasForeignKey(t => t.TOStationId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Trip>()
@@ -49,9 +50,12 @@ namespace Transport_system_prototype.Models
                 new Trip { Id = 3, vehicleId = 3, FromStationId = 2, Price = 300, NumberOfSeats = 30, AvailableSeats = 30, TOStationId = 4, TripDate = new DateTime(2025, 3, 16, 14, 45, 00) }, // March 16, 2025, 2:45 PM
                 new Trip { Id = 4, vehicleId = 4, FromStationId = 5, Price = 300, NumberOfSeats = 20, AvailableSeats = 20, TOStationId = 1, TripDate = new DateTime(2025, 3, 17, 16, 00, 00) }  // March 17, 2025, 4:00 PM
             );
+            base.OnModelCreating(modelBuilder);
         }
         public DbSet<vehicle> vehicles { get; set; }
         public DbSet<Station> Stations { get; set; }
         public DbSet<Trip> Trips { get; set; }
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<Client> Clients { get; set; }
     }
 }

@@ -1,0 +1,1109 @@
+﻿@model Transport__system_prototype.Models.RegisterVM
+@{
+    ViewData["Title"] = "Create Your Account";
+}
+
+<div class="registration-container my-5">
+    <div class="registration-wrapper">
+        <!-- Left side - Image and branding -->
+        <div class="registration-brand">
+            <div class="brand-content">
+                <h1 class="brand-title">Begin Your Journey</h1>
+                <p class="brand-subtitle">Join thousands of travelers booking their perfect trips every day.</p>
+
+                <!-- Testimonial -->
+                <div class="testimonial">
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-left"></i>
+                        <p>عشره علي عشره وربنا ناس جامده جدا </p>
+                        <div class="testimonial-author">
+                            <img src="~/uploads/avatar.jpg" alt="Customer" class="testimonial-avatar" style="width: 120px; height: 100px;">
+                            <div>
+                                <p class="author-name">
+                                    Abdel Fattah El-Sisi
+                                </p>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right side - Registration form -->
+        <div class="registration-form-container">
+            <div class="form-header">
+                <h2>Create Your Account</h2>
+                <p>Fill in your details to get started</p>
+            </div>
+
+            <form asp-action="Register" asp-controller="Account" method="post" class="registration-form needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" role="alert"></div>
+
+                <!-- Progress indicator -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-indicator" id="formProgress"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span class="active">Account</span>
+                        <span>Contact</span>
+                        <span>Finish</span>
+                    </div>
+                </div>
+
+                <!-- Form sections -->
+                <div class="form-sections">
+                    <!-- Section 1: Account Details -->
+                    <div class="form-section active" id="section1">
+                        <div class="input-group-custom mb-4">
+                            <div class="input-field">
+                                <input asp-for="UserName" class="form-control custom-input" id="UserName" placeholder="Enter your username" required data-field-group="1" />
+                                <label asp-for="UserName">Username</label>
+                                <span asp-validation-for="UserName" class="invalid-feedback"></span>
+                                <div class="form-text">Choose a unique username for your account</div>
+                            </div>
+                        </div>
+
+                        <div class="input-group-custom mb-4">
+                            <div class="input-field">
+                                <input asp-for="Email" class="form-control custom-input" id="Email" placeholder="Enter your email address" required data-field-group="1" />
+                                <label asp-for="Email">Email Address</label>
+                                <span asp-validation-for="Email" class="invalid-feedback"></span>
+                                <div class="form-text">We'll never share your email with anyone else</div>
+                            </div>
+                        </div>
+
+                        <div class="input-group-custom mb-4">
+                            <div class="password-input-group">
+                                <div class="input-field">
+                                    <input asp-for="Password" class="form-control custom-input" id="Password" placeholder="Enter your password" required data-field-group="1" />
+                                    <label asp-for="Password">Password</label>
+                                </div>
+                                <button type="button" class="password-toggle-btn" onclick="togglePassword('Password')">
+                                    <i class="fas fa-eye" id="togglePassword"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="invalid-feedback"></span>
+                            <div class="password-strength">
+                                <div class="strength-meter">
+                                    <div class="strength-meter-fill" id="strengthMeter"></div>
+                                </div>
+                                <span class="strength-text" id="strengthText">Password strength</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group-custom mb-4">
+                            <div class="password-input-group">
+                                <div class="input-field">
+                                    <input asp-for="ConfirmPassword" class="form-control custom-input" id="ConfirmPassword" placeholder="Confirm your password" required data-field-group="1" />
+                                    <label asp-for="ConfirmPassword">Confirm Password</label>
+                                </div>
+                                <button type="button" class="password-toggle-btn" onclick="togglePassword('ConfirmPassword')">
+                                    <i class="fas fa-eye" id="toggleConfirmPassword"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="invalid-feedback"></span>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-primary next-btn" onclick="nextSection(1, 2)">
+                                Continue <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Contact Details -->
+                    <div class="form-section" id="section2">
+                        <div class="input-group-custom mb-4">
+                            <div class="input-field">
+                                <input asp-for="PhoneNumber" class="form-control custom-input" id="PhoneNumber" placeholder="Enter your phone number" required data-field-group="2" />
+                                <label asp-for="PhoneNumber">Phone Number</label>
+                                <span asp-validation-for="PhoneNumber" class="invalid-feedback"></span>
+                                <div class="form-text">For booking confirmations and updates</div>
+                            </div>
+                        </div>
+
+                        <div class="input-group-custom mb-4">
+                            <div class="input-field">
+                                <input asp-for="City" class="form-control custom-input" id="City" placeholder="Enter your city" required data-field-group="2" />
+                                <label asp-for="City">City</label>
+                                <span asp-validation-for="City" class="invalid-feedback"></span>
+                            </div>
+                        </div>
+
+                        <div class="terms-agreement mb-4">
+                            <p>By creating an account, you agree to our <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>.</p>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-outline-secondary prev-btn" onclick="prevSection(2, 1)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" class="btn btn-primary next-btn" onclick="nextSection(2, 3)">
+                                Review <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Review & Submit -->
+                    <div class="form-section" id="section3">
+                        <div class="review-section">
+                            <h3>Review Your Information</h3>
+                            <div class="review-item">
+                                <span class="review-label"><i class="fas fa-user"></i> Username:</span>
+                                <span class="review-value" id="review-username"></span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label"><i class="fas fa-envelope"></i> Email:</span>
+                                <span class="review-value" id="review-email"></span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label"><i class="fas fa-phone"></i> Phone:</span>
+                                <span class="review-value" id="review-phone"></span>
+                            </div>
+                            <div class="review-item">
+                                <span class="review-label"><i class="fas fa-city"></i> City:</span>
+                                <span class="review-value" id="review-city"></span>
+                            </div>
+                        </div>
+
+                        <div class="security-note">
+                            <i class="fas fa-shield-alt"></i>
+                            <p>Your information is secure and encrypted. By clicking "Create Account", you agree to our Terms of Service and Privacy Policy.</p>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-outline-secondary prev-btn" onclick="prevSection(3, 2)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="submit" class="btn btn-success submit-btn">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="form-footer">
+                <p>Already have an account? <a asp-action="Login" asp-controller="Account" class="login-link">Sign In</a></p>
+                <div class="social-login">
+                    <p>Or sign up with:</p>
+                    <div class="social-buttons">
+                        <button type="button" class="btn btn-social btn-google">
+                            <i class="fab fa-google"></i>
+                        </button>
+                        <button type="button" class="btn btn-social btn-facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button type="button" class="btn btn-social btn-apple">
+                            <i class="fab fa-apple"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary-color: #4cc9f0;
+            --accent-color: #f72585;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+        }
+
+        .registration-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .registration-wrapper {
+            display: flex;
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+
+        /* Brand section */
+        .registration-brand {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .registration-brand::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('~/images/travel-pattern.svg') repeat;
+                opacity: 0.1;
+            }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container {
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            height: 60px;
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .testimonial {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 3rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .testimonial-quote {
+            position: relative;
+        }
+
+            .testimonial-quote i {
+                font-size: 1.5rem;
+                opacity: 0.5;
+                margin-bottom: 0.5rem;
+            }
+
+            .testimonial-quote p {
+                font-style: italic;
+                margin-bottom: 1rem;
+            }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .testimonial-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            border: 2px solid white;
+        }
+
+        .author-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .rating {
+            color: #ffc107;
+        }
+
+        /* Form section */
+        .registration-form-container {
+            flex: 1;
+            padding: 3rem;
+            overflow-y: auto;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+            .form-header h2 {
+                font-size: 1.75rem;
+                font-weight: 700;
+                color: var(--dark-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .form-header p {
+                color: var(--gray-color);
+            }
+
+        .registration-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-indicator {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            width: 33.33%;
+            transition: var(--transition);
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .progress-labels span {
+                font-size: 0.85rem;
+                color: var(--gray-color);
+                position: relative;
+            }
+
+                .progress-labels span.active {
+                    color: var(--primary-color);
+                    font-weight: 600;
+                }
+
+        /* Form sections */
+        .form-sections {
+            position: relative;
+            min-height: 400px;
+        }
+
+        .form-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(20px);
+            transition: var(--transition);
+        }
+
+            .form-section.active {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(0);
+            }
+
+        /* Custom Input Group */
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            z-index: 10;
+        }
+
+        .input-field {
+            position: relative;
+        }
+
+        .custom-input {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--dark-color);
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            height: 56px;
+        }
+
+            .custom-input:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+                outline: 0;
+            }
+
+            .custom-input::placeholder {
+                color: #adb5bd;
+                opacity: 1;
+            }
+
+            .custom-input:focus::placeholder {
+                opacity: 0.5;
+            }
+
+        .input-field label {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            padding: 0 5px;
+            font-size: 0.85rem;
+            color: var(--gray-color);
+            background-color: white;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .custom-input:focus + label,
+        .custom-input:not(:placeholder-shown) + label {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .custom-input.is-invalid {
+            border-color: var(--danger-color);
+        }
+
+            .custom-input.is-invalid + label {
+                color: var(--danger-color);
+            }
+
+        .form-text {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            margin-top: 0.25rem;
+            margin-left: 0.5rem;
+        }
+
+        /* Password field with separate button */
+        .password-input-group {
+            display: flex;
+            align-items: stretch;
+        }
+
+            .password-input-group .input-field {
+                flex: 1;
+            }
+
+            .password-input-group .custom-input {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+        .password-toggle-btn {
+            width: 50px;
+            background-color: var(--light-color);
+            border: 2px solid #e9ecef;
+            border-left: none;
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            color: var(--gray-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+            .password-toggle-btn:hover {
+                background-color: #e9ecef;
+                color: var(--primary-color);
+            }
+
+            .password-toggle-btn:focus {
+                outline: none;
+                box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+            }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .strength-meter {
+            height: 4px;
+            background-color: #e9ecef;
+            border-radius: 2px;
+            margin-bottom: 0.25rem;
+            overflow: hidden;
+        }
+
+        .strength-meter-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .strength-text {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            display: inline-block;
+        }
+
+        /* Terms agreement */
+        .terms-agreement {
+            background-color: rgba(76, 201, 240, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+            .terms-agreement p {
+                margin: 0;
+                font-size: 0.9rem;
+                color: var(--gray-color);
+            }
+
+        /* Form navigation */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+            .btn-primary:hover {
+                background-color: var(--primary-dark);
+                border-color: var(--primary-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+            }
+
+        .btn-outline-secondary {
+            color: var(--gray-color);
+            border-color: #ced4da;
+        }
+
+            .btn-outline-secondary:hover {
+                background-color: #f8f9fa;
+                transform: translateY(-2px);
+            }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+            .btn-success:hover {
+                background-color: #3d9140;
+                border-color: #3d9140;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+            }
+
+        /* Review section */
+        .review-section {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+            .review-section h3 {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+                color: var(--dark-color);
+                position: relative;
+                padding-bottom: 0.5rem;
+            }
+
+                .review-section h3:after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 50px;
+                    height: 3px;
+                    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+                    border-radius: 3px;
+                }
+
+        .review-item {
+            display: flex;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+            .review-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+        .review-label {
+            flex: 0 0 120px;
+            font-weight: 600;
+            color: var(--gray-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .review-value {
+            flex: 1;
+            word-break: break-word;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .security-note {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background-color: rgba(76, 201, 240, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+            .security-note i {
+                color: var(--secondary-color);
+                font-size: 1.25rem;
+                margin-top: 0.25rem;
+            }
+
+            .security-note p {
+                margin: 0;
+                font-size: 0.9rem;
+                color: var(--gray-color);
+            }
+
+        /* Form footer */
+        .form-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .login-link {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+            .login-link:hover {
+                text-decoration: underline;
+            }
+
+        .social-login {
+            margin-top: 1.5rem;
+        }
+
+            .social-login p {
+                font-size: 0.9rem;
+                color: var(--gray-color);
+                margin-bottom: 1rem;
+            }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .btn-social {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .btn-google {
+            background-color: #ea4335;
+            color: white;
+        }
+
+        .btn-facebook {
+            background-color: #3b5998;
+            color: white;
+        }
+
+        .btn-apple {
+            background-color: #000;
+            color: white;
+        }
+
+        .btn-social:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Invalid feedback */
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: var(--danger-color);
+        }
+
+        .was-validated .custom-input:invalid ~ .invalid-feedback,
+        .custom-input.is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        /* Responsive styles */
+        @@media (max-width: 991.98px) {
+            .registration-wrapper {
+                flex-direction: column;
+            }
+
+            .registration-brand {
+                padding: 2rem;
+            }
+
+            .brand-title {
+                font-size: 2rem;
+            }
+
+            .testimonial {
+                margin-top: 2rem;
+            }
+        }
+
+        @@media (max-width: 767.98px) {
+            .registration-form-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .form-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .review-item {
+                flex-direction: column;
+            }
+
+            .review-label {
+                margin-bottom: 0.25rem;
+            }
+        }
+
+        @@media (max-width: 575.98px) {
+            .progress-labels span {
+                font-size: 0.75rem;
+            }
+
+            .social-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @@keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-5px);
+            }
+
+            20%, 40%, 60%, 80% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Focus and hover effects */
+        .custom-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+        }
+
+        .btn:focus {
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        }
+
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Current section tracking
+        let currentSection = 1;
+
+        // Function to navigate to next section
+        function nextSection(current, next) {
+            // Validate current section fields
+            const currentFields = document.querySelectorAll(`[data-field-group="${current}"]`);
+            let isValid = true;
+
+            currentFields.forEach(field => {
+                if (!field.checkValidity()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                }
+            });
+
+            if (!isValid) {
+                document.getElementById(`section${current}`).classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById(`section${current}`).classList.remove('shake');
+                }, 500);
+                return;
+            }
+
+            // If moving to review section, populate review data
+            if (next === 3) {
+                document.getElementById('review-username').textContent = document.getElementById('UserName').value;
+                document.getElementById('review-email').textContent = document.getElementById('Email').value;
+                document.getElementById('review-phone').textContent = document.getElementById('PhoneNumber').value;
+                document.getElementById('review-city').textContent = document.getElementById('City').value;
+            }
+
+            // Update progress bar
+            document.getElementById('formProgress').style.width = `${(next / 3) * 100}%`;
+
+            // Update active section
+            document.getElementById(`section${current}`).classList.remove('active');
+            document.getElementById(`section${next}`).classList.add('active');
+
+            // Update progress labels
+            document.querySelectorAll('.progress-labels span').forEach((label, index) => {
+                if (index + 1 <= next) {
+                    label.classList.add('active');
+                } else {
+                    label.classList.remove('active');
+                }
+            });
+
+            currentSection = next;
+        }
+
+        // Function to navigate to previous section
+        function prevSection(current, prev) {
+            // Update progress bar
+            document.getElementById('formProgress').style.width = `${(prev / 3) * 100}%`;
+
+            // Update active section
+            document.getElementById(`section${current}`).classList.remove('active');
+            document.getElementById(`section${prev}`).classList.add('active');
+
+            // Update progress labels
+            document.querySelectorAll('.progress-labels span').forEach((label, index) => {
+                if (index + 1 <= prev) {
+                    label.classList.add('active');
+                } else {
+                    label.classList.remove('active');
+                }
+            });
+
+            currentSection = prev;
+        }
+
+        // Toggle password visibility
+        function togglePassword(id) {
+            const passwordInput = document.getElementById(id);
+            const icon = document.querySelector(`#toggle${id}`);
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Password strength meter
+        document.getElementById('Password').addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+
+            // Length check
+            if (password.length >= 8) strength += 25;
+
+            // Uppercase check
+            if (/[A-Z]/.test(password)) strength += 25;
+
+            // Lowercase check
+            if (/[a-z]/.test(password)) strength += 25;
+
+            // Number/special char check
+            if (/[0-9!@@#$%^&*]/.test(password)) strength += 25;
+
+            const meter = document.getElementById('strengthMeter');
+            const text = document.getElementById('strengthText');
+
+            meter.style.width = `${strength}%`;
+
+            if (strength < 25) {
+                meter.style.backgroundColor = '#f44336';
+                text.textContent = 'Weak';
+                text.style.color = '#f44336';
+            } else if (strength < 50) {
+                meter.style.backgroundColor = '#ff9800';
+                text.textContent = 'Fair';
+                text.style.color = '#ff9800';
+            } else if (strength < 75) {
+                meter.style.backgroundColor = '#ffc107';
+                text.textContent = 'Good';
+                text.style.color = '#ffc107';
+            } else {
+                meter.style.backgroundColor = '#4caf50';
+                text.textContent = 'Strong';
+                text.style.color = '#4caf50';
+            }
+        });
+
+        // Form validation
+        (function () {
+            'use strict'
+
+            // Fetch all forms that need validation
+            var forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+
+                            // Find the section with invalid fields and show it
+                            const invalidFields = form.querySelectorAll(':invalid');
+                            if (invalidFields.length > 0) {
+                                // Find which section contains the first invalid field
+                                const firstInvalidField = invalidFields[0];
+                                const fieldGroup = firstInvalidField.getAttribute('data-field-group');
+
+                                // Navigate to that section
+                                if (fieldGroup && currentSection !== parseInt(fieldGroup)) {
+                                    document.getElementById(`section${currentSection}`).classList.remove('active');
+                                    document.getElementById(`section${fieldGroup}`).classList.add('active');
+                                    currentSection = parseInt(fieldGroup);
+
+                                    // Update progress bar
+                                    document.getElementById('formProgress').style.width = `${(currentSection / 3) * 100}%`;
+
+                                    // Update progress labels
+                                    document.querySelectorAll('.progress-labels span').forEach((label, index) => {
+                                        if (index + 1 <= currentSection) {
+                                            label.classList.add('active');
+                                        } else {
+                                            label.classList.remove('active');
+                                        }
+                                    });
+                                }
+
+                                // Focus the first invalid field
+                                firstInvalidField.focus();
+                            }
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+
+        // Add animation to form on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.registration-form').classList.add('fade-in');
+        });
+    </script>
+}

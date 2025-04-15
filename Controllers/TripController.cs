@@ -5,7 +5,12 @@ namespace Transport_system_prototype.Controllers
 {
     public class TripController : Controller
     {
-        context data = new context();
+        private readonly context data;
+
+        public TripController(context db) // 👈 DI gives you the configured DbContext
+        {
+            data = db;
+        }
         public IActionResult Index()
         {
             ViewData["Stations"] = data.Stations.ToList();  
