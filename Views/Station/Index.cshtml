@@ -5,11 +5,29 @@
 }
 
 <div class="container py-5">
-    <!-- Error Alert -->
+    <!-- Notifications -->
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-start border-danger border-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-circle me-2 fs-4"></i>
+                <div>
+                    <strong>Error!</strong> @TempData["ErrorMessage"]
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-start border-success border-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-2 fs-4"></i>
+                <div>
+                    <strong>Success!</strong> @TempData["SuccessMessage"]
+                </div>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
@@ -17,13 +35,62 @@
     <!-- Header Section -->
     <div class="row mb-4 align-items-center">
         <div class="col-md-6">
-            <h1 class="display-5 fw-bold text-primary mb-0">Our Stations</h1>
+            <h1 class="display-5 fw-bold text-primary mb-0">
+                <i class="fas fa-building me-2"></i>Our Stations
+            </h1>
             <p class="text-muted lead">Find the perfect station for your journey</p>
         </div>
         <div class="col-md-6">
             <div class="d-flex justify-content-md-end gap-2 mt-3 mt-md-0">
                 <div class="input-group">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search stations...">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" id="searchInput" class="form-control border-start-0 ps-0"
+                           placeholder="Search by name or location..." aria-label="Search stations">
+                    <button id="clearSearch" class="btn btn-outline-secondary border-start-0 d-none" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="dropdown d-none d-md-block">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-sort me-1"></i> Sort
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                        <li><button class="dropdown-item sort-btn" data-sort="name-asc">Name (A-Z)</button></li>
+                        <li><button class="dropdown-item sort-btn" data-sort="name-desc">Name (Z-A)</button></li>
+                        <li><button class="dropdown-item sort-btn" data-sort="location-asc">Location (A-Z)</button></li>
+                        <li><button class="dropdown-item sort-btn" data-sort="location-desc">Location (Z-A)</button></li>
+                        <li><button class="dropdown-item sort-btn" data-sort="id-asc">ID (Low-High)</button></li>
+                        <li><button class="dropdown-item sort-btn" data-sort="id-desc">ID (High-Low)</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-light shadow-sm rounded-3">
+                <div class="card-body py-3">
+                    <div class="d-flex justify-content-around text-center flex-wrap">
+                        <div class="px-3 py-2">
+                            <h5 class="mb-0 fw-bold text-primary" id="totalStations">@Model.Count()</h5>
+                            <small class="text-muted">Total Stations</small>
+                        </div>
+                        <div class="px-3 py-2 border-start border-end">
+                            <h5 class="mb-0 fw-bold text-primary" id="visibleStations">@Model.Count()</h5>
+                            <small class="text-muted">Visible Stations</small>
+                        </div>
+                        <div class="px-3 py-2">
+                            <h5 class="mb-0 fw-bold text-primary">
+                                @Model.Select(s => s.Location).Distinct().Count()
+                            </h5>
+                            <small class="text-muted">Unique Locations</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -35,17 +102,19 @@
         {
             <div class="col-md-6 col-lg-4 mb-4 station-card"
                  data-name="@station.Name.ToLower()"
-                 data-location="@station.Location.ToLower()">
-                <div class="card h-100 shadow rounded-4 border-0 overflow-hidden">
+                 data-location="@station.Location.ToLower()"
+                 data-id="@station.Id">
+                <div class="card h-100 shadow-sm hover-shadow rounded-4 border-0 overflow-hidden">
                     <div class="position-relative">
                         @if (!string.IsNullOrEmpty(station.ImgURL))
                         {
-                            <img src="@Url.Content(station.ImgURL)" class="card-img-top" alt="@station.Name" style="height: 200px; object-fit: cover;">
+                            <img src="@Url.Content(station.ImgURL)" class="card-img-top" alt="@station.Name"
+                                 style="height: 200px; object-fit: cover;">
                         }
                         else
                         {
                             <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="bi bi-building display-1 text-muted"></i>
+                                <i class="fas fa-building display-1 text-muted opacity-50"></i>
                             </div>
                         }
                         <div class="position-absolute top-0 end-0 p-2">
@@ -56,38 +125,58 @@
                     <div class="card-body">
                         <h4 class="card-title fw-bold mb-2">@station.Name</h4>
                         <p class="text-muted mb-3">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> @station.Location
+                            <i class="fas fa-map-marker-alt text-danger me-1"></i> @station.Location
                         </p>
                     </div>
 
-                    <div class="card-footer bg-white pt-3">
+                    <div class="card-footer bg-white pt-3 border-0">
                         <div class="d-flex justify-content-between gap-2">
                             <a href="@Url.Action("Edit", new { id = station.Id })" class="btn btn-outline-primary flex-grow-1">
-                                <i class="bi bi-pencil-square me-1"></i> Edit
+                                <i class="fas fa-edit me-1"></i> Edit
                             </a>
-                            <button type="button" class="btn btn-outline-danger flex-grow-1"
+                            <button type="button" class="btn btn-outline-danger"
                                     data-bs-toggle="modal" data-bs-target="#deleteModal@(station.Id)">
-                                <i class="bi bi-trash me-1"></i> Delete
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Delete Confirmation Modal -->
-            <div class="modal fade" id="deleteModal@(station.Id)" tabindex="-1" aria-labelledby="deleteModalLabel@(station.Id)" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel@(station.Id)">Confirm Delete</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <!-- Enhanced Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal@(station.Id)" tabindex="-1"
+                 aria-labelledby="deleteModalLabel@(station.Id)" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="deleteModalLabel@(station.Id)">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Confirm Station Deletion
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            Are you sure you want to delete the station "@station.Name" (ID: @station.Id)?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <a href="@Url.Action("Delete", new { id = station.Id })" class="btn btn-danger">Delete</a>
+                        <div class="modal-body p-4">
+                            <div class="text-center mb-4">
+                                <div class="display-1 text-danger mb-3">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                                <h4>Are you absolutely sure?</h4>
+                                <p class="text-muted">
+                                    You are about to delete the station "<strong>@station.Name</strong>" located in
+                                    <strong>@station.Location</strong> (ID: @station.Id).
+                                </p>
+                                <div class="alert alert-warning mt-3">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    This action cannot be undone. All data associated with this station will be permanently removed.
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center gap-2">
+                                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </button>
+                                <a href="@Url.Action("Delete", new { id = station.Id })" class="btn btn-danger px-4">
+                                    <i class="fas fa-trash-alt me-2"></i>Delete Station
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -97,17 +186,29 @@
 
     <!-- Empty State -->
     <div id="emptyState" class="text-center py-5 d-none">
-        <i class="bi bi-search display-1 text-muted"></i>
-        <h3 class="mt-3">No stations found</h3>
-        <p class="text-muted">Try adjusting your search</p>
+        <div class="py-5">
+            <div class="display-1 text-muted mb-4">
+                <i class="fas fa-search"></i>
+            </div>
+            <h3 class="fw-bold">No stations found</h3>
+            <p class="text-muted mb-4">Try adjusting your search criteria or clear the search</p>
+            <button id="resetSearch" class="btn btn-outline-primary px-4">
+                <i class="fas fa-redo me-2"></i>Reset Search
+            </button>
+        </div>
     </div>
 
     <!-- Add New Station Button -->
     <div class="d-flex justify-content-center mt-5">
         <a href="@Url.Action("Create")" class="btn btn-success btn-lg px-4 py-2 shadow-sm">
-            <i class="bi bi-plus-circle me-2"></i> Add New Station
+            <i class="fas fa-plus-circle me-2"></i> Add New Station
         </a>
     </div>
+
+    <!-- Back to top button -->
+    <button id="backToTop" class="btn btn-primary rounded-circle shadow position-fixed bottom-0 end-0 m-4 p-3" style="display: none;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 </div>
 
 <style>
@@ -116,14 +217,15 @@
         border-radius: 12px;
     }
 
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-        }
+    .hover-shadow:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
 
     .btn {
         border-radius: 6px;
         font-weight: 500;
+        transition: all 0.2s ease;
     }
 
     .btn-success {
@@ -134,6 +236,8 @@
         .btn-success:hover {
             background-color: #218838;
             border-color: #1e7e34;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
     .badge {
@@ -155,15 +259,61 @@
     .bg-success {
         background-color: #28a745 !important;
     }
+
+    /* Animation for new items */
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .station-card {
+        animation: fadeIn 0.5s ease forwards;
+    }
+
+    /* Back to top button */
+    #backToTop {
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+        #backToTop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    /* Improved focus styles for accessibility */
+    a:focus, button:focus, input:focus {
+        outline: 2px solid #0d6efd;
+        outline-offset: 2px;
+    }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const resetSearchBtn = document.getElementById('resetSearch');
         const stationCards = document.querySelectorAll('.station-card');
         const emptyState = document.getElementById('emptyState');
+        const visibleStationsCount = document.getElementById('visibleStations');
+        const backToTopBtn = document.getElementById('backToTop');
+        const sortButtons = document.querySelectorAll('.sort-btn');
+        const stationContainer = document.getElementById('stationContainer');
 
-        searchInput.addEventListener('input', () => {
+        // Search functionality
+        function performSearch() {
             const searchTerm = searchInput.value.toLowerCase();
             let visibleCount = 0;
 
@@ -180,7 +330,81 @@
                 }
             });
 
+            // Update UI based on search results
             emptyState.classList.toggle('d-none', visibleCount !== 0);
+            visibleStationsCount.textContent = visibleCount;
+            clearSearchBtn.classList.toggle('d-none', searchTerm === '');
+        }
+
+        // Clear search
+        function clearSearch() {
+            searchInput.value = '';
+            performSearch();
+            searchInput.focus();
+        }
+
+        // Sort functionality
+        function sortStations(sortBy) {
+            const cards = Array.from(stationCards);
+
+            cards.sort((a, b) => {
+                let valueA, valueB;
+
+                if (sortBy.startsWith('name')) {
+                    valueA = a.dataset.name;
+                    valueB = b.dataset.name;
+                } else if (sortBy.startsWith('location')) {
+                    valueA = a.dataset.location;
+                    valueB = b.dataset.location;
+                } else if (sortBy.startsWith('id')) {
+                    valueA = parseInt(a.dataset.id);
+                    valueB = parseInt(b.dataset.id);
+                    return sortBy.endsWith('asc') ? valueA - valueB : valueB - valueA;
+                }
+
+                if (sortBy.endsWith('asc')) {
+                    return valueA.localeCompare(valueB);
+                } else {
+                    return valueB.localeCompare(valueA);
+                }
+            });
+
+            // Reorder DOM elements
+            cards.forEach(card => {
+                stationContainer.appendChild(card);
+            });
+        }
+
+        // Back to top functionality
+        function toggleBackToTopButton() {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', performSearch);
+        clearSearchBtn.addEventListener('click', clearSearch);
+        resetSearchBtn.addEventListener('click', clearSearch);
+
+        sortButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                sortStations(button.dataset.sort);
+            });
         });
+
+        window.addEventListener('scroll', toggleBackToTopButton);
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Initialize
+        toggleBackToTopButton();
     });
 </script>
