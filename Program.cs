@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using Transport__system_prototype.Models;
 using Transport_system_prototype.Models;
+using Transport__system_prototype.Settings;
 
 namespace Transport_system_prototype
 {
@@ -29,6 +31,10 @@ namespace Transport_system_prototype
             })
             .AddEntityFrameworkStores<context>()
             .AddDefaultTokenProviders();
+            builder.Services.Configure<StripeSettings>(
+    builder.Configuration.GetSection("Stripe"));
+
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 

@@ -28,7 +28,15 @@ namespace Transport__system_prototype.Controllers
         {
             if (ModelState.IsValid)
             {
-                //create a new user
+                // Check if email already exists
+                var existingUser = await userManager.FindByEmailAsync(VM.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("Email", "Email is already registered.");
+                    return View(VM);
+                }
+
+                // Create a new user
                 User user = new User
                 {
                     UserName = VM.UserName,
@@ -36,26 +44,24 @@ namespace Transport__system_prototype.Controllers
                     PhoneNumber = VM.PhoneNumber,
                     City = VM.City
                 };
+
                 var isGoodUser = await userManager.CreateAsync(user, VM.Password);
                 if (isGoodUser.Succeeded)
                 {
-                    //add the user to the client role
                     await userManager.AddToRoleAsync(user, "Client");
                     await signInManager.SignInAsync(user, true);
-                   return RedirectToAction("index", "Home");
+                    return RedirectToAction("index", "Home");
                 }
                 else
                 {
-                    //if the user is not created, add the errors to the model state
                     foreach (var error in isGoodUser.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-                    return View(VM);
                 }
             }
-            return View(VM);
 
+            return View(VM);
         }
         //login
         public IActionResult Login()
@@ -99,6 +105,12 @@ namespace Transport__system_prototype.Controllers
             //sign out the user
             await signInManager.SignOutAsync();
             return RedirectToAction("index", "Home");
+        }
+        //access denied
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
         }
 
     }

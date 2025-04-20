@@ -1,9 +1,12 @@
 ﻿using Transport__system_prototype.Models;
 using Transport_system_prototype.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Transport_system_prototype.Controllers
 {
+    [Authorize(Roles = "Admin")] // 👈 Only users in the "Admin" role can access any action here
+
     public class StationController : Controller
     {
         private readonly context data;

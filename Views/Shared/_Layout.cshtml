@@ -192,27 +192,32 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Home" asp-action="Index">
-                                    <i class="fas fa-home"></i> Home
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vehicle" ? "active" : "")" asp-controller="Vehicle" asp-action="Index">
-                                    <i class="fas fa-train"></i> Vehicles
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Station" ? "active" : "")" asp-controller="Station" asp-action="Index">
-                                    <i class="fas fa-building"></i> Station
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trip" ? "active" : "")" asp-controller="Trip" asp-action="Index">
-                                    <i class="fas fa-route"></i> Trip
-                                </a>
-                            </li>
+                            <ul class="navbar-nav flex-grow-1">
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vehicle" ? "active" : "")" asp-controller="Vehicle" asp-action="Index">
+                                            <i class="fas fa-train"></i> Vehicles
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Station" ? "active" : "")" asp-controller="Station" asp-action="Index">
+                                            <i class="fas fa-building"></i> Station
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trip" ? "active" : "")" asp-controller="Trip" asp-action="Index">
+                                            <i class="fas fa-route"></i> Trip
+                                        </a>
+                                    </li>
+                                     <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Booking" asp-action="Index">
+                                        <i class="fas fa-ticket-alt"></i> Dashboard
+                                    </a>
+                                    </li>
+                                }
+                            </ul>
+
                         </ul>
 
                         <!-- Authentication Navigation -->

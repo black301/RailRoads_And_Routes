@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0 text-center">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Access Denied
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-3">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#dc3545" stroke-width="2" />
+                            <path d="M15 9L9 15" stroke="#dc3545" stroke-width="2" stroke-linecap="round" />
+                            <path d="M9 9L15 15" stroke="#dc3545" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        <h3 class="fw-bold">You don't have permission to access this resource</h3>
+                        <p class="text-muted">
+                            The page you're trying to access has restricted permissions that require additional authorization.
+                        </p>
+                    </div>
+
+                    <div class="alert alert-secondary">
+                        <p class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            If you believe you should have access to this page, please contact your administrator or try logging in with an account that has the required permissions.
+                        </p>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="/" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Return to Home
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-center text-muted">
+                    <small>If you need assistance, please contact support</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add a subtle animation to the error icon
+        document.addEventListener('DOMContentLoaded', function() {
+            const svg = document.querySelector('.card-body svg');
+            if (svg) {
+                svg.animate([
+                    { transform: 'scale(0.95)' },
+                    { transform: 'scale(1.05)' },
+                    { transform: 'scale(1)' }
+                ], {
+                    duration: 800,
+                    easing: 'ease-out'
+                });
+            }
+        });
+    </script>
+}

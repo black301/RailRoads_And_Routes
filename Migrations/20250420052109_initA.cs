@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Transport__system_prototype.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class initA : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -267,6 +267,34 @@ namespace Transport__system_prototype.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    TripId = table.Column<int>(type: "int", nullable: false),
+                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NumberOfSeats = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Stations",
                 columns: new[] { "Id", "ImgURL", "Location", "Name" },
@@ -347,6 +375,16 @@ namespace Transport__system_prototype.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookings_ClientId",
+                table: "Bookings",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_TripId",
+                table: "Bookings",
+                column: "TripId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Clients_UserID",
                 table: "Clients",
                 column: "UserID",
@@ -390,13 +428,16 @@ namespace Transport__system_prototype.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Bookings");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "Trips");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

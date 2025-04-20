@@ -12,15 +12,15 @@ using Transport_system_prototype.Models;
 namespace Transport__system_prototype.Migrations
 {
     [DbContext(typeof(context))]
-    [Migration("20250414215616_init")]
-    partial class init
+    [Migration("20250420052109_initA")]
+    partial class initA
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.3")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -176,6 +176,35 @@ namespace Transport__system_prototype.Migrations
                         .IsUnique();
 
                     b.ToTable("Admins");
+                });
+
+            modelBuilder.Entity("Transport__system_prototype.Models.Booking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("BookingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfSeats")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("Transport__system_prototype.Models.Client", b =>
@@ -574,6 +603,25 @@ namespace Transport__system_prototype.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Transport__system_prototype.Models.Booking", b =>
+                {
+                    b.HasOne("Transport__system_prototype.Models.Client", "Client")
+                        .WithMany("Bookings")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Transport_system_prototype.Models.Trip", "Trip")
+                        .WithMany("Bookings")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Trip");
+                });
+
             modelBuilder.Entity("Transport__system_prototype.Models.Client", b =>
                 {
                     b.HasOne("Transport__system_prototype.Models.User", "User")
@@ -612,11 +660,21 @@ namespace Transport__system_prototype.Migrations
                     b.Navigation("vehicle");
                 });
 
+            modelBuilder.Entity("Transport__system_prototype.Models.Client", b =>
+                {
+                    b.Navigation("Bookings");
+                });
+
             modelBuilder.Entity("Transport__system_prototype.Models.User", b =>
                 {
                     b.Navigation("Admin");
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Transport_system_prototype.Models.Trip", b =>
+                {
+                    b.Navigation("Bookings");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,9 +1,12 @@
 ﻿using Transport_system_prototype.Models;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Transport_system_prototype.Controllers
 {
+    [Authorize(Roles = "Admin")] // 👈 Only users in the "Admin" role can access any action here
+
     public class vehicleController : Controller
     {
         private readonly context data;
