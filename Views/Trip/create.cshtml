@@ -35,7 +35,7 @@
                         <div class="select-container">
                             <select id="VehicleId" name="VehicleId" class="form-select" required>
                                 <option value="">-- Select a Vehicle --</option>
-                                @foreach (var vehicle in ViewBag.Vehicles ?? new List<vehicle>())
+                                @foreach (var vehicle in ViewBag.Vehicles ?? new List<Vehicle>())
                                 {
                                     <option value="@vehicle.Id" data-type="@vehicle.Type" data-seats="@vehicle.NumberOfSeats">
                                         @(vehicle.Type != null ? $"{vehicle.Type}: " : "")@vehicle.Name

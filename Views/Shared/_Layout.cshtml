@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="RailRoads & Routes - Your premier transportation booking platform" />
+    <meta name="description" content="RailRoads & Routes - Book train and bus tickets across Egypt" />
     <title>@ViewData["Title"] - RailRoads & Routes</title>
 
     <!-- Fonts -->
@@ -296,6 +296,138 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
 
+        /* Transportation specific styles */
+        .hero-section {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+        }
+
+        .booking-form {
+            margin-top: -5rem;
+            position: relative;
+            z-index: 10;
+            margin-bottom: 3rem;
+        }
+
+        .booking-card {
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            background-color: white;
+            padding: 1.5rem;
+        }
+
+        .destination-card {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+            .destination-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+        .destination-img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .vehicle-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+            .vehicle-feature i {
+                width: 20px;
+                text-align: center;
+            }
+
+        .feature-available {
+            color: var(--success);
+        }
+
+        .feature-unavailable {
+            color: var(--danger);
+        }
+
+        .trip-card {
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+            .trip-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            }
+
+        .trip-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .trip-body {
+            padding: 1.5rem;
+        }
+
+        .trip-footer {
+            background-color: var(--light);
+            padding: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .trip-route {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .trip-station {
+            flex: 1;
+        }
+
+        .trip-arrow {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .trip-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .trip-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .trip-detail i {
+                color: var(--primary);
+            }
+
         /* Responsive */
         @@media (max-width: 767.98px) {
             .navbar-collapse {
@@ -325,6 +457,20 @@
             .navbar-auth-link {
                 display: flex;
                 justify-content: center;
+            }
+
+            .booking-form {
+                margin-top: 1rem;
+            }
+
+            .trip-route {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .trip-arrow {
+                transform: rotate(90deg);
             }
         }
 
@@ -411,25 +557,34 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Privacy" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Privacy">
-                                <i class="fas fa-shield-alt"></i> Privacy
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vehicle" ? "active" : "")" asp-area="" asp-controller="Vehicle" asp-action="Index">
-                                <i class="fas fa-train"></i> Vehicles
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trip" ? "active" : "")" asp-area="" asp-controller="Trip" asp-action="Index">
+                                <i class="fas fa-route"></i> Find Trips
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Station" ? "active" : "")" asp-area="" asp-controller="Station" asp-action="Index">
-                                <i class="fas fa-building"></i> Station
+                                <i class="fas fa-map-marker-alt"></i> Destinations
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trip" ? "active" : "")" asp-area="" asp-controller="Trip" asp-action="Index">
-                                <i class="fas fa-route"></i> Trip
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vehicle" ? "active" : "")" asp-area="" asp-controller="Vehicle" asp-action="Index">
+                                <i class="fas fa-bus"></i> Our Vehicles
                             </a>
                         </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cog"></i> Admin
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="ManageTrips"><i class="fas fa-calendar-alt"></i> Manage Trips</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="ManageVehicles"><i class="fas fa-bus"></i> Manage Vehicles</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="ManageStations"><i class="fas fa-building"></i> Manage Stations</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="ManageUsers"><i class="fas fa-users"></i> Manage Users</a></li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
 
                     <!-- Authentication Navigation -->
@@ -449,17 +604,17 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="Profile">
                                             <i class="fas fa-user"></i> My Profile
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-controller="Booking" asp-action="MyBookings">
                                             <i class="fas fa-ticket-alt"></i> My Bookings
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="Settings">
                                             <i class="fas fa-cog"></i> Settings
                                         </a>
                                     </li>
@@ -501,13 +656,14 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-copyright">
-                    &copy; @DateTime.Now.Year - RailRoads & Routes
+                    &copy; @DateTime.Now.Year - RailRoads & Routes - Your premier transportation booking platform
                 </div>
                 <div class="footer-links">
-                    <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Contact Us</a>
-                    <a href="#">Support</a>
+                    <a asp-controller="Home" asp-action="About">About Us</a>
+                    <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                    <a asp-controller="Home" asp-action="Terms">Terms of Service</a>
+                    <a asp-controller="Home" asp-action="Contact">Contact Us</a>
+                    <a asp-controller="Home" asp-action="FAQ">FAQ</a>
                 </div>
             </div>
         </div>

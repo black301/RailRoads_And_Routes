@@ -1,6 +1,6 @@
 ﻿namespace Transport_system_prototype.Models
 {
-    public class vehicle
+    public class Vehicle
     {
         public int Id { get; set; }
         //added

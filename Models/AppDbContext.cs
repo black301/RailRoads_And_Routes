@@ -5,9 +5,9 @@ using System;
 using Transport__system_prototype.Models;
 namespace Transport_system_prototype.Models
 {
-    public class context : IdentityDbContext<User>
+    public class AppDbContext : IdentityDbContext<User>
     {
-        public context(DbContextOptions<context> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,11 +37,11 @@ namespace Transport_system_prototype.Models
                 new Station { Id = 5, Name = "Nuweiba", Location = "Nuweiba, Egypt", ImgURL = "~/uploads/Nuweiba.jpeg" }
             );
 
-            modelBuilder.Entity<vehicle>().HasData(
-                new vehicle { Id = 1,Type= "Train", Name = "Luxury", TV = true, NumberOfSeats =  150  , AirConditioning = true, WiFi = true, Drinks = true, Snacks = true, ImgURL = "~/uploads/Train1.jpeg" },
-                new vehicle { Id = 2,Type= "Train" ,Name = "Standard", TV = false, NumberOfSeats = 200, AirConditioning = true, WiFi = false, Drinks = false, Snacks = false, ImgURL = "~/uploads/Train2.jpeg" },
-                new vehicle { Id = 3,Type= "Bus" ,Name = "Comfort", TV = true, NumberOfSeats =   30, AirConditioning = true, WiFi = false, Drinks = true, Snacks = true, ImgURL = "~/uploads/bus3.jpeg" },
-                new vehicle { Id = 4,Type= "Bus" ,Name = "Premium", TV = true, NumberOfSeats =   55, AirConditioning = true, WiFi = true, Drinks = true, Snacks = false, ImgURL = "~/uploads/bus4.jpeg" }
+            modelBuilder.Entity<Vehicle>().HasData(
+                new Vehicle { Id = 1,Type= "Train", Name = "Luxury", TV = true, NumberOfSeats =  150  , AirConditioning = true, WiFi = true, Drinks = true, Snacks = true, ImgURL = "~/uploads/Train1.jpeg" },
+                new Vehicle { Id = 2,Type= "Train" ,Name = "Standard", TV = false, NumberOfSeats = 200, AirConditioning = true, WiFi = false, Drinks = false, Snacks = false, ImgURL = "~/uploads/Train2.jpeg" },
+                new Vehicle { Id = 3,Type= "Bus" ,Name = "Comfort", TV = true, NumberOfSeats =   30, AirConditioning = true, WiFi = false, Drinks = true, Snacks = true, ImgURL = "~/uploads/bus3.jpeg" },
+                new Vehicle { Id = 4,Type= "Bus" ,Name = "Premium", TV = true, NumberOfSeats =   55, AirConditioning = true, WiFi = true, Drinks = true, Snacks = false, ImgURL = "~/uploads/bus4.jpeg" }
             );
 
             modelBuilder.Entity<Trip>().HasData(
@@ -52,10 +52,14 @@ namespace Transport_system_prototype.Models
             );
             base.OnModelCreating(modelBuilder);
         }
-        public DbSet<vehicle> vehicles { get; set; }
+        public DbSet<Vehicle> vehicles { get; set; }
         public DbSet<Station> Stations { get; set; }
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Client> Clients { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies();
+        }
     }
 }

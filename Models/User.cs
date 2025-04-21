@@ -4,8 +4,8 @@ namespace Transport__system_prototype.Models
 {
     public class User : IdentityUser
     {
-        public Client? Client { get; set; }
-        public Admin ? Admin { get; set; }
+        public virtual Client? Client { get; set; }
+        public virtual Admin ? Admin { get; set; }
         public string City { get; set; }
 
     }

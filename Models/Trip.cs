@@ -20,8 +20,8 @@ namespace Transport_system_prototype.Models
         public int FromStationId { get; set;}
 
         public DateTime TripDate { get; set; }
-        public vehicle ? vehicle { get; set; }
-        public Station? TOStation { get; set; }
-        public Station? FromStation { get; set; }
+        public virtual Vehicle ? vehicle { get; set; }
+        public virtual Station? TOStation { get; set; }
+        public virtual Station? FromStation { get; set; }
     }
 }

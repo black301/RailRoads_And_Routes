@@ -8,6 +8,6 @@ namespace Transport__system_prototype.Models
 
         [ForeignKey("User")]
         public string UserID { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
     }
 }

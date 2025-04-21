@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Transport__system_prototype.Models;
+using Transport__system_prototype.Repository;
 using Transport_system_prototype.Models;
 
 namespace Transport_system_prototype
@@ -13,7 +14,7 @@ namespace Transport_system_prototype
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<context>(options =>
+            builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
@@ -27,9 +28,11 @@ namespace Transport_system_prototype
                 options.Password.RequiredLength = 1;
                 options.Lockout.MaxFailedAccessAttempts = 10;
             })
-            .AddEntityFrameworkStores<context>()
+            .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-
+            builder.Services.AddScoped<IStationRepository, StationRepository>();
+            builder.Services.AddScoped<ITripRepository, TripRepository>();
+            builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

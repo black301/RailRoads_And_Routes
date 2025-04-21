@@ -1,8 +1,313 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model StationsTripsViewModel
+@{
+    ViewData["Title"] = "RailRoad Routes - Book Your Journey";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+<section class="hero-section position-relative">
+    <div class="hero-overlay position-absolute w-100 h-100" style="background-color: rgba(0, 0, 0, 0.5);"></div>
+    <div class="container position-relative py-5 text-white">
+        <div class="row py-5">
+            <div class="col-lg-6 py-5">
+                <h1 class="display-4 fw-bold mb-4">Travel Across Egypt with Comfort and Style</h1>
+                <p class="lead mb-4">Book your train or bus tickets online and enjoy a seamless journey experience.</p>
+                <a href="#booking-form" class="btn btn-primary btn-lg px-4 me-2">Book Now</a>
+                <a href="#destinations" class="btn btn-outline-light btn-lg px-4">Explore Destinations</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Form Section -->
+<section id="booking-form" class="booking-form py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <h2 class="text-center mb-4">Find Your Perfect Trip</h2>
+                        <form asp-controller="Trip" asp-action="Search" method="get">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">From</label>
+                                    <select name="fromStationId" class="form-select" required>
+                                        <option value="">Select departure station</option>
+                                        @foreach (var station in Model.Stations ?? new List<Station>())
+                                        {
+                                                <option value="@station.Id">@station.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">To</label>
+                                    <select name="toStationId" class="form-select" required>
+                                        <option value="">Select arrival station</option>
+                                        @foreach (var station in Model.Stations ?? new List<Station>())
+                                        {
+                                                <option value="@station.Id">@station.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" name="tripDate" class="form-control" required min="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Transportation Type</label>
+                                    <select name="vehicleType" class="form-select">
+                                        <option value="">All Types</option>
+                                        <option value="Train">Train</option>
+                                        <option value="Bus">Bus</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">Search Trips</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Destinations -->
+<section id="destinations" class="destinations py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Popular Destinations</h2>
+        <div class="row g-4">
+            @foreach (var station in ViewBag.FeaturedStations ?? new List<Station>())
+            {
+                    <div class="col-md-4">
+                        <div class="card h-100 destination-card">
+                            <img src="@Url.Content(station.ImgURL)" class="card-img-top" alt="@station.Name" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">@station.Name</h5>
+                                <p class="card-text">@station.Location</p>
+                                <a href="#" class="btn btn-outline-primary" onclick="setDestination('@station.Id')">Select as Destination</a>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Transportation Options -->
+<section class="transportation-options py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Transportation Options</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="m-0">Train Travel</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="~/uploads/Train1.jpeg" class="img-fluid rounded mb-3" alt="Luxury Train">
+                                <h5>Luxury Train</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>TV Entertainment</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Air Conditioning</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Free WiFi</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Complimentary Drinks</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Snacks Available</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="~/uploads/Train2.jpeg" class="img-fluid rounded mb-3" alt="Standard Train">
+                                <h5>Standard Train</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Air Conditioning</li>
+                                    <li><i class="bi bi-x-circle-fill text-danger me-2"></i>No TV</li>
+                                    <li><i class="bi bi-x-circle-fill text-danger me-2"></i>No WiFi</li>
+                                    <li><i class="bi bi-x-circle-fill text-danger me-2"></i>No Drinks</li>
+                                    <li><i class="bi bi-x-circle-fill text-danger me-2"></i>No Snacks</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="m-0">Bus Travel</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="~/uploads/bus3.jpeg" class="img-fluid rounded mb-3" alt="Comfort Bus">
+                                <h5>Comfort Bus</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>TV Entertainment</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Air Conditioning</li>
+                                    <li><i class="bi bi-x-circle-fill text-danger me-2"></i>No WiFi</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Complimentary Drinks</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Snacks Available</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="~/uploads/bus4.jpeg" class="img-fluid rounded mb-3" alt="Premium Bus">
+                                <h5>Premium Bus</h5>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>TV Entertainment</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Air Conditioning</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Free WiFi</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Complimentary Drinks</li>
+                                    <li><i class="bi bi-x-circle-fill text-danger me-2"></i>No Snacks</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="why-choose-us py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose RailRoad Routes</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-3">
+                    <div class="card-body">
+                        <i class="bi bi-ticket-perforated fs-1 text-primary mb-3"></i>
+                        <h4>Easy Booking</h4>
+                        <p>Book your tickets online in just a few clicks. No more waiting in lines!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-3">
+                    <div class="card-body">
+                        <i class="bi bi-shield-check fs-1 text-primary mb-3"></i>
+                        <h4>Safe Travel</h4>
+                        <p>Your safety is our priority. All our vehicles undergo regular maintenance checks.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-3">
+                    <div class="card-body">
+                        <i class="bi bi-star fs-1 text-primary mb-3"></i>
+                        <h4>Comfort Options</h4>
+                        <p>Choose from various comfort levels to match your preferences and budget.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Trips -->
+<section class="latest-trips py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Latest Available Trips</h2>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Date & Time</th>
+                        <th>Vehicle Type</th>
+                        <th>Price</th>
+                        <th>Available Seats</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var trip in Model.Trips ?? new List<Trip>())
+                    {
+                            <tr>
+                                <td>@trip.FromStation?.Name</td>
+                                <td>@trip.TOStation?.Name</td>
+                                <td>@trip.TripDate.ToString("MMM dd, yyyy - HH:mm")</td>
+                                <td>@trip.vehicle?.Type (@trip.vehicle?.Name)</td>
+                                <td>@trip.Price EGP</td>
+                                <td>@trip.AvailableSeats / @trip.NumberOfSeats</td>
+                                <td>
+                                    <a asp-controller="Trip" asp-action="Details" asp-route-id="@trip.Id" class="btn btn-sm btn-primary">View Details</a>
+                                </td>
+                            </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center mt-4">
+            <a asp-controller="Trip" asp-action="Index" class="btn btn-outline-primary">View All Trips</a>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h3>Subscribe to Our Newsletter</h3>
+                <p class="mb-4">Get the latest updates on new routes and special offers!</p>
+                <form class="row g-3 justify-content-center">
+                    <div class="col-md-8">
+                        <input type="email" class="form-control form-control-lg" placeholder="Your email address">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+        <script>
+            // Function to set destination in the booking form
+            function setDestination(stationId) {
+                document.querySelector('select[name="toStationId"]').value = stationId;
+                document.getElementById('booking-form').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Add hero background image dynamically
+            document.addEventListener('DOMContentLoaded', function() {
+                const heroSection = document.querySelector('.hero-section');
+                heroSection.style.backgroundImage = 'url("/uploads/Alex.jpeg")';
+                heroSection.style.backgroundSize = 'cover';
+                heroSection.style.backgroundPosition = 'center';
+                heroSection.style.minHeight = '600px';
+            });
+        </script>
+}
+
+@section Styles {
+        <style>
+            .hero-section {
+                position: relative;
+                color: white;
+                text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+                display: flex;
+                align-items: center;
+            }
+
+            .destination-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+            }
+
+            .booking-form {
+                margin-top: -50px;
+                position: relative;
+                z-index: 10;
+            }
+
+            /* Add Bootstrap Icons if not already included */
+        
+        </style>
+}

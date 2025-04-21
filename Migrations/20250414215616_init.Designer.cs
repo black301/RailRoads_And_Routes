@@ -11,7 +11,7 @@ using Transport_system_prototype.Models;
 
 namespace Transport__system_prototype.Migrations
 {
-    [DbContext(typeof(context))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20250414215616_init")]
     partial class init
     {
