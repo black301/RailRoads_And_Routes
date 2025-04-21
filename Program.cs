@@ -32,7 +32,7 @@ namespace Transport_system_prototype
             .AddEntityFrameworkStores<context>()
             .AddDefaultTokenProviders();
             builder.Services.Configure<StripeSettings>(
-    builder.Configuration.GetSection("Stripe"));
+         builder.Configuration.GetSection("Stripe"));
 
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
