@@ -41,7 +41,7 @@
                         <label for="VehicleId" class="form-label">Select Vehicle <span class="required">*</span></label>
                         <div class="select-container">
                             <select id="VehicleId" name="VehicleId" class="form-select" required>
-                                @foreach (var vehicle in ViewBag.Vehicles ?? new List<vehicle>())
+                                @foreach (var vehicle in ViewBag.Vehicles ?? new List<Vehicle>())
                                 {
                                     if (Model.vehicleId == vehicle.Id)
                                     {

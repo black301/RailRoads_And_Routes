@@ -12,10 +12,10 @@ namespace Transport__system_prototype.Controllers
 {
     public class BookingController : Controller
     {
-        private readonly context data;
+        private readonly AppDbContext data;
         private readonly StripeSettings _stripeSettings;
 
-        public BookingController(context context, IOptions<StripeSettings> stripeOptions)
+        public BookingController(AppDbContext context, IOptions<StripeSettings> stripeOptions)
         {
             data = context;
             _stripeSettings = stripeOptions.Value;

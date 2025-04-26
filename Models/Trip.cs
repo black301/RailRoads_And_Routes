@@ -24,14 +24,14 @@ namespace Transport_system_prototype.Models
 
         public DateTime TripDate { get; set; }
 
-        public vehicle? vehicle { get; set; }
-        public Station? TOStation { get; set; }
-        public Station? FromStation { get; set; }
+        public virtual Vehicle? vehicle { get; set; }
+        public virtual Station? TOStation { get; set; }
+        public virtual Station? FromStation { get; set; }
 
-        public ICollection<Booking>? Bookings { get; set; }
+        public virtual ICollection<Booking>? Bookings { get; set; }
 
         [NotMapped]
-        public IEnumerable<Client> Clients => Bookings?.Select(b => b.Client).Where(c => c != null)! ?? Enumerable.Empty<Client>();
+        public virtual IEnumerable<Client> Clients => Bookings?.Select(b => b.Client).Where(c => c != null)! ?? Enumerable.Empty<Client>();
     }
 
 }

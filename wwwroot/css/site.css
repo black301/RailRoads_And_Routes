@@ -29,3 +29,131 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+    .btn-outline-primary:hover, .btn-outline-primary:focus {
+        background-color: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+/* Cards and shadows */
+.card {
+    border-radius: var(--border-radius);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06) !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05) !important;
+}
+
+.rounded-lg {
+    border-radius: var(--border-radius) !important;
+}
+
+/* Destination cards */
+.destination-card {
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+    .destination-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .destination-card img {
+        transition: transform 0.5s ease;
+    }
+
+    .destination-card:hover img {
+        transform: scale(1.05);
+    }
+
+/* Service cards */
+.service-card {
+    transition: transform 0.3s ease;
+}
+
+    .service-card:hover {
+        transform: translateY(-5px);
+    }
+
+.feature-icon {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.service-card:hover .feature-icon {
+    transform: scale(1.1);
+    background-color: var(--primary-dark) !important;
+}
+
+/* Table styles */
+.table th {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--primary-light);
+}
+
+/* Search results transition */
+#search-results-section {
+    transition: opacity 0.3s ease;
+}
+
+/* Button loading state */
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Form controls */
+.form-control, .form-select {
+    padding: 0.6rem 1rem;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+    }
+
+/* Footer styles */
+footer a {
+    transition: color 0.3s ease;
+}
+
+    footer a:hover {
+        color: var(--primary) !important;
+    }

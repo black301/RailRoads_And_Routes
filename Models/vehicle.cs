@@ -2,7 +2,7 @@
 
 namespace Transport_system_prototype.Models
 {
-    public class vehicle
+    public class Vehicle
     {
         [Key]
         public int Id { get; set; }

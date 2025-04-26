@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Transport_system_prototype.Models;
 
@@ -10,14 +11,19 @@ using Transport_system_prototype.Models;
 
 namespace Transport__system_prototype.Migrations
 {
-    [DbContext(typeof(context))]
-    partial class contextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20250425010447_fix User full name null issue")]
+    partial class fixUserfullnamenullissue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -175,6 +181,78 @@ namespace Transport__system_prototype.Migrations
                     b.ToTable("Admins");
                 });
 
+            modelBuilder.Entity("Transport__system_prototype.Models.AppUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
             modelBuilder.Entity("Transport__system_prototype.Models.Booking", b =>
                 {
                     b.Property<int>("Id")
@@ -222,75 +300,6 @@ namespace Transport__system_prototype.Migrations
                         .IsUnique();
 
                     b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("Transport__system_prototype.Models.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Transport_system_prototype.Models.Station", b =>
@@ -441,7 +450,7 @@ namespace Transport__system_prototype.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Transport_system_prototype.Models.vehicle", b =>
+            modelBuilder.Entity("Transport_system_prototype.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -549,7 +558,7 @@ namespace Transport__system_prototype.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Transport__system_prototype.Models.User", null)
+                    b.HasOne("Transport__system_prototype.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -558,7 +567,7 @@ namespace Transport__system_prototype.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Transport__system_prototype.Models.User", null)
+                    b.HasOne("Transport__system_prototype.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -573,7 +582,7 @@ namespace Transport__system_prototype.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Transport__system_prototype.Models.User", null)
+                    b.HasOne("Transport__system_prototype.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -582,7 +591,7 @@ namespace Transport__system_prototype.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Transport__system_prototype.Models.User", null)
+                    b.HasOne("Transport__system_prototype.Models.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -591,7 +600,7 @@ namespace Transport__system_prototype.Migrations
 
             modelBuilder.Entity("Transport__system_prototype.Models.Admin", b =>
                 {
-                    b.HasOne("Transport__system_prototype.Models.User", "User")
+                    b.HasOne("Transport__system_prototype.Models.AppUser", "User")
                         .WithOne("Admin")
                         .HasForeignKey("Transport__system_prototype.Models.Admin", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -621,7 +630,7 @@ namespace Transport__system_prototype.Migrations
 
             modelBuilder.Entity("Transport__system_prototype.Models.Client", b =>
                 {
-                    b.HasOne("Transport__system_prototype.Models.User", "User")
+                    b.HasOne("Transport__system_prototype.Models.AppUser", "User")
                         .WithOne("Client")
                         .HasForeignKey("Transport__system_prototype.Models.Client", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -644,7 +653,7 @@ namespace Transport__system_prototype.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Transport_system_prototype.Models.vehicle", "vehicle")
+                    b.HasOne("Transport_system_prototype.Models.Vehicle", "vehicle")
                         .WithMany()
                         .HasForeignKey("vehicleId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -657,16 +666,16 @@ namespace Transport__system_prototype.Migrations
                     b.Navigation("vehicle");
                 });
 
-            modelBuilder.Entity("Transport__system_prototype.Models.Client", b =>
-                {
-                    b.Navigation("Bookings");
-                });
-
-            modelBuilder.Entity("Transport__system_prototype.Models.User", b =>
+            modelBuilder.Entity("Transport__system_prototype.Models.AppUser", b =>
                 {
                     b.Navigation("Admin");
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Transport__system_prototype.Models.Client", b =>
+                {
+                    b.Navigation("Bookings");
                 });
 
             modelBuilder.Entity("Transport_system_prototype.Models.Trip", b =>

@@ -4,6 +4,8 @@ using Stripe;
 using Transport__system_prototype.Models;
 using Transport_system_prototype.Models;
 using Transport__system_prototype.Settings;
+using Transport__system_prototype.Repository;
+using NuGet.Protocol.Core.Types;
 
 namespace Transport_system_prototype
 {
@@ -15,11 +17,11 @@ namespace Transport_system_prototype
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<context>(options =>
+            builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            builder.Services.AddIdentity<User, IdentityRole>(options =>
+            builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 // No password restrictions
                 options.Password.RequireDigit = false;
@@ -29,13 +31,13 @@ namespace Transport_system_prototype
                 options.Password.RequiredLength = 1;
                 options.Lockout.MaxFailedAccessAttempts = 10;
             })
-            .AddEntityFrameworkStores<context>()
+            .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
             builder.Services.Configure<StripeSettings>(
          builder.Configuration.GetSection("Stripe"));
 
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
-
+            builder.Services.AddScoped(typeof(IGenaricRepository<>), typeof(GenaricRepository<>));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -60,7 +62,7 @@ namespace Transport_system_prototype
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
                 // Create roles if they don't exist
                 var roles = new[] { "Admin", "Client" };
@@ -77,12 +79,13 @@ namespace Transport_system_prototype
                 var adminUser = await userManager.FindByEmailAsync(adminEmail);
                 if (adminUser == null)
                 {
-                    adminUser = new User
+                    adminUser = new AppUser
                     {
                         UserName = "CEO",
                         Email = adminEmail,
                         PhoneNumber = "01012149832",
                         City = "Cairo",
+                        FullName = "Mohammed ElDief"
                     };
 
                     var result = await userManager.CreateAsync(adminUser, "admin");

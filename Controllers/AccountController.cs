@@ -2,24 +2,29 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using NuGet.Protocol.Core.Types;
+using Stripe;
 using Transport__system_prototype.Models;
+using Transport__system_prototype.Repository;
+using Transport__system_prototype.ViewModels;
 
 namespace Transport__system_prototype.Controllers
 {
     public class AccountController : Controller
     {
         //DI
-        private readonly UserManager<User> userManager;
-        private readonly SignInManager<User> signInManager;
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        private readonly UserManager<AppUser> userManager;
+        private readonly SignInManager<AppUser> signInManager;
+
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
         }
         //register
-        public IActionResult Register()
+        public IActionResult RegisterView()
         {
-            return View();
+            return View("Register");
         }
         //register post
         [HttpPost]
@@ -37,20 +42,20 @@ namespace Transport__system_prototype.Controllers
                 }
 
                 // Create a new user
-                User user = new User
+                AppUser user = new AppUser
                 {
                     UserName = VM.UserName,
                     Email = VM.Email,
                     PhoneNumber = VM.PhoneNumber,
-                    City = VM.City
+                    City = VM.City,
+                    FullName = VM.FullName
                 };
 
                 var isGoodUser = await userManager.CreateAsync(user, VM.Password);
                 if (isGoodUser.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, "Client");
-                    await signInManager.SignInAsync(user, true);
-                    return RedirectToAction("index", "Home");
+                    return View("Login");
                 }
                 else
                 {
@@ -84,7 +89,7 @@ namespace Transport__system_prototype.Controllers
                     if (isGoodUser)
                     {
                         //sign in the user
-                        await signInManager.SignInAsync(user, true);
+                        await signInManager.SignInAsync(user, VM.RememberMe);
                         return RedirectToAction("index", "Home");
                     }
                     else

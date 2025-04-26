@@ -2,26 +2,48 @@ using System.Diagnostics;
 using Transport_system_prototype.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Transport__system_prototype.Repository;
+using Transport__system_prototype.ViewModels;
+using Transport__system_prototype.Models;
+using System.Security.Claims;
 
 namespace Transport_system_prototype.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly context data;
+        private readonly IGenaricRepository<Trip> tripRepo;
+        private readonly IGenaricRepository<Station> stationRepo;
+        private readonly IGenaricRepository<AppUser> userRepo;
 
-        public HomeController(ILogger<HomeController> logger, context db)
+        public HomeController(ILogger<HomeController> logger, IGenaricRepository<Trip> _tripRepo, IGenaricRepository<Station> _stationRepo, IGenaricRepository<AppUser> _userRepo)
         {
-            data = db;
             _logger = logger;
+            tripRepo=_tripRepo;
+            stationRepo=_stationRepo;
+            userRepo=_userRepo;
         }
 
         public IActionResult Index()
         {
-            ViewBag.Stations = data.Stations.ToList();
-            return View(data.Trips
-                .Include(t => t.vehicle)
-                .ToList());
+            AppUser? appUser = null;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                if (userIdClaim != null)
+                {
+                    appUser = userRepo.GetById(userIdClaim.Value);
+                }
+            }
+            UserTripsStationsViewModel usertripsStations = new UserTripsStationsViewModel
+            {
+                Stations = stationRepo.GetAll(),
+                Trips = tripRepo.GetAll(),
+                AppUser = appUser
+            };
+          
+            return View(usertripsStations);
         }
 
         public IActionResult Privacy()

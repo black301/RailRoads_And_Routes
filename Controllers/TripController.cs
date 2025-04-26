@@ -1,6 +1,7 @@
 ﻿using Transport_system_prototype.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Transport__system_prototype.Repository;
 
 namespace Transport_system_prototype.Controllers
 {
@@ -8,36 +9,40 @@ namespace Transport_system_prototype.Controllers
 
     public class TripController : Controller
     {
-        private readonly context data;
+        private readonly Transport__system_prototype.Repository.IGenaricRepository<Trip> tripRepo;
+        private readonly IGenaricRepository<Vehicle> vehicleRepo;
+        private readonly IGenaricRepository<Station> stationRepo;
 
-        public TripController(context db) // 👈 DI gives you the configured DbContext
+        public TripController(IGenaricRepository<Trip> _tripRepo, IGenaricRepository<Vehicle> _vehicleRepo,IGenaricRepository<Station> _stationRepo)
         {
-            data = db;
+            tripRepo=_tripRepo;
+            vehicleRepo=_vehicleRepo;
+            stationRepo=_stationRepo;
         }
         public IActionResult Index()
         {
-            ViewData["Stations"] = data.Stations.ToList();  
-            ViewData["vehicles"] = data.vehicles.ToList();
-            return View(data.Trips.ToList());
+            ViewData["Stations"] = tripRepo.GetAll();  
+            ViewData["vehicles"] = vehicleRepo.GetAll();
+            return View(tripRepo.GetAll());
         }
         //create
         public IActionResult create()
         {
             //take a list of stations and buses and pass it to the view
-            ViewData["Stations"] = data.Stations.ToList();
-            ViewData["vehicles"]    = data.vehicles.ToList();
+            ViewData["Stations"] =stationRepo.GetAll();
+            ViewData["vehicles"]    = vehicleRepo.GetAll();
             return View();
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult create(Trip Trip)
         {
-            ViewData["Stations"] = data.Stations.ToList();
-            ViewData["vehicles"]    = data.vehicles.ToList();
+            ViewData["Stations"] = stationRepo.GetAll();
+            ViewData["vehicles"]    = vehicleRepo.GetAll();
             if (ModelState.IsValid)
             {
-                data.Trips.Add(Trip);
-                data.SaveChanges();
+               tripRepo.Add(Trip);
+                tripRepo.Save();
                 return RedirectToAction("Index");
             }
             return View(Trip);
@@ -45,17 +50,17 @@ namespace Transport_system_prototype.Controllers
         //edit
         public IActionResult Edit(int id)
         {
-            ViewData["Stations"] = data.Stations.ToList();
-            ViewData["vehicles"]    = data.vehicles.ToList();
-            return View(data.Trips.Find(id));
+            ViewData["Stations"] = stationRepo.GetAll();
+            ViewData["vehicles"]    = vehicleRepo.GetAll();
+            return View(tripRepo.GetById(id));
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult Edit(Trip Trip)
         {
-            ViewData["Stations"] = data.Stations.ToList();
-            ViewData["vehicles"]    = data.vehicles.ToList();
-            Trip EditedTrip = data.Trips.Find(Trip.Id);
+            ViewData["Stations"] = stationRepo.GetAll();
+            ViewData["vehicles"]    = vehicleRepo.GetAll();
+            Trip EditedTrip = tripRepo.GetById(Trip.Id);
             if (ModelState.IsValid)
             {
                 EditedTrip.vehicleId = Trip.vehicleId;
@@ -64,7 +69,7 @@ namespace Transport_system_prototype.Controllers
                 EditedTrip.AvailableSeats = Trip.AvailableSeats;
                 EditedTrip.TOStationId = Trip.TOStationId;
                 EditedTrip.TripDate = Trip.TripDate;
-                data.SaveChanges();
+                tripRepo.Save();
                 return RedirectToAction("Index");
             }
             else
@@ -75,8 +80,8 @@ namespace Transport_system_prototype.Controllers
         //delete
         public IActionResult Delete(int id)
         {
-            data.Trips.Remove(data.Trips.Find(id));
-            data.SaveChanges();
+            tripRepo.Delete(tripRepo.GetById(id));
+            tripRepo.Save();
             return RedirectToAction("Index");
         }
     }
