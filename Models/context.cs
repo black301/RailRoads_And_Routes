@@ -27,7 +27,7 @@ namespace Transport_system_prototype.Models
                 .HasOne(t => t.vehicle)
                 .WithMany()
                 .HasForeignKey(t => t.vehicleId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.NoAction);//انا ظبتها
             
             modelBuilder.Entity<Booking>()
                 .HasKey(b => b.Id);
@@ -36,13 +36,13 @@ namespace Transport_system_prototype.Models
                 .HasOne(b => b.Client)
                 .WithMany(c => c.Bookings)
                 .HasForeignKey(b => b.ClientId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade);// عواد ابقي عدلها 
 
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.Trip)
                 .WithMany(t => t.Bookings)
                 .HasForeignKey(b => b.TripId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade);// عواد ابقي عدلها
 
             modelBuilder.Entity<Station>().HasData(
                 new Station { Id = 1, Name = "Alexandria", Location = "Alexandria, Egypt", ImgURL = "~/uploads/Alex.jpeg" },

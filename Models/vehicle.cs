@@ -1,7 +1,10 @@
-﻿namespace Transport_system_prototype.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Transport_system_prototype.Models
 {
     public class vehicle
     {
+        [Key]
         public int Id { get; set; }
         //added
         public string Name { get; set; }
