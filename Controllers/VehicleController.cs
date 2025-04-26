@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.AspNetCore.Authorization;
+using Transport__system_prototype.Repository;
 
 namespace Transport_system_prototype.Controllers
 {
@@ -9,28 +10,30 @@ namespace Transport_system_prototype.Controllers
 
     public class vehicleController : Controller
     {
-        private readonly context data;
+        private readonly IGenaricRepository<Trip> tripRepo;
+        private readonly IGenaricRepository<Vehicle> vehicleRepo;
 
-        public vehicleController(context db) // 👈 DI gives you the configured DbContext
+        public vehicleController(IGenaricRepository<Trip> _tripRepo, IGenaricRepository<Vehicle> _vehicleRepo)
         {
-            data = db;
+            tripRepo=_tripRepo;
+            vehicleRepo=_vehicleRepo;
         }
         public IActionResult Index()
         {
-            return View(data.vehicles.ToList());
+            return View(vehicleRepo.GetAll());
         }
         public IActionResult create()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult create(vehicle vehicle)
+        public IActionResult create(Vehicle vehicle)
         {
 
             if (ModelState.IsValid)
             {
-                data.vehicles.Add(vehicle);
-                data.SaveChanges();
+                vehicleRepo.Add(vehicle);
+                vehicleRepo.Save();
                 return RedirectToAction("Index");
             }
             return View(vehicle);
@@ -38,13 +41,13 @@ namespace Transport_system_prototype.Controllers
         //update
         public IActionResult Edit(int id)
         {
-            return View(data.vehicles.Find(id));
+            return View(vehicleRepo.GetById(id));
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Edit(vehicle vehicle)
+        public IActionResult Edit(Vehicle vehicle)
         {
-            vehicle Editedvehicle = data.vehicles.Find(vehicle.Id);
+            Vehicle Editedvehicle = vehicleRepo.GetById(vehicle.Id);
             if (ModelState.IsValid)
             {
                 Editedvehicle.Type = vehicle.Type;
@@ -56,7 +59,7 @@ namespace Transport_system_prototype.Controllers
                 Editedvehicle.Drinks = vehicle.Drinks;
                 Editedvehicle.Snacks = vehicle.Snacks;
                 Editedvehicle.ImgURL = vehicle.ImgURL;
-                data.SaveChanges();
+                vehicleRepo.Save();
                 return RedirectToAction("Index");
             }
             else
@@ -66,13 +69,13 @@ namespace Transport_system_prototype.Controllers
         }
         public IActionResult Delete(int id)
         {
-            var vehicle = data.vehicles.Find(id);
+            var vehicle = vehicleRepo.GetById(id);
             if (vehicle == null)
             {
                 return NotFound();
             }
 
-            bool isUsedInTrip = data.Trips.Any(t => t.vehicleId == id);
+            bool isUsedInTrip = tripRepo.GetAll().Any(t => t.vehicleId == id);
 
             if (isUsedInTrip)
             {
@@ -80,8 +83,8 @@ namespace Transport_system_prototype.Controllers
                 return RedirectToAction("Index");
             }
 
-            data.vehicles.Remove(vehicle);
-            data.SaveChanges();
+            vehicleRepo.Delete(vehicle);
+            vehicleRepo.Save();
             return RedirectToAction("Index");
         }
 

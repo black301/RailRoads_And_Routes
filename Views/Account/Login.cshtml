@@ -1,4 +1,4 @@
-﻿@model Transport__system_prototype.Models.LoginVM
+﻿@model LoginVM
 
 @{
     ViewData["Title"] = "Login";
@@ -83,8 +83,8 @@
 
                     <div class="form-options">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe" name="RememberMe">
-                            <label class="form-check-label" for="rememberMe">
+                            <input class="form-check-input" type="checkbox" id="rememberMe" asp-for = "RememberMe">
+                            <label class="form-check-label" asp-for="RememberMe">
                                 Remember me
                             </label>
                         </div>

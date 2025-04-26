@@ -2,6 +2,7 @@
 using Transport_system_prototype.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Transport__system_prototype.Repository;
 
 namespace Transport_system_prototype.Controllers
 {
@@ -9,15 +10,17 @@ namespace Transport_system_prototype.Controllers
 
     public class StationController : Controller
     {
-        private readonly context data;
+        private readonly IGenaricRepository<Station> stationRepo;
+        private readonly IGenaricRepository<Trip> tripRepo;
 
-        public StationController(context db) 
+        public StationController(IGenaricRepository<Station> _stationRepo, IGenaricRepository<Trip> _tripRepo)
         {
-            data = db;
+            stationRepo=_stationRepo;
+            tripRepo=_tripRepo;
         }
         public IActionResult Index()
         {
-            return View(data.Stations.ToList());
+            return View(stationRepo.GetAll());
         }
 
         public IActionResult create()
@@ -30,27 +33,27 @@ namespace Transport_system_prototype.Controllers
         {
             if (ModelState.IsValid)
             {
-                data.Stations.Add(Station);
-                data.SaveChanges();
+                stationRepo.Add(Station);
+                stationRepo.Save();
                 return RedirectToAction("Index");
             }
             return View(Station);
         }
         public IActionResult Edit(int id)
         {
-            return View(data.Stations.Find(id));
+            return View(stationRepo.GetById(id));
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
         public IActionResult Edit(Station Station)
         {
-            Station EditedStation = data.Stations.Find(Station.Id);
+            Station EditedStation = stationRepo.GetById(Station.Id);
             if (ModelState.IsValid)
             {
                 EditedStation.Name = Station.Name;
                 EditedStation.Location = Station.Location;
                 EditedStation.ImgURL = Station.ImgURL;
-                data.SaveChanges();
+                stationRepo.Save();
                 return RedirectToAction("Index");
             }
             else
@@ -60,13 +63,13 @@ namespace Transport_system_prototype.Controllers
         }
         public IActionResult Delete(int id)
         {
-            var station = data.Stations.Find(id);
+            var station = stationRepo.GetById(id);
             if (station == null)
             {
                 return NotFound();
             }
 
-            bool isUsedInTrip = data.Trips.Any(t => t.FromStationId == id || t.TOStationId == id);
+            bool isUsedInTrip = tripRepo.GetAll().Any(t => t.FromStationId == id || t.TOStationId == id);
 
             if (isUsedInTrip)
             {
@@ -74,8 +77,8 @@ namespace Transport_system_prototype.Controllers
                 return RedirectToAction("Index");
             }
 
-            data.Stations.Remove(station);
-            data.SaveChanges();
+           stationRepo.Delete(station);
+            stationRepo.Save();
             return RedirectToAction("Index");
         }
 

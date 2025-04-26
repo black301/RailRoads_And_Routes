@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Transport__system_prototype.Models
+namespace Transport__system_prototype.ViewModels
 {
     public class LoginVM
     {
@@ -10,5 +10,6 @@ namespace Transport__system_prototype.Models
         [Required(ErrorMessage = "Please enter your password")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+        public bool RememberMe { get; set; }
     }
 }

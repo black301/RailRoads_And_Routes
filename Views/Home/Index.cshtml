@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Transport_system_prototype.Models.Trip>
+﻿    @model UserTripsStationsViewModel
 @{
     ViewData["Title"] = "Home";
 }
@@ -37,7 +37,7 @@
                                             </span>
                                             <select class="form-select border-start-0" id="FromStationId" name="FromStationId" required>
                                                 <option value="">Select departure station</option>
-                                                @foreach (var station in ViewBag.Stations ?? new List<Station>())
+                                                @foreach (var station in Model.Stations ?? new List<Station>())
                                                 {
                                                     <option value="@station.Id">@station.Name</option>
                                                 }
@@ -52,7 +52,7 @@
                                             </span>
                                             <select class="form-select border-start-0" id="TOStationId" name="TOStationId" required>
                                                 <option value="">Select destination station</option>
-                                                @foreach (var station in ViewBag.Stations ?? new List<Station>())
+                                                @foreach (var station in Model.Stations ?? new List<Station>())
                                                 {
                                                     <option value="@station.Id">@station.Name</option>
                                                 }
@@ -66,7 +66,7 @@
                                                 <i class="fas fa-calendar text-primary"></i>
                                             </span>
                                             <input type="date" class="form-control border-start-0" id="TripDate" name="TripDate"
-                                                   min="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+                                            min="@DateTime.Now.ToString("yyyy-MM-dd")" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2 d-flex align-items-end">
@@ -101,7 +101,7 @@
 <!-- Available Trips Section -->
 <section class="mb-5" id="available-trips-section">
     <div id="available-trips-container">
-        @if (Model != null && Model.Any())
+        @if (Model.Trips != null && Model.Trips.Any())
         {
             <div class="card border-0 shadow-sm">
                 <div class="table-responsive">
@@ -118,12 +118,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var trip in Model.Where(t => t.TripDate >= DateTime.Now.Date))
+                            @foreach (var trip in Model.Trips)
                             {
                                 <tr class="trip-row"
-                                    data-from-station-id="@trip.FromStationId"
-                                    data-to-station-id="@trip.TOStationId"
-                                    data-trip-date="@trip.TripDate.ToString("yyyy-MM-dd")">
+                                data-from-station-id="@trip.FromStationId"
+                                data-to-station-id="@trip.TOStationId"
+                                data-trip-date="@trip.TripDate.ToString("yyyy-MM-dd")">
                                     <td>@trip.FromStation?.Name</td>
                                     <td>@trip.TOStation?.Name</td>
                                     <td>@trip.TripDate.ToString("MMM dd, yyyy")</td>
@@ -138,13 +138,13 @@
                                         @if (User.Identity.IsAuthenticated)
                                         {
                                             <button class="btn btn-sm @(trip.AvailableSeats <= 0 ? "btn-outline-secondary" : "btn-primary") book-trip-btn"
-                                                    data-trip-id="@trip.Id"
-                                                    data-from="@trip.FromStation?.Name"
-                                                    data-to="@trip.TOStation?.Name"
-                                                    data-date="@trip.TripDate.ToString("MMM dd, yyyy")"
-                                                    data-price="@trip.Price"
-                                                    data-available="@trip.AvailableSeats"
-                                                    data-vehicle="@trip.vehicle?.Name"
+                                            data-trip-id="@trip.Id"
+                                            data-from="@trip.FromStation?.Name"
+                                            data-to="@trip.TOStation?.Name"
+                                            data-date="@trip.TripDate.ToString("MMM dd, yyyy")"
+                                            data-price="@trip.Price"
+                                            data-available="@trip.AvailableSeats"
+                                            data-vehicle="@trip.vehicle?.Name"
                                             @(trip.AvailableSeats <= 0 ? "disabled" : "")>
                                                 @(trip.AvailableSeats <= 0 ? "Sold Out" : "Book Now")
                                             </button>
@@ -298,303 +298,294 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="ClientName" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="ClientName" name="ClientName" required>
+                                <label asp-for="AppUser.FullName" class="form-label">Full Name</label>
+                                @if (User.Identity.IsAuthenticated) {
+                                    <input type="text" class="form-control" id="ClientName" asp-for="AppUser.FullName" value="@(Model.AppUser?.FullName ?? "")" required>
+                                }
+                                else {
+                                    <input type="text" class="form-control" id="ClientName" asp-for="AppUser.FullName" required>
+                                }
                             </div>
 
-                            <div class="mb-3">
-                                <label for="ClientEmail" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="ClientEmail" name="ClientEmail" required>
-                            </div>
+                                <div class="mb-3">
+                                <label asp-for="AppUser.Email" class="form-label">Email Address</label>
+                                @if(User.Identity.IsAuthenticated){
+                                    <input type="email" class="form-control" id="ClientEmail" asp-for="AppUser.Email" value="@(Model.AppUser?.Email?? "")" required>
+                                }
+                                else{
+                                    <input type="email" class="form-control" id="ClientEmail" asp-for="AppUser.Email" required>
+                                }
+                                </div>
 
-                            <div class="mb-3">
-                                <label for="ClientPhone" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="ClientPhone" name="ClientPhone" required>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="ClientPhone" class="form-label">Phone Number</label>
+                                @if(User.Identity.IsAuthenticated){
+                                    <input type="tel" class="form-control" id="ClientPhone" asp-for="AppUser.PhoneNumber" value="@(Model.AppUser?.PhoneNumber ?? "")" required>
 
-                            <div class="mb-3">
-                                <label for="PaymentMethod" class="form-label">Payment Method</label>
-                                <select class="form-select" id="PaymentMethod" name="PaymentMethod" required>
-                                    <option value="">Select payment method</option>
-                                    <option value="CreditCard">Credit Card</option>
-                                    <option value="PayPal">PayPal</option>
-                                    <option value="BankTransfer">Bank Transfer</option>
-                                </select>
-                            </div>
+                                }
+                                else{
+                                    <input type="tel" class="form-control" id="ClientPhone" asp-for="AppUser.PhoneNumber" required>
 
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="terms" required>
-                                <label class="form-check-label" for="terms">I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a></label>
-                            </div>
-                        </form>
+                                }
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="PaymentMethod" class="form-label">Payment Method</label>
+                                    <select class="form-select" id="PaymentMethod" name="PaymentMethod" required>
+                                        <option value="">Select payment method</option>
+                                        <option value="CreditCard">Credit Card</option>
+                                        <option value="PayPal">PayPal</option>
+                                        <option value="BankTransfer">Bank Transfer</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="terms" required>
+                                    <label class="form-check-label" for="terms">I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a></label>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirm-booking-btn">
-                    <i class="fas fa-ticket-alt me-2"></i>Confirm Booking
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Terms Modal -->
-<div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header">
-                <h5 class="modal-title">Terms and Conditions</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h6>Booking Policy</h6>
-                <p>All bookings are subject to availability. A booking is only confirmed once full payment has been received.</p>
-
-                <h6>Cancellation Policy</h6>
-                <p>Cancellations made more than 48 hours before departure will receive a full refund minus a processing fee. Cancellations within 48 hours of departure are non-refundable.</p>
-
-                <h6>Refund Policy</h6>
-                <p>Refunds will be processed within 7-14 business days to the original payment method.</p>
-
-                <h6>Baggage Policy</h6>
-                <p>Each passenger is allowed one piece of luggage and one carry-on item. Additional baggage may incur extra charges.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirm-booking-btn">
+                        <i class="fas fa-ticket-alt me-2"></i>Confirm Booking
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- No Results Template -->
-<template id="no-results-template">
-    <div class="alert alert-info border-0 shadow-sm">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-info-circle text-primary me-3 fs-4"></i>
-            <div>
-                <h5 class="mb-1">No trips found</h5>
-                <p class="mb-0">No trips match your search criteria. Please try different stations or dates.</p>
+    <!-- Terms Modal -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title">Terms and Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Booking Policy</h6>
+                    <p>All bookings are subject to availability. A booking is only confirmed once full payment has been received.</p>
+
+                    <h6>Cancellation Policy</h6>
+                    <p>Cancellations made more than 48 hours before departure will receive a full refund minus a processing fee. Cancellations within 48 hours of departure are non-refundable.</p>
+
+                    <h6>Refund Policy</h6>
+                    <p>Refunds will be processed within 7-14 business days to the original payment method.</p>
+
+                    <h6>Baggage Policy</h6>
+                    <p>Each passenger is allowed one piece of luggage and one carry-on item. Additional baggage may incur extra charges.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+                </div>
             </div>
         </div>
     </div>
-</template>
+
+    <!-- No Results Template -->
+    <template id="no-results-template">
+        <div class="alert alert-info border-0 shadow-sm">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle text-primary me-3 fs-4"></i>
+                <div>
+                    <h5 class="mb-1">No trips found</h5>
+                    <p class="mb-0">No trips match your search criteria. Please try different stations or dates.</p>
+                </div>
+            </div>
+        </div>
+    </template>
 
 @section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize date picker with today's date
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('TripDate').value = today;
-
-            // Client-side Search Form Handling
-            const searchForm = document.getElementById('trip-search-form');
-            const searchButton = document.getElementById('search-button');
-            const clearSearchBtn = document.getElementById('clear-search-btn');
-            const searchResultsSection = document.getElementById('search-results-section');
-            const searchResultsContainer = document.getElementById('search-results-container');
-            const availableTripsSection = document.getElementById('available-trips-section');
-            const tripsTable = document.getElementById('trips-table');
-
-            // Handle search form submission
-            searchForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Get form data
-                const fromStationId = document.getElementById('FromStationId').value;
-                const toStationId = document.getElementById('TOStationId').value;
-                const tripDate = document.getElementById('TripDate').value;
-
-                // Show loading state
-                searchButton.disabled = true;
-                searchButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...';
-
-                // Filter trips based on search criteria
-                const tripRows = document.querySelectorAll('.trip-row');
-                const matchingTrips = [];
-
-                tripRows.forEach(row => {
-                    const rowFromStationId = row.getAttribute('data-from-station-id');
-                    const rowToStationId = row.getAttribute('data-to-station-id');
-                    const rowTripDate = row.getAttribute('data-trip-date');
-
-                    // Check if the trip date is not in the past
-                    const currentDate = new Date().toISOString().split('T')[0];
-                    if (rowTripDate < currentDate) {
-                        return; // Skip past trips
-                    }
-
-                    // Check if the trip matches the search criteria
-                    const fromMatch = !fromStationId || rowFromStationId === fromStationId;
-                    const toMatch = !toStationId || rowToStationId === toStationId;
-                    const dateMatch = !tripDate || rowTripDate === tripDate;
-
-                    if (fromMatch && toMatch && dateMatch) {
-                        matchingTrips.push(row.cloneNode(true));
-                    }
-                });
-
-                // Create search results
-                searchResultsContainer.innerHTML = '';
-
-                if (matchingTrips.length > 0) {
-                    // Create table for results
-                    const resultTable = document.createElement('div');
-                    resultTable.className = 'card border-0 shadow-sm';
-                    resultTable.innerHTML = `
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Date & Time</th>
-                                        <th>Vehicle</th>
-                                        <th>Available Seats</th>
-                                        <th>Price</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="search-results-tbody">
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-
-                    searchResultsContainer.appendChild(resultTable);
-                    const tbody = document.getElementById('search-results-tbody');
-
-                    // Add matching trips to the results table
-                    matchingTrips.forEach(trip => {
-                        tbody.appendChild(trip);
-                    });
-                } else {
-                    // No results found
-                    const noResults = document.getElementById('no-results-template').content.cloneNode(true);
-                    searchResultsContainer.appendChild(noResults);
-                }
-
-                // Show search results, hide available trips
-                searchResultsSection.style.display = 'block';
-                availableTripsSection.style.display = 'none';
-
-                // Reset search button
-                searchButton.disabled = false;
-                searchButton.innerHTML = '<i class="fas fa-search me-2"></i>Search';
-
-                // Reattach event listeners to the cloned book buttons
-                attachBookButtonListeners();
-            });
-
-            // Clear search results
-            clearSearchBtn.addEventListener('click', function() {
-                searchResultsSection.style.display = 'none';
-                availableTripsSection.style.display = 'block';
-                searchResultsContainer.innerHTML = '';
-                searchForm.reset();
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize date picker with today's date
+                const today = new Date().toISOString().split('T')[0];
                 document.getElementById('TripDate').value = today;
-            });
 
-            // Function to attach event listeners to book buttons
-            function attachBookButtonListeners() {
-                const bookButtons = document.querySelectorAll('.book-trip-btn');
-                bookButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const tripId = this.getAttribute('data-trip-id');
-                        const from = this.getAttribute('data-from');
-                        const to = this.getAttribute('data-to');
-                        const date = this.getAttribute('data-date');
-                        const price = this.getAttribute('data-price');
-                        const available = this.getAttribute('data-available');
-                        const vehicle = this.getAttribute('data-vehicle');
+                // Client-side Search Form Handling
+                const searchForm = document.getElementById('trip-search-form');
+                const searchButton = document.getElementById('search-button');
+                const clearSearchBtn = document.getElementById('clear-search-btn');
+                const searchResultsSection = document.getElementById('search-results-section');
+                const searchResultsContainer = document.getElementById('search-results-container');
+                const availableTripsSection = document.getElementById('available-trips-section');
+                const tripsTable = document.getElementById('trips-table');
 
-                        // Set modal values
-                        document.getElementById('TripId').value = tripId;
-                        document.getElementById('modal-from').textContent = from;
-                        document.getElementById('modal-to').textContent = to;
-                        document.getElementById('modal-date').textContent = date;
-                        document.getElementById('modal-price').textContent = '$' + price;
-                        document.getElementById('modal-seats').textContent = available;
-                        document.getElementById('modal-vehicle').textContent = vehicle;
-                        document.getElementById('modal-total-price').textContent = '$' + price;
-                        document.getElementById('TotalPrice').value = price;
+                // Handle search form submission
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
 
-                        // Limit number of seats in dropdown based on availability
-                        const seatsDropdown = document.getElementById('NumberOfSeats');
-                        seatsDropdown.innerHTML = '';
+                    // Get form data
+                    const fromStationId = document.getElementById('FromStationId').value;
+                    const toStationId = document.getElementById('TOStationId').value;
+                    const tripDate = document.getElementById('TripDate').value;
 
-                        for (let i = 1; i <= Math.min(5, available); i++) {
-                            const option = document.createElement('option');
-                            option.value = i;
-                            option.textContent = i + (i === 1 ? ' Seat' : ' Seats');
-                            seatsDropdown.appendChild(option);
+                    // Show loading state
+                    searchButton.disabled = true;
+                    searchButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...';
+
+                    // Filter trips based on search criteria
+                    const tripRows = document.querySelectorAll('.trip-row');
+                    const matchingTrips = [];
+
+                    tripRows.forEach(row => {
+                        const rowFromStationId = row.getAttribute('data-from-station-id');
+                        const rowToStationId = row.getAttribute('data-to-station-id');
+                        const rowTripDate = row.getAttribute('data-trip-date');
+
+                        // Check if the trip date is not in the past
+                        const currentDate = new Date().toISOString().split('T')[0];
+                        if (rowTripDate < currentDate) {
+                            return; // Skip past trips
                         }
 
-                        // Add event listener to update total price when number of seats changes
-                        seatsDropdown.addEventListener('change', function() {
-                            const seats = parseInt(this.value);
-                            const totalPrice = seats * price;
-                            document.getElementById('modal-total-price').textContent = '$' + totalPrice;
-                            document.getElementById('TotalPrice').value = totalPrice;
-                        });
+                        // Check if the trip matches the search criteria
+                        const fromMatch = !fromStationId || rowFromStationId === fromStationId;
+                        const toMatch = !toStationId || rowToStationId === toStationId;
+                        const dateMatch = !tripDate || rowTripDate === tripDate;
 
-                        // Show the modal
-                        const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
-                        bookingModal.show();
+                        if (fromMatch && toMatch && dateMatch) {
+                            matchingTrips.push(row.cloneNode(true));
+                        }
                     });
-                });
-            }
 
-            // Initial attachment of event listeners to book buttons
-            attachBookButtonListeners();
+                    // Create search results
+                    searchResultsContainer.innerHTML = '';
 
-            // Handle booking form submission
-            const confirmBookingBtn = document.getElementById('confirm-booking-btn');
-            if (confirmBookingBtn) {
-                confirmBookingBtn.addEventListener('click', function() {
-                    const form = document.getElementById('booking-form');
-                    if (form.checkValidity()) {
-                        // Submit the form
-                        form.submit();
+                    if (matchingTrips.length > 0) {
+                        // Create table for results
+                        const resultTable = document.createElement('div');
+                        resultTable.className = 'card border-0 shadow-sm';
+                        resultTable.innerHTML = `
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Date & Time</th>
+                                            <th>Vehicle</th>
+                                            <th>Available Seats</th>
+                                            <th>Price</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="search-results-tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+
+                        searchResultsContainer.appendChild(resultTable);
+                        const tbody = document.getElementById('search-results-tbody');
+
+                        // Add matching trips to the results table
+                        matchingTrips.forEach(trip => {
+                            tbody.appendChild(trip);
+                        });
                     } else {
-                        // Trigger form validation
-                        form.reportValidity();
+                        // No results found
+                        const noResults = document.getElementById('no-results-template').content.cloneNode(true);
+                        searchResultsContainer.appendChild(noResults);
                     }
+
+                    // Show search results, hide available trips
+                    searchResultsSection.style.display = 'block';
+                    availableTripsSection.style.display = 'none';
+
+                    // Reset search button
+                    searchButton.disabled = false;
+                    searchButton.innerHTML = '<i class="fas fa-search me-2"></i>Search';
+
+                    // Reattach event listeners to the cloned book buttons
+                    attachBookButtonListeners();
                 });
-            }
-        });
-    </script>
-}
 
-@section Styles {
-    <style>
-        /* Custom styles for the home page */
-        .feature-icon {
-            transition: transform 0.3s ease;
-        }
+                // Clear search results
+                clearSearchBtn.addEventListener('click', function() {
+                    searchResultsSection.style.display = 'none';
+                    availableTripsSection.style.display = 'block';
+                    searchResultsContainer.innerHTML = '';
+                    searchForm.reset();
+                    document.getElementById('TripDate').value = today;
+                });
 
-        .card:hover .feature-icon {
-            transform: scale(1.1);
-        }
+                // Function to attach event listeners to book buttons
+                function attachBookButtonListeners() {
+                    const bookButtons = document.querySelectorAll('.book-trip-btn');
+                    bookButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const tripId = this.getAttribute('data-trip-id');
+                            const from = this.getAttribute('data-from');
+                            const to = this.getAttribute('data-to');
+                            const date = this.getAttribute('data-date');
+                            const price = this.getAttribute('data-price');
+                            const available = this.getAttribute('data-available');
+                            const vehicle = this.getAttribute('data-vehicle');
 
-        .table th {
-            font-weight: 600;
-            color: var(--dark);
-        }
+                            // Set modal values
+                            document.getElementById('TripId').value = tripId;
+                            document.getElementById('modal-from').textContent = from;
+                            document.getElementById('modal-to').textContent = to;
+                            document.getElementById('modal-date').textContent = date;
+                            document.getElementById('modal-price').textContent = '$' + price;
+                            document.getElementById('modal-seats').textContent = available;
+                            document.getElementById('modal-vehicle').textContent = vehicle;
+                            document.getElementById('modal-total-price').textContent = '$' + price;
+                            document.getElementById('TotalPrice').value = price;
 
-        .table td {
-            vertical-align: middle;
-        }
+                            // Limit number of seats in dropdown based on availability
+                            const seatsDropdown = document.getElementById('NumberOfSeats');
+                            seatsDropdown.innerHTML = '';
 
-        /* Search results transition */
-        #search-results-section {
-            transition: opacity 0.3s ease;
-        }
+                            for (let i = 1; i <= Math.min(5, available); i++) {
+                                const option = document.createElement('option');
+                                option.value = i;
+                                option.textContent = i + (i === 1 ? ' Seat' : ' Seats');
+                                seatsDropdown.appendChild(option);
+                            }
 
-        /* Button loading state */
-        .btn:disabled {
-            cursor: not-allowed;
-        }
-    </style>
-}
+                            // Add event listener to update total price when number of seats changes
+                            seatsDropdown.addEventListener('change', function() {
+                                const seats = parseInt(this.value);
+                                const totalPrice = seats * price;
+                                document.getElementById('modal-total-price').textContent = '$' + totalPrice;
+                                document.getElementById('TotalPrice').value = totalPrice;
+                            });
+
+                            // Show the modal
+                            const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+                            bookingModal.show();
+                        });
+                    });
+                }
+
+                // Initial attachment of event listeners to book buttons
+                attachBookButtonListeners();
+
+                // Handle booking form submission
+                const confirmBookingBtn = document.getElementById('confirm-booking-btn');
+                if (confirmBookingBtn) {
+                    confirmBookingBtn.addEventListener('click', function() {
+                        const form = document.getElementById('booking-form');
+                        if (form.checkValidity()) {
+                            // Submit the form
+                            form.submit();
+                        } else {
+                            // Trigger form validation
+                            form.reportValidity();
+                        }
+                    });
+                }
+            });
+        </script>
+    }
+
+    @section Styles {
+        <style>
+ 
+        </style>
+    }
