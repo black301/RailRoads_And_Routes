@@ -237,7 +237,11 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
                                         <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> My Profile</a></li>
-                                        <li><a class="dropdown-item" href="#"><i class="fas fa-ticket-alt me-2"></i> My Bookings</a></li>
+                                        <li>
+                                            <a class="dropdown-item" href="@Url.Action("MyBookings", "BookingController")">
+                                                <i class="fas fa-ticket-alt me-2"></i> My Bookings
+                                            </a>
+                                        </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <form asp-controller="Account" asp-action="Logout" method="post">

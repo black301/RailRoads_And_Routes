@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
@@ -103,6 +104,12 @@ namespace Transport__system_prototype.Controllers
                 }
             }
             return View(VM);
+        }
+        public IActionResult LoginGoolge()
+        {
+            var redirectUrl = Url.Action("Index", "Home");
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
         //logout
         public async Task<IActionResult> Logout()

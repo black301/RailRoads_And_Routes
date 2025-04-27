@@ -3,10 +3,11 @@ using Transport_system_prototype.Models;
 
 namespace Transport__system_prototype.ViewModels
 {
-    public class UserTripsStationsViewModel
+    public class UserTripStationViewModel
     {
         public virtual List<Station> Stations { get; set; }
         public virtual List<Trip> Trips { get; set; }
         public virtual AppUser? AppUser { get; set; }
+        public virtual List<Booking> UserBookings { get; set; }
     }
 }

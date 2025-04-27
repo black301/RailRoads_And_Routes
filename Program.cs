@@ -6,6 +6,8 @@ using Transport_system_prototype.Models;
 using Transport__system_prototype.Settings;
 using Transport__system_prototype.Repository;
 using NuGet.Protocol.Core.Types;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace Transport_system_prototype
 {
@@ -38,7 +40,26 @@ namespace Transport_system_prototype
 
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
             builder.Services.AddScoped(typeof(IGenaricRepository<>), typeof(GenaricRepository<>));
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddGoogle(options =>
+            {
+                options.ClientId ="628563211093-t2dusjap4jr02k44pfa2ojov6e207u69.apps.googleusercontent.com";
+                options.ClientSecret= "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";
+                options.CallbackPath = "/signin-google";
+            });
+            //builder.Services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+            //});
+
             var app = builder.Build();
+            //app.UseCookiePolicy();
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

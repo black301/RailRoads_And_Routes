@@ -15,18 +15,29 @@ namespace Transport_system_prototype.Controllers
         private readonly IGenaricRepository<Trip> tripRepo;
         private readonly IGenaricRepository<Station> stationRepo;
         private readonly IGenaricRepository<AppUser> userRepo;
+        private readonly IGenaricRepository<Booking> bookingRepo;
+        private readonly IGenaricRepository<Client> clientRepo;
 
-        public HomeController(ILogger<HomeController> logger, IGenaricRepository<Trip> _tripRepo, IGenaricRepository<Station> _stationRepo, IGenaricRepository<AppUser> _userRepo)
+        public HomeController(
+            ILogger<HomeController> logger, 
+            IGenaricRepository<Trip> _tripRepo, 
+            IGenaricRepository<Station> _stationRepo, 
+            IGenaricRepository<AppUser> _userRepo,
+            IGenaricRepository<Booking> _bookingRepo,
+            IGenaricRepository<Client> _clientRepo)
         {
             _logger = logger;
-            tripRepo=_tripRepo;
-            stationRepo=_stationRepo;
-            userRepo=_userRepo;
+            tripRepo = _tripRepo;
+            stationRepo = _stationRepo;
+            userRepo = _userRepo;
+            bookingRepo = _bookingRepo;
+            clientRepo = _clientRepo;
         }
 
         public IActionResult Index()
         {
             AppUser? appUser = null;
+            List<Booking> userBookings = new List<Booking>();
 
             if (User.Identity.IsAuthenticated)
             {
@@ -34,13 +45,22 @@ namespace Transport_system_prototype.Controllers
                 if (userIdClaim != null)
                 {
                     appUser = userRepo.GetById(userIdClaim.Value);
+                    var client = clientRepo.GetAll().FirstOrDefault(c => c.UserID == userIdClaim.Value);
+                    if (client != null)
+                    {
+                        userBookings = bookingRepo.GetAll()
+                            .Where(b => b.ClientId == client.Id.ToString())
+                            .OrderByDescending(b => b.BookingDate).ToList();
+                    }
                 }
             }
-            UserTripsStationsViewModel usertripsStations = new UserTripsStationsViewModel
+
+            UserTripStationViewModel usertripsStations = new UserTripStationViewModel
             {
                 Stations = stationRepo.GetAll(),
                 Trips = tripRepo.GetAll(),
-                AppUser = appUser
+                AppUser = appUser,
+                UserBookings = userBookings
             };
           
             return View(usertripsStations);

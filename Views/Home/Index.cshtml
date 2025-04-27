@@ -1,4 +1,4 @@
-﻿    @model UserTripsStationsViewModel
+﻿@model UserTripStationViewModel
 @{
     ViewData["Title"] = "Home";
 }
@@ -286,16 +286,16 @@
                         </div>
                     </div>
                     <div class="col-md-7">
-                        <form id="booking-form" method="post" action="@Url.Action("Create", "Booking")">
-                            <input type="hidden" id="TripId" name="TripId">
-                            <input type="hidden" id="TotalPrice" name="TotalPrice">
-
+                        <!-- Update the form section in the booking modal -->
+                        <form id="booking-form" asp-controller="Booking" asp-action="Create" method="post">
+                            <input type="hidden" name="tripId" id="TripId">
                             <div class="mb-3">
-                                <label for="NumberOfSeats" class="form-label">Number of Seats</label>
-                                <select class="form-select" id="NumberOfSeats" name="NumberOfSeats" required>
-                                    <option value="1">1 Seat</option>
+                                <label for="numberOfSeats" class="form-label">Number of Seats</label>
+                                <select class="form-select" id="NumberOfSeats" name="numberOfSeats" required>
+                                    <!-- Options will be populated by JavaScript -->
                                 </select>
                             </div>
+                            <input type="hidden" id="TotalPrice" name="TotalPrice">
 
                             <div class="mb-3">
                                 <label asp-for="AppUser.FullName" class="form-label">Full Name</label>
@@ -307,7 +307,7 @@
                                 }
                             </div>
 
-                                <div class="mb-3">
+                             <div class="mb-3">
                                 <label asp-for="AppUser.Email" class="form-label">Email Address</label>
                                 @if(User.Identity.IsAuthenticated){
                                     <input type="email" class="form-control" id="ClientEmail" asp-for="AppUser.Email" value="@(Model.AppUser?.Email?? "")" required>
@@ -315,13 +315,12 @@
                                 else{
                                     <input type="email" class="form-control" id="ClientEmail" asp-for="AppUser.Email" required>
                                 }
-                                </div>
+                             </div>
 
                                 <div class="mb-3">
                                     <label for="ClientPhone" class="form-label">Phone Number</label>
                                 @if(User.Identity.IsAuthenticated){
                                     <input type="tel" class="form-control" id="ClientPhone" asp-for="AppUser.PhoneNumber" value="@(Model.AppUser?.PhoneNumber ?? "")" required>
-
                                 }
                                 else{
                                     <input type="tel" class="form-control" id="ClientPhone" asp-for="AppUser.PhoneNumber" required>
@@ -584,8 +583,31 @@
         </script>
     }
 
-    @section Styles {
-        <style>
- 
-        </style>
-    }
+@if (User.Identity.IsAuthenticated)
+{
+    <section class="my-bookings-section mb-5" >
+        <div class="container">
+            <h2 class="section-title">My Bookings</h2>
+            <div class="row">
+                @foreach (var booking in Model.UserBookings)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card booking-card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    @booking.Trip?.FromStation?.Name to @booking.Trip?.TOStation?.Name
+                                </h5>
+                                <div class="booking-details">
+                                    <p><i class="fas fa-calendar"></i> Travel Date: @booking.Trip?.TripDate.ToString("MMM dd, yyyy HH:mm")</p>
+                                    <p><i class="fas fa-ticket-alt"></i> Seats: @booking.NumberOfSeats</p>
+                                    <p><i class="fas fa-money-bill"></i> Total: $@booking.ComputedTotalPrice</p>
+                                    <p><i class="fas fa-clock"></i> Booked: @booking.BookingDate.ToString("MMM dd, yyyy")</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}

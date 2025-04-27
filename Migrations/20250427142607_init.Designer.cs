@@ -12,8 +12,8 @@ using Transport_system_prototype.Models;
 namespace Transport__system_prototype.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250425010447_fix User full name null issue")]
-    partial class fixUserfullnamenullissue
+    [Migration("20250427142607_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -264,8 +264,9 @@ namespace Transport__system_prototype.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
@@ -284,11 +285,8 @@ namespace Transport__system_prototype.Migrations
 
             modelBuilder.Entity("Transport__system_prototype.Models.Client", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserID")
                         .IsRequired()

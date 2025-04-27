@@ -7,7 +7,7 @@ namespace Transport__system_prototype.Models
     {
         public int Id { get; set; }
         [ForeignKey("Client")]
-        public int ClientId { get; set; }
+        public string ClientId { get; set; }
         [ForeignKey("Trip")]
         public int TripId { get; set; }
         public virtual Client? Client { get; set; }

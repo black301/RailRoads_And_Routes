@@ -1,0 +1,49 @@
+@model IEnumerable<Transport__system_prototype.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">My Bookings</h2>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    <div class="row">
+        @foreach (var booking in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @booking.Trip?.FromStation?.Name to @booking.Trip?.TOStation?.Name
+                        </h5>
+                        <div class="booking-details">
+                            <p><i class="fas fa-calendar"></i> Travel Date: @booking.Trip?.TripDate.ToString("MMM dd, yyyy HH:mm")</p>
+                            <p><i class="fas fa-ticket-alt"></i> Number of Seats: @booking.NumberOfSeats</p>
+                            <p><i class="fas fa-money-bill"></i> Total Price: $@booking.ComputedTotalPrice</p>
+                            <p><i class="fas fa-clock"></i> Booked on: @booking.BookingDate.ToString("MMM dd, yyyy HH:mm")</p>
+                        </div>
+                        <div class="vehicle-details mt-3">
+                            <h6>Vehicle Details:</h6>
+                            <p><i class="fas fa-bus"></i> @booking.Trip?.vehicle?.Name (@booking.Trip?.vehicle?.Type)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <p>You haven't made any bookings yet.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-2">Browse Available Trips</a>
+        </div>
+    }
+</div>

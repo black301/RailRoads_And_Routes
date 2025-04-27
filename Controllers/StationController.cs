@@ -77,7 +77,7 @@ namespace Transport_system_prototype.Controllers
                 return RedirectToAction("Index");
             }
 
-           stationRepo.Delete(station);
+            stationRepo.Delete(station);
             stationRepo.Save();
             return RedirectToAction("Index");
         }
