@@ -70,7 +70,10 @@
                     <div class="form-section active" id="section1">
                         <div class="input-group-custom mb-4">
                             <div class="input-field">
-                                <input asp-for="FullName" class="form-control custom-input @(ViewData.ModelState["Full Name"]?.Errors.Count > 0 ? "is-invalid" : "")" id="Fullname" placeholder="Enter your Full Name" required data-field-group="1" />
+                                @{
+                                    var fullNameHasError = ViewData.ModelState["FullName"] != null && ViewData.ModelState["FullName"].Errors.Count > 0;
+                                }
+                                <input asp-for="FullName" class="form-control custom-input @(fullNameHasError ? "is-invalid" : "")" id="Fullname" placeholder="Enter your Full Name" required data-field-group="1" />
                                 <label asp-for="FullName"></label>
                                 <span asp-validation-for="FullName" class="invalid-feedback"></span>
                                 <div class="form-text">Enter Your first and last name</div>
@@ -78,7 +81,10 @@
                         </div>
                         <div class="input-group-custom mb-4">
                             <div class="input-field">
-                                <input asp-for="UserName" class="form-control custom-input @(ViewData.ModelState["UserName"]?.Errors.Count > 0 ? "is-invalid" : "")" id="UserName" placeholder="Enter your username" required data-field-group="1" />
+                                @{
+                                    var userNameHasError = ViewData.ModelState["UserName"] != null && ViewData.ModelState["UserName"].Errors.Count > 0;
+                                }
+                                <input asp-for="UserName" class="form-control custom-input @(userNameHasError ? "is-invalid" : "")" id="UserName" placeholder="Enter your username" required data-field-group="1" />
                                 <label asp-for="UserName">Username</label>
                                 <span asp-validation-for="UserName" class="invalid-feedback"></span>
                                 <div class="form-text">Choose a unique username for your account</div>
@@ -87,7 +93,10 @@
 
                         <div class="input-group-custom mb-4">
                             <div class="input-field">
-                                <input asp-for="Email" class="form-control custom-input @(ViewData.ModelState["Email"]?.Errors.Count > 0 ? "is-invalid" : "")" id="Email" placeholder="Enter your email address" required data-field-group="1" />
+                                @{
+                                    var emailHasError = ViewData.ModelState["Email"] != null && ViewData.ModelState["Email"].Errors.Count > 0;
+                                }
+                                <input asp-for="Email" class="form-control custom-input @(emailHasError ? "is-invalid" : "")" id="Email" placeholder="Enter your email address" required data-field-group="1" />
                                 <label asp-for="Email">Email Address</label>
                                 <span asp-validation-for="Email" class="invalid-feedback"></span>
                                 <div class="form-text">We'll never share your email with anyone else</div>
@@ -97,7 +106,10 @@
                         <div class="input-group-custom mb-4">
                             <div class="password-input-group">
                                 <div class="input-field">
-                                    <input asp-for="Password" class="form-control custom-input @(ViewData.ModelState["Password"]?.Errors.Count > 0 ? "is-invalid" : "")" id="Password" placeholder="Enter your password" required data-field-group="1" />
+                                    @{
+                                        var passwordHasError = ViewData.ModelState["Password"] != null && ViewData.ModelState["Password"].Errors.Count > 0;
+                                    }
+                                    <input asp-for="Password" class="form-control custom-input @(passwordHasError ? "is-invalid" : "")" id="Password" placeholder="Enter your password" required data-field-group="1" />
                                     <label asp-for="Password">Password</label>
                                 </div>
                                 <button type="button" class="password-toggle-btn" onclick="togglePassword('Password')">
@@ -116,7 +128,10 @@
                         <div class="input-group-custom mb-4">
                             <div class="password-input-group">
                                 <div class="input-field">
-                                    <input asp-for="ConfirmPassword" class="form-control custom-input @(ViewData.ModelState["ConfirmPassword"]?.Errors.Count > 0 ? "is-invalid" : "")" id="ConfirmPassword" placeholder="Confirm your password" required data-field-group="1" />
+                                    @{
+                                        var confirmPasswordHasError = ViewData.ModelState["ConfirmPassword"] != null && ViewData.ModelState["ConfirmPassword"].Errors.Count > 0;
+                                    }
+                                    <input asp-for="ConfirmPassword" class="form-control custom-input @(confirmPasswordHasError ? "is-invalid" : "")" id="ConfirmPassword" placeholder="Confirm your password" required data-field-group="1" />
                                     <label asp-for="ConfirmPassword">Confirm Password</label>
                                 </div>
                                 <button type="button" class="password-toggle-btn" onclick="togglePassword('ConfirmPassword')">
@@ -137,7 +152,10 @@
                     <div class="form-section" id="section2">
                         <div class="input-group-custom mb-4">
                             <div class="input-field">
-                                <input asp-for="PhoneNumber" class="form-control custom-input @(ViewData.ModelState["PhoneNumber"]?.Errors.Count > 0 ? "is-invalid" : "")" id="PhoneNumber" placeholder="Enter your phone number" required data-field-group="2" />
+                                @{
+                                    var phoneNumberHasError = ViewData.ModelState["PhoneNumber"] != null && ViewData.ModelState["PhoneNumber"].Errors.Count > 0;
+                                }
+                                <input asp-for="PhoneNumber" class="form-control custom-input @(phoneNumberHasError ? "is-invalid" : "")" id="PhoneNumber" placeholder="Enter your phone number" required data-field-group="2" />
                                 <label asp-for="PhoneNumber">Phone Number</label>
                                 <span asp-validation-for="PhoneNumber" class="invalid-feedback"></span>
                                 <div class="form-text">For booking confirmations and updates</div>
@@ -146,7 +164,10 @@
 
                         <div class="input-group-custom mb-4">
                             <div class="input-field">
-                                <input asp-for="City" class="form-control custom-input @(ViewData.ModelState["City"]?.Errors.Count > 0 ? "is-invalid" : "")" id="City" placeholder="Enter your city" required data-field-group="2" />
+                                @{
+                                    var cityHasError = ViewData.ModelState["City"] != null && ViewData.ModelState["City"].Errors.Count > 0;
+                                }
+                                <input asp-for="City" class="form-control custom-input @(cityHasError ? "is-invalid" : "")" id="City" placeholder="Enter your city" required data-field-group="2" />
                                 <label asp-for="City">City</label>
                                 <span asp-validation-for="City" class="invalid-feedback"></span>
                             </div>
@@ -209,19 +230,15 @@
             <br>
             <div class="form-footer">
                 <p>Already have an account? <a asp-action="Login" asp-controller="Account" class="login-link">Sign In</a></p>
-                <div class="social-login">
-                    <p>Or sign up with:</p>
-                    <div class="social-buttons">
-                        <button type="button" class="btn btn-social btn-google">
-                            <i class="fab fa-google"></i>
-                        </button>
-                        <button type="button" class="btn btn-social btn-facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </button>
-                        <button type="button" class="btn btn-social btn-apple">
-                            <i class="fab fa-apple"></i>
-                        </button>
-                    </div>
+            </div>
+            
+            <!-- Moved Google login button below the form footer -->
+            <div class="social-login mt-5">
+                <p>Or sign up with:</p>
+                <div class="social-buttons">
+                    <button type="button" class="btn btn-social btn-google">
+                        <i class="fab fa-google"></i> Continue with Google
+                    </button>
                 </div>
             </div>
         </div>
@@ -758,31 +775,34 @@
                 text-decoration: underline;
             }
 
+        /* Social login - Moved below form footer */
         .social-login {
-            margin-top: 1.5rem;
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #e9ecef;
         }
 
             .social-login p {
                 font-size: 0.9rem;
-                color: var(--gray-color);
                 margin-bottom: 1rem;
             }
 
         .social-buttons {
             display: flex;
             justify-content: center;
-            gap: 1rem;
         }
 
         .btn-social {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
             transition: var(--transition);
+            width: 100%;
+            max-width: 300px;
         }
 
         .btn-google {
@@ -790,20 +810,14 @@
             color: white;
         }
 
-        .btn-facebook {
-            background-color: #3b5998;
-            color: white;
-        }
+            .btn-google:hover {
+                transform: translateY(-3px);
+                background-color: #d73125;
+            }
 
-        .btn-apple {
-            background-color: #000;
-            color: white;
-        }
-
-        .btn-social:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
+            .btn-google i {
+                margin-right: 0.5rem;
+            }
 
         /* Invalid feedback */
         .invalid-feedback {
