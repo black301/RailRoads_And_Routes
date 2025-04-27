@@ -48,7 +48,7 @@ namespace Transport_system_prototype.Controllers
 
             var booking = new Booking
             {
-                ClientId = user.Id,
+                UserId = user.Id,
                 TripId = tripId,
                 NumberOfSeats = numberOfSeats,
                 BookingDate = DateTime.Now
@@ -59,37 +59,19 @@ namespace Transport_system_prototype.Controllers
                 // Update available seats
                 trip.AvailableSeats -= numberOfSeats;
                 _tripRepository.Update(trip);
-                _tripRepository.Save();
 
                 // Create booking
                 _bookingRepository.Add(booking);
                 _bookingRepository.Save();
 
                 TempData["Success"] = "Booking confirmed successfully!";
-                return RedirectToAction("MyBookings");
+                return RedirectToAction("Index","Home");
             }
             catch (Exception)
             {
                 TempData["Error"] = "An error occurred while processing your booking.";
                 return RedirectToAction("Index", "Home");
             }
-        }
-
-        public IActionResult MyBookings()
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var client = _clientRepository.GetAll().FirstOrDefault(c => c.UserID == userId);
-
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            //var bookings = _bookingRepository.GetAll()
-            //    .Where(b => b.ClientId == client.Id)
-            //    .OrderByDescending(b => b.BookingDate);
-            return NotFound();
-            //return View(bookings);
         }
     }
 }

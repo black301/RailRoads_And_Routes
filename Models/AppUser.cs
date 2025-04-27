@@ -8,6 +8,7 @@ namespace Transport__system_prototype.Models
         public virtual Admin ? Admin { get; set; }
         public string City { get; set; }
         public string? FullName { get; set; }
+        public virtual ICollection<Booking>? Bookings { get; set; }
 
     }
 }

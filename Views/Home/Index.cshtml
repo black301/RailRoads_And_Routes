@@ -582,32 +582,4 @@
             });
         </script>
     }
-
-@if (User.Identity.IsAuthenticated)
-{
-    <section class="my-bookings-section mb-5" >
-        <div class="container">
-            <h2 class="section-title">My Bookings</h2>
-            <div class="row">
-                @foreach (var booking in Model.UserBookings)
-                {
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card booking-card">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    @booking.Trip?.FromStation?.Name to @booking.Trip?.TOStation?.Name
-                                </h5>
-                                <div class="booking-details">
-                                    <p><i class="fas fa-calendar"></i> Travel Date: @booking.Trip?.TripDate.ToString("MMM dd, yyyy HH:mm")</p>
-                                    <p><i class="fas fa-ticket-alt"></i> Seats: @booking.NumberOfSeats</p>
-                                    <p><i class="fas fa-money-bill"></i> Total: $@booking.ComputedTotalPrice</p>
-                                    <p><i class="fas fa-clock"></i> Booked: @booking.BookingDate.ToString("MMM dd, yyyy")</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    </section>
 }

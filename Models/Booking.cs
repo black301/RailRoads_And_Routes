@@ -6,11 +6,11 @@ namespace Transport__system_prototype.Models
     public class Booking 
     {
         public int Id { get; set; }
-        [ForeignKey("Client")]
-        public string ClientId { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
         [ForeignKey("Trip")]
         public int TripId { get; set; }
-        public virtual Client? Client { get; set; }
+        public virtual AppUser? User { get; set; }
         public virtual Trip? Trip { get; set; }
         public DateTime BookingDate { get; set; }
         public int NumberOfSeats { get; set; }

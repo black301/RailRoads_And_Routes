@@ -45,13 +45,6 @@ namespace Transport_system_prototype.Controllers
                 if (userIdClaim != null)
                 {
                     appUser = userRepo.GetById(userIdClaim.Value);
-                    var client = clientRepo.GetAll().FirstOrDefault(c => c.UserID == userIdClaim.Value);
-                    if (client != null)
-                    {
-                        userBookings = bookingRepo.GetAll()
-                            .Where(b => b.ClientId == client.Id.ToString())
-                            .OrderByDescending(b => b.BookingDate).ToList();
-                    }
                 }
             }
 

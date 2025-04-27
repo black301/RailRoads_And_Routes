@@ -30,7 +30,7 @@ namespace Transport_system_prototype.Models
         public virtual ICollection<Booking>? Bookings { get; set; }
 
         [NotMapped]
-        public virtual IEnumerable<Client> Clients => Bookings?.Select(b => b.Client).Where(c => c != null)! ?? Enumerable.Empty<Client>();
+        public virtual List<AppUser> Users => Bookings?.Select(b => b.User).Where(c => c != null).ToList()!;
     }
 
 }

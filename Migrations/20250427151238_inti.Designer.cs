@@ -12,8 +12,8 @@ using Transport_system_prototype.Models;
 namespace Transport__system_prototype.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250427142607_init")]
-    partial class init
+    [Migration("20250427151238_inti")]
+    partial class inti
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -265,7 +265,6 @@ namespace Transport__system_prototype.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ClientId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("NumberOfSeats")
@@ -274,11 +273,17 @@ namespace Transport__system_prototype.Migrations
                     b.Property<int>("TripId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
                     b.HasIndex("TripId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
                 });
@@ -609,11 +614,9 @@ namespace Transport__system_prototype.Migrations
 
             modelBuilder.Entity("Transport__system_prototype.Models.Booking", b =>
                 {
-                    b.HasOne("Transport__system_prototype.Models.Client", "Client")
+                    b.HasOne("Transport__system_prototype.Models.Client", null)
                         .WithMany("Bookings")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClientId");
 
                     b.HasOne("Transport_system_prototype.Models.Trip", "Trip")
                         .WithMany("Bookings")
@@ -621,9 +624,15 @@ namespace Transport__system_prototype.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Client");
+                    b.HasOne("Transport__system_prototype.Models.AppUser", "User")
+                        .WithMany("Bookings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Trip");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Transport__system_prototype.Models.Client", b =>
@@ -667,6 +676,8 @@ namespace Transport__system_prototype.Migrations
             modelBuilder.Entity("Transport__system_prototype.Models.AppUser", b =>
                 {
                     b.Navigation("Admin");
+
+                    b.Navigation("Bookings");
 
                     b.Navigation("Client");
                 });

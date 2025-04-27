@@ -33,9 +33,9 @@ namespace Transport_system_prototype.Models
                 .HasKey(b => b.Id);
 
             modelBuilder.Entity<Booking>()
-                .HasOne(b => b.Client)
+                .HasOne(b => b.User)
                 .WithMany(c => c.Bookings)
-                .HasForeignKey(b => b.ClientId)
+                .HasForeignKey(b => b.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Booking>()
