@@ -6,13 +6,8 @@ namespace Transport__system_prototype.Models
 {
     public class Client
     {
-<<<<<<< HEAD
-        public string Id { get; set; }
-=======
-        [Key]
-        public int Id { get; set; }
->>>>>>> 326099a89b7633b5e8161b733ad6a465c59bf5c7
 
+        public string Id { get; set; }
         [ForeignKey("User")]
         public string UserID { get; set; }
 
