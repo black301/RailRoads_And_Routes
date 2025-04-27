@@ -6,8 +6,7 @@ using Transport__system_prototype.Repository;
 
 namespace Transport_system_prototype.Controllers
 {
-    [Authorize(Roles = "Admin")] // 👈 Only users in the "Admin" role can access any action here
-
+    [Authorize(Roles = "Admin")]
     public class StationController : Controller
     {
         private readonly IGenaricRepository<Station> stationRepo;
@@ -15,52 +14,103 @@ namespace Transport_system_prototype.Controllers
 
         public StationController(IGenaricRepository<Station> _stationRepo, IGenaricRepository<Trip> _tripRepo)
         {
-            stationRepo=_stationRepo;
-            tripRepo=_tripRepo;
+            stationRepo = _stationRepo;
+            tripRepo = _tripRepo;
         }
+
         public IActionResult Index()
         {
             return View(stationRepo.GetAll());
         }
 
-        public IActionResult create()
+        public IActionResult Create()
         {
             return View();
         }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult create(Station Station)
+        public IActionResult Create(Station station)
         {
             if (ModelState.IsValid)
             {
-                stationRepo.Add(Station);
+                if (station.ImageFile != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(station.ImageFile.FileName);
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        station.ImageFile.CopyTo(stream);
+                    }
+
+                    station.ImgURL = "/uploads/" + fileName;
+                }
+
+                stationRepo.Add(station);
                 stationRepo.Save();
                 return RedirectToAction("Index");
             }
-            return View(Station);
+            return View(station);
         }
+
         public IActionResult Edit(int id)
         {
             return View(stationRepo.GetById(id));
         }
+
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Edit(Station Station)
+        public IActionResult Edit(Station station)
         {
-            Station EditedStation = stationRepo.GetById(Station.Id);
+            Station EditedStation = stationRepo.GetById(station.Id);
             if (ModelState.IsValid)
             {
-                EditedStation.Name = Station.Name;
-                EditedStation.Location = Station.Location;
-                EditedStation.ImgURL = Station.ImgURL;
+                if (station.ImageFile != null)
+                {
+                    // Delete the old image if exists
+                    if (!string.IsNullOrEmpty(EditedStation.ImgURL))
+                    {
+                        string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", EditedStation.ImgURL.TrimStart('/'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    // Upload the new image
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(station.ImageFile.FileName);
+                    string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+
+                    string filePath = Path.Combine(uploadsFolder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        station.ImageFile.CopyTo(stream);
+                    }
+
+                    EditedStation.ImgURL = "/uploads/" + fileName;
+                }
+
+                EditedStation.Name = station.Name;
+                EditedStation.Location = station.Location;
                 stationRepo.Save();
                 return RedirectToAction("Index");
             }
             else
             {
-                return View(Station);
+                return View(station);
             }
         }
+
         public IActionResult Delete(int id)
         {
             var station = stationRepo.GetById(id);
@@ -77,10 +127,19 @@ namespace Transport_system_prototype.Controllers
                 return RedirectToAction("Index");
             }
 
-           stationRepo.Delete(station);
+            // Delete the image file if it exists
+            if (!string.IsNullOrEmpty(station.ImgURL))
+            {
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", station.ImgURL.TrimStart('/'));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+            }
+
+            stationRepo.Delete(station);
             stationRepo.Save();
             return RedirectToAction("Index");
         }
-
     }
 }

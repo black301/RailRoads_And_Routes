@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Image Upload Demo";
+}
+
+<div class="container mt-5">
+    <h1>Upload an Image</h1>
+
+    <!-- Display success message -->
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success">
+            @ViewBag.Message
+        </div>
+
+        <!-- Show the uploaded image -->
+        @if (ViewBag.ImagePath != null)
+        {
+            <img src="@ViewBag.ImagePath" alt="Uploaded Image" class="img-thumbnail mt-3" style="max-height: 300px;" />
+        }
+    }
+
+    <!-- Upload Form -->
+    <form method="post" enctype="multipart/form-data" asp-action="Upload">
+        @Html.AntiForgeryToken()
+        <div class="form-group mt-4">
+            <label for="imageFile">Choose an image:</label>
+            <input type="file" name="imageFile" class="form-control-file" accept=".jpg,.jpeg,.png,.gif" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Upload</button>
+    </form>
+</div>

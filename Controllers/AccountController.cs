@@ -117,6 +117,70 @@ namespace Transport__system_prototype.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
+        // Edit Profile View
+        public async Task<IActionResult> EditProfile()
+        {
+            // Get the currently logged-in user
+            var user = await userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Create a view model populated with the user's current data
+            var profileVM = new EditProfileVM
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                City = user.City,
+                FullName = user.FullName
+            };
+
+            return View(profileVM);
+        }
+
+        // Edit Profile POST (Handle Form Submission)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(EditProfileVM profileVM)
+        {
+            if (ModelState.IsValid)
+            {
+                // Get the currently logged-in user
+                var user = await userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
+
+                // Update user's information
+                user.UserName = profileVM.UserName;
+                user.Email = profileVM.Email;
+                user.PhoneNumber = profileVM.PhoneNumber;
+                user.City = profileVM.City;
+                user.FullName = profileVM.FullName;
+
+                var result = await userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home"); // Redirect to a different view (e.g., Home)
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+
+            return View(profileVM); // Return to the form with error messages if any
+        }
+
 
     }
 }

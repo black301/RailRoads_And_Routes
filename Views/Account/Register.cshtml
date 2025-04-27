@@ -46,7 +46,7 @@
             <form asp-action="Register" asp-controller="Account" method="post" class="registration-form needs-validation" novalidate>
                 @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger @(ViewData.ModelState.ErrorCount > 0 ? "show" : "")" role="alert">
                         <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Please fix the following errors:</h5>
                         <div asp-validation-summary="ModelOnly" class="mb-0"></div>
                     </div>
@@ -825,7 +825,13 @@
             color: var(--danger-color);
             border-left: 4px solid var(--danger-color);
             margin-bottom: 1.5rem;
+            display: none;
         }
+
+            .alert-danger.show {
+                display: block;
+                animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            }
 
         .alert-heading {
             display: flex;
@@ -957,6 +963,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Check if there are any validation errors
             const hasErrors = document.querySelectorAll('.is-invalid').length > 0;
+
+            // Show validation summary if there are errors
+            const validationAlert = document.querySelector('.alert-danger');
+            if (validationAlert && validationAlert.querySelector('.validation-summary ul li')) {
+                validationAlert.classList.add('show');
+            }
 
             if (hasErrors) {
                 // Find which section has errors

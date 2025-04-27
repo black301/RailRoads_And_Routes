@@ -80,16 +80,6 @@
                             <h5 class="mb-0 fw-bold text-primary" id="totalStations">@Model.Count()</h5>
                             <small class="text-muted">Total Stations</small>
                         </div>
-                        <div class="px-3 py-2 border-start border-end">
-                            <h5 class="mb-0 fw-bold text-primary" id="visibleStations">@Model.Count()</h5>
-                            <small class="text-muted">Visible Stations</small>
-                        </div>
-                        <div class="px-3 py-2">
-                            <h5 class="mb-0 fw-bold text-primary">
-                                @Model.Select(s => s.Location).Distinct().Count()
-                            </h5>
-                            <small class="text-muted">Unique Locations</small>
-                        </div>
                     </div>
                 </div>
             </div>
