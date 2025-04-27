@@ -1,0 +1,390 @@
+﻿@model Transport__system_prototype.ViewModels.EditProfileVM
+
+<div class="profile-edit-container py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg rounded-lg overflow-hidden">
+                    <!-- Premium Header -->
+                    <div class="card-header border-0 p-0">
+                        <div class="profile-header-bg d-flex align-items-center justify-content-center">
+                            <div class="text-center py-5">
+                                <div class="display-icon mb-3">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <h2 class="text-white mb-0">Edit Your Profile</h2>
+                                <p class="text-white-50">Update your personal information</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body p-0">
+                        <!-- Form Content with Premium Styling -->
+                        <div class="p-4 p-lg-5">
+                            <form asp-action="EditProfile" method="post" id="profileForm">
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4 border-0 shadow-sm" role="alert"></div>
+                                
+                                <!-- Full Name Field -->
+                                <div class="form-group position-relative mb-4 fade-in-up">
+                                    <label asp-for="FullName" class="form-label fw-bold">
+                                        <i class="fas fa-user text-primary me-2"></i>Full Name
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="fas fa-user-edit"></i>
+                                        </span>
+                                        <input asp-for="FullName" class="form-control form-control-lg border-0 bg-light" 
+                                               placeholder="Enter your full name" />
+                                    </div>
+                                    <span asp-validation-for="FullName" class="text-danger position-absolute validation-message"></span>
+                                    <small class="text-muted mt-1 d-block">Your legal full name as it appears on official documents</small>
+                                </div>
+                                
+                                <!-- Username Field -->
+                                <div class="form-group position-relative mb-4 fade-in-up">
+                                    <label asp-for="UserName" class="form-label fw-bold">
+                                        <i class="fas fa-at text-primary me-2"></i>Username
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="fas fa-user-tag"></i>
+                                        </span>
+                                        <input asp-for="UserName" class="form-control form-control-lg border-0 bg-light" 
+                                               placeholder="Choose a unique username" />
+                                    </div>
+                                    <span asp-validation-for="UserName" class="text-danger position-absolute validation-message"></span>
+                                    <small class="text-muted mt-1 d-block">This will be your public username visible to others</small>
+                                </div>
+                                
+                                <!-- Email Field -->
+                                <div class="form-group position-relative mb-4 fade-in-up">
+                                    <label asp-for="Email" class="form-label fw-bold">
+                                        <i class="fas fa-envelope text-primary me-2"></i>Email Address
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="fas fa-envelope-open"></i>
+                                        </span>
+                                        <input asp-for="Email" type="email" class="form-control form-control-lg border-0 bg-light" 
+                                               placeholder="your.email@example.com" />
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger position-absolute validation-message"></span>
+                                    <small class="text-muted mt-1 d-block">We'll never share your email with anyone else</small>
+                                </div>
+                                
+                                <!-- Phone Number Field -->
+                                <div class="form-group position-relative mb-4 fade-in-up">
+                                    <label asp-for="PhoneNumber" class="form-label fw-bold">
+                                        <i class="fas fa-phone text-primary me-2"></i>Phone Number
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="fas fa-mobile-alt"></i>
+                                        </span>
+                                        <input asp-for="PhoneNumber" class="form-control form-control-lg border-0 bg-light" 
+                                               placeholder="+1 (123) 456-7890" data-mask="(000) 000-0000" />
+                                    </div>
+                                    <span asp-validation-for="PhoneNumber" class="text-danger position-absolute validation-message"></span>
+                                    <small class="text-muted mt-1 d-block">For account verification and important notifications</small>
+                                </div>
+                                
+                                <!-- City Field -->
+                                <div class="form-group position-relative mb-4 fade-in-up">
+                                    <label asp-for="City" class="form-label fw-bold">
+                                        <i class="fas fa-map-marker-alt text-primary me-2"></i>City
+                                    </label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="fas fa-city"></i>
+                                        </span>
+                                        <input asp-for="City" class="form-control form-control-lg border-0 bg-light" 
+                                               placeholder="Enter your city" list="cityList" />
+                                    </div>
+                                    <span asp-validation-for="City" class="text-danger position-absolute validation-message"></span>
+                                    <small class="text-muted mt-1 d-block">Your current city of residence</small>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-5 fade-in-up">
+                                    <button type="button" class="btn btn-outline-secondary btn-lg px-4 order-2 order-md-1" 
+                                            data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                        <i class="fas fa-arrow-left me-2"></i>Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 order-1 order-md-2 w-100 w-md-auto">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <i class="fas fa-save me-2"></i>
+                                            <span>Save Changes</span>
+                                            <span class="spinner-border spinner-border-sm ms-2 d-none" id="saveSpinner" role="status" aria-hidden="true"></span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Status Indicators -->
+                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                    <!-- Success Toast -->
+                    <div id="successToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header bg-success text-white">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong class="me-auto">Success</strong>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            <div class="d-flex align-items-center">
+                                <div class="toast-icon bg-success text-white rounded-circle me-3">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Profile Updated!</h6>
+                                    <small>Your profile has been updated successfully.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cancel Modal -->
+                <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header bg-light">
+                                <h5 class="modal-title" id="cancelModalLabel">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    Discard Changes?
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to discard your changes? Any unsaved changes will be lost.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-pencil-alt me-2"></i>Continue Editing
+                                </button>
+                                <a href="@Url.Action("Index", "Home")" class="btn btn-danger">
+                                    <i class="fas fa-times me-2"></i>Discard Changes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    .profile-header-bg {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        min-height: 180px;
+        position: relative;
+    }
+    
+    .display-icon {
+        font-size: 3.5rem;
+        height: 80px;
+        width: 80px;
+        line-height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        color: white;
+        margin: 0 auto;
+    }
+    
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(37, 117, 252, 0.25);
+        border-color: #2575fc;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #5b0fb0 0%, #1e68e6 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(37, 117, 252, 0.2);
+    }
+    
+    .form-control {
+        transition: all 0.3s ease;
+        border-radius: 0.5rem;
+    }
+    
+    .form-control:focus {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+    
+    .input-group-text {
+        border-radius: 0.5rem 0 0 0.5rem;
+    }
+    
+    .form-control {
+        border-radius: 0 0.5rem 0.5rem 0;
+    }
+    
+    .validation-message {
+        bottom: -20px;
+        left: 0;
+        font-size: 0.8rem;
+    }
+    
+    .toast-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Animation for form elements */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .fade-in-up {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+    }
+    
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+    .form-group:nth-child(4) { animation-delay: 0.4s; }
+    .form-group:nth-child(5) { animation-delay: 0.5s; }
+    .form-group:nth-child(6) { animation-delay: 0.6s; }
+    
+    /* Floating label animation */
+    .form-label {
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus + .form-label,
+    .form-control:not(:placeholder-shown) + .form-label {
+        transform: translateY(-25px);
+        font-size: 0.8rem;
+        color: #2575fc;
+    }
+    
+    /* Card hover effect */
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Button pulse animation */
+    @@keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(37, 117, 252, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(37, 117, 252, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(37, 117, 252, 0);
+        }
+    }
+    
+    .btn-primary {
+        animation: pulse 2s infinite;
+    }
+    
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .display-icon {
+            font-size: 2.5rem;
+            height: 60px;
+            width: 60px;
+            line-height: 60px;
+        }
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Staggered animation for form elements
+            setTimeout(function() {
+                $(".fade-in-up").each(function(index) {
+                    var $this = $(this);
+                    setTimeout(function() {
+                        $this.css("opacity", "1");
+                    }, 100 * index);
+                });
+            }, 300);
+            
+            // Form submission with animation
+            $("#profileForm").submit(function(e) {
+                $("#saveSpinner").removeClass("d-none");
+                
+                // Simulate form submission delay (remove in production)
+                setTimeout(function() {
+                    $("#saveSpinner").addClass("d-none");
+                    var toast = new bootstrap.Toast(document.getElementById('successToast'));
+                    toast.show();
+                }, 1500);
+                
+                // In a real app, you'd remove this line to allow actual form submission
+                // e.preventDefault();
+            });
+            
+            // Phone number mask
+            $("[data-mask]").each(function() {
+                var mask = $(this).data("mask");
+                $(this).mask(mask);
+            });
+            
+            // Input focus effects
+            $(".form-control").focus(function() {
+                $(this).closest(".form-group").addClass("focused");
+            }).blur(function() {
+                $(this).closest(".form-group").removeClass("focused");
+            });
+            
+            // Validation styling enhancement
+            $("form").on("submit", function() {
+                if (!$(this).valid()) {
+                    $(".input-validation-error").first().focus();
+                    $(".input-validation-error").closest(".form-group").addClass("shake");
+                    
+                    setTimeout(function() {
+                        $(".form-group").removeClass("shake");
+                    }, 1000);
+                }
+            });
+        });
+        
+        // Animation for shake effect
+        @@keyframes shake {
+            0%, 100% {transform: translateX(0);}
+            10%, 30%, 50%, 70%, 90% {transform: translateX(-5px);}
+            20%, 40%, 60%, 80% {transform: translateX(5px);}
+        }
+        
+        .shake {
+            animation: shake 0.8s ease;
+        }
+    </script>
+}

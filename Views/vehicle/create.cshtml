@@ -12,7 +12,7 @@
                     <h2 class="mb-0">Add New Vehicle</h2>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Create" method="post">
+                    <form asp-action="Create" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <div class="mb-3">
@@ -95,14 +95,9 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="ImgURL" class="form-label">Image URL</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-image"></i></span>
-                                <input asp-for="ImgURL" class="form-control" placeholder="Enter URL for vehicle image" />
-                            </div>
-                            <div class="form-text">Enter a URL for the vehicle image or leave blank to use a default image.</div>
-                            <span asp-validation-for="ImgURL" class="text-danger"></span>
+                        <div class="form-group">
+                            <label asp-for="ImageFile">Upload Vehicle Image</label>
+                            <input asp-for="ImageFile" type="file" class="form-control" />
                         </div>
 
                         <div class="d-flex justify-content-between mt-4">

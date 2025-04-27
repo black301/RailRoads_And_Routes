@@ -12,7 +12,7 @@
                     <h2 class="mb-0">Edit Station</h2>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <input type="hidden" asp-for="Id" />
@@ -31,35 +31,37 @@
                             </div>
                             <span asp-validation-for="Location" class="text-danger"></span>
                         </div>
+
                         <div class="mb-3">
-                            <label asp-for="ImgURL" class="form-label">Image URL</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-image"></i></span>
-                                <input asp-for="ImgURL" class="form-control" id="imgUrlInput" placeholder="Enter URL for station image" />
-                            </div>
-                            <div class="form-text">Enter a URL for the station image or leave blank to use a default image.</div>
-                            <span asp-validation-for="ImgURL" class="text-danger"></span>
+                            <label asp-for="ImageFile" class="form-label">Update Station Image</label>
+                            <input asp-for="ImageFile" class="form-control" type="file" accept="image/*" onchange="previewImage(event)" />
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
                         </div>
 
                         @if (!string.IsNullOrEmpty(Model.ImgURL))
                         {
-                            <div class="mb-3">
+                            <div id="currentImageContainer" class="mb-3">
                                 <label class="form-label">Current Image</label>
                                 <div class="text-center p-3 border rounded">
-                                    <img src="@Url.Content(Model.ImgURL)" id="currentImage" alt="@Model.Name" class="img-fluid" style="max-height: 200px;" />
+                                    <img id="currentImage" src="@Url.Content(Model.ImgURL)" alt="@Model.Name" class="img-fluid" style="max-height: 200px;" />
                                 </div>
                             </div>
                         }
+
+                        <div id="imagePreviewContainer" class="mb-3 d-none">
+                            <label class="form-label">New Image Preview</label>
+                            <div class="text-center p-3 border rounded">
+                                <img id="imagePreview" src="#" alt="New Preview" class="img-fluid" style="max-height: 200px;" />
+                            </div>
+                        </div>
 
                         <div class="d-flex justify-content-between mt-4">
                             <a asp-action="Index" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left"></i> Back to List
                             </a>
-                            <div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-save"></i> Save Changes
-                                </button>
-                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -74,34 +76,19 @@
     }
 
     <script>
-        $(document).ready(function() {
-            $('#imgUrlInput').on('change', function() {
-                let url = $(this).val().trim();
+        function previewImage(event) {
+            var input = event.target;
+            var reader = new FileReader();
 
-                // Fix "~/" paths (used in ASP.NET, but not recognized by browsers)
-                url = url.replace(/^~\//, '/');
+            reader.onload = function() {
+                var preview = document.getElementById('imagePreview');
+                preview.src = reader.result;
+                document.getElementById('imagePreviewContainer').classList.remove('d-none');
+            };
 
-                // Ensure the URL is root-relative if it's not an absolute URL
-                if (url && !url.startsWith('http') && !url.startsWith('/')) {
-                    url = '/' + url;
-                }
-
-                if (url) {
-                    if ($('#currentImage').length) {
-                        $('#currentImage').attr('src', url);
-                    } else {
-                        const imgPreview = `
-                            <div class="mb-3">
-                                <label class="form-label">Image Preview</label>
-                                <div class="text-center p-3 border rounded">
-                                    <img src="${url}" id="currentImage" alt="Preview" class="img-fluid" style="max-height: 200px;" />
-                                </div>
-                            </div>`;
-                        $(this).closest('.mb-3').after(imgPreview);
-                    }
-                }
-            });
-        });
+            if (input.files && input.files[0]) {
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
     </script>
-
 }

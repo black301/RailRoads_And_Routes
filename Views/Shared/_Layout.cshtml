@@ -236,12 +236,21 @@
                                         <span>@User.Identity.Name</span>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+
                                         <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> My Profile</a></li>
                                         <li>
-                                            <a class="dropdown-item" href="@Url.Action("MyBookings", "BookingController")">
+                                            <a class="dropdown-item" href="#">
                                                 <i class="fas fa-ticket-alt me-2"></i> My Bookings
                                             </a>
                                         </li>
+
+                                        <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile"><i class="fas fa-user me-2"></i> My Profile</a></li>
+                                        <!-- Only show "My Bookings" if the user is not an admin -->
+                                        @if (!User.IsInRole("Admin"))
+                                        {
+                                            <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile"><i class="fas fa-ticket-alt me-2"></i> My Bookings</a></li>
+                                        }
+
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <form asp-controller="Account" asp-action="Logout" method="post">

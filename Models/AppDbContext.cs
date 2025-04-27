@@ -36,13 +36,13 @@ namespace Transport_system_prototype.Models
                 .HasOne(b => b.User)
                 .WithMany(c => c.Bookings)
                 .HasForeignKey(b => b.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.Trip)
                 .WithMany(t => t.Bookings)
                 .HasForeignKey(b => b.TripId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Station>().HasData(
                 new Station { Id = 1, Name = "Alexandria", Location = "Alexandria, Egypt", ImgURL = "~/uploads/Alex.jpeg" },

@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Transport_system_prototype.Models;
 
 namespace Transport__system_prototype.Models
 {
     public class Booking 
     {
+        [Key]
         public int Id { get; set; }
         [ForeignKey("User")]
         public string UserId { get; set; }

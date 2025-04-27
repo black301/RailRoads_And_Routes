@@ -5,6 +5,7 @@ namespace Transport__system_prototype.Models
 {
     public class Admin
     {
+        [Key]
         public int Id { get; set; }
 
         [ForeignKey("User")]

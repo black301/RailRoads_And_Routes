@@ -6,6 +6,7 @@ namespace Transport_system_prototype.Models
 {
     public class Trip
     {
+        [Key]
         public int Id { get; set; }
 
         [ForeignKey("vehicle")]
