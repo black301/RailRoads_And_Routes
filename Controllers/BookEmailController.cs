@@ -1,76 +1,70 @@
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Net;
 using System.Net.Mail;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
+using QuestPDF.Helpers;
+using System.IO;
+using Transport__system_prototype.Migrations;
 
-namespace Transport__system_prototype.Services
+namespace Transport__system_prototype.Controllers
 {
-    public class EmailSender : IEmailSender
+    public class BookEmailController : Controller
     {
-        public async Task SendEmailAsync(string email, string subject, string message)
+        public IActionResult SendTestEmail()
         {
-            var fromAddress = new MailAddress("biocodeocteam4010@gmail.com", "RailRoads & Routes");
-            var toAddress = new MailAddress(email);
-            const string fromPassword = "hmrj gfwn kdhx cljl";
-
-            var smtp = new SmtpClient
+            try
             {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
+                // Set the QuestPDF license type
+                QuestPDF.Settings.License = LicenseType.Community;
 
-            using (var mailMessage = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = message,
-                IsBodyHtml = true
-            })
-            {
-                await smtp.SendMailAsync(mailMessage);
-            }
-        }
+                // Enable debugging to get more detailed error information
+                QuestPDF.Settings.EnableDebugging = true;
 
-        public async Task SendEmailWithAttachmentAsync(string email, string subject, string message, byte[] attachment, string attachmentName)
-        {
-            var fromAddress = new MailAddress("biocodeocteam4010@gmail.com", "RailRoads & Routes");
-            var toAddress = new MailAddress(email);
-            const string fromPassword = "hmrj gfwn kdhx cljl";
+                // Email settings
+                var fromAddress = new MailAddress("biocodeocteam4010@gmail.com", "Transport System");
+                var toAddress = new MailAddress("ali.essam.abdelhaleem.20@gmail.com"); // change to your target test email
+                const string fromPassword = "hmrj gfwn kdhx cljl"; // use app password if possible
 
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
+                const string subject = "Booking Confirmation - Your Ticket";
+                const string body = "Thank you for booking with us! Please find your ticket attached.";
 
-            // Generate the ticket PDF
-            var pdfBytes = GenerateTestTicket();
+                // Generate the Ticket PDF
+                var ticketBytes = GenerateTestTicket();
 
-            using (var mailMessage = new MailMessage(fromAddress, toAddress)
-            {
-                Subject = subject,
-                Body = message,
-                IsBodyHtml = true
-            })
-            {
-                // Add the PDF attachment using the generated ticket
-                using (var ms = new MemoryStream(pdfBytes))
+                // Prepare email
+                var smtp = new SmtpClient
                 {
-                    mailMessage.Attachments.Add(new Attachment(ms, "Ticket.pdf", "application/pdf"));
-                    await smtp.SendMailAsync(mailMessage);
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                };
+
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    // Attach the PDF ticket
+                    message.Attachments.Add(new Attachment(new MemoryStream(ticketBytes), "Ticket.pdf", "application/pdf"));
+
+                    smtp.Send(message);
                 }
+
+                return Content("Email sent successfully!");
+            }
+            catch (Exception ex)
+            {
+                return Content($"Failed to send email. Error: {ex.Message}");
             }
         }
-         private byte[] GenerateTestTicket()
+
+        private byte[] GenerateTestTicket()
         {
+            // Sample data - in a real app, this would come from your database
             var ticketData = new
             {
                 PassengerName = "John Doe",
@@ -236,6 +230,5 @@ namespace Transport__system_prototype.Services
 
             return pdf.GeneratePdf();
         }
-       
     }
 }
