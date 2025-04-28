@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.SignalR;
 using RailRoads_And_Routes.Hubs;
+using Transport__system_prototype.Services;
 
 namespace Transport_system_prototype
 {
@@ -61,6 +62,8 @@ namespace Transport_system_prototype
 
             // Add SignalR services
             builder.Services.AddSignalR();
+
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             var app = builder.Build();
             //app.UseCookiePolicy();

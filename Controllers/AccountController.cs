@@ -7,20 +7,25 @@ using NuGet.Protocol.Core.Types;
 using Stripe;
 using Transport__system_prototype.Models;
 using Transport__system_prototype.Repository;
+using Transport__system_prototype.Services;  
 using Transport__system_prototype.ViewModels;
 
 namespace Transport__system_prototype.Controllers
 {
     public class AccountController : Controller
     {
-        //DI
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
+        private readonly IEmailSender emailSender;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            IEmailSender emailSender)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.emailSender = emailSender;
         }
         //register
         public IActionResult RegisterView()
@@ -189,5 +194,95 @@ namespace Transport__system_prototype.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                    
+                    // Generate a random 6-digit code
+                    Random random = new Random();
+                    string resetCode = random.Next(100000, 999999).ToString();
+                    
+                    // Send email with the 6-digit code
+                    await emailSender.SendEmailAsync(
+                        model.Email,
+                        "Password Reset Code",
+                        $"Your password reset code is: {resetCode}"
+                    );
+                    
+                    TempData["ResetEmail"] = model.Email;
+                    TempData["ResetToken"] = token; 
+                    TempData["ResetCode"] = resetCode;
+                    return RedirectToAction("ResetPassword");
+                }
+                ModelState.AddModelError("", "Email not found");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword()
+        {
+            var email = TempData["ResetEmail"]?.ToString();
+            var code = TempData["ResetCode"]?.ToString();
+            
+            // Preserve the values for the POST action
+            TempData.Keep("ResetEmail");
+            TempData.Keep("ResetCode");
+
+            if (string.IsNullOrEmpty(email))
+                return RedirectToAction(nameof(ForgotPassword));
+
+            var model = new ResetPasswordViewModel { Email = email };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var storedCode = TempData["ResetCode"]?.ToString();
+                
+                if (model.Code != storedCode)
+                {
+                    ModelState.AddModelError("Code", "Invalid reset code");
+                    return View(model);
+                }
+
+                var user = await userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    // Generate a new token for password reset
+                    var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                    var result = await userManager.ResetPasswordAsync(user, token, model.NewPassword);
+                    
+                    if (result.Succeeded)
+                    {
+                        TempData["Success"] = "Password has been reset successfully";
+                        return RedirectToAction(nameof(Login));
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+            return View(model);
+        }
+    
     }
 }
+
