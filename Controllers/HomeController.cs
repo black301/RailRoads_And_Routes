@@ -19,10 +19,13 @@ namespace Transport_system_prototype.Controllers
         private readonly IGenaricRepository<Vehicle> vehicleRepo;
 
         public HomeController(ILogger<HomeController> logger, IGenaricRepository<Trip> _tripRepo, IGenaricRepository<Station> _stationRepo, IGenaricRepository<AppUser> _userRepo, IGenaricRepository<Vehicle> _vehicleRepo)
+        public HomeController(ILogger<HomeController> logger, IGenaricRepository<Trip> _tripRepo, IGenaricRepository<Station> _stationRepo, IGenaricRepository<AppUser> _userRepo, IGenaricRepository<Vehicle> _vehicleRepo)
         {
             _logger = logger;
             tripRepo=_tripRepo;
             stationRepo=_stationRepo;
+            vehicleRepo = _vehicleRepo;
+            userRepo =_userRepo;
             vehicleRepo = _vehicleRepo;
             userRepo =_userRepo;
         }

@@ -67,6 +67,7 @@
                                             </span>
                                             <input type="date" class="form-control border-start-0" id="TripDate" name="TripDate"
                                                    min="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+                                                   min="@DateTime.Now.ToString("yyyy-MM-dd")" required>
                                         </div>
                                     </div>
                                     <div class="col-md-2 d-flex align-items-end">
@@ -101,6 +102,7 @@
 <!-- Available Trips Section -->
 <section class="mb-5" id="available-trips-section">
     <h2 class="h4 mb-4">Available Trips</h2>
+    <h2 class="h4 mb-4">Available Trips</h2>
     <div id="available-trips-container">
         @if (Model.Trips != null && Model.Trips.Any())
         {
@@ -125,9 +127,13 @@
                                     data-from-station-id="@trip.FromStationId"
                                     data-to-station-id="@trip.TOStationId"
                                     data-trip-date="@trip.TripDate.ToString("yyyy-MM-dd")">
+                                    data-from-station-id="@trip.FromStationId"
+                                    data-to-station-id="@trip.TOStationId"
+                                    data-trip-date="@trip.TripDate.ToString("yyyy-MM-dd")">
                                     <td>@trip.FromStation?.Name</td>
                                     <td>@trip.TOStation?.Name</td>
                                     <td>@trip.TripDate.ToString("MMM dd, yyyy")</td>
+                                    <td>@trip.vehicle?.Type : @trip.vehicle?.Name</td>
                                     <td>@trip.vehicle?.Type : @trip.vehicle?.Name</td>
                                     <td>
                                         <span id="available-seats-@trip.Id" class="@(trip.AvailableSeats > 5 ? "text-success" : trip.AvailableSeats > 0 ? "text-warning" : "text-danger")">
@@ -137,6 +143,29 @@
                                     <td>$@trip.Price</td>
                                     <td>
                                         @if (User.Identity.IsAuthenticated)
+                                        {
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <div class="btn-group">
+                                                    <a href="@Url.Action("index", "Trip")" class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-edit me-1"></i>show all trips
+                                                    </a>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-sm @(trip.AvailableSeats <= 0 ? "btn-outline-secondary" : "btn-primary") book-trip-btn"
+                                                        data-trip-id="@trip.Id"
+                                                        data-from="@trip.FromStation?.Name"
+                                                        data-to="@trip.TOStation?.Name"
+                                                        data-date="@trip.TripDate.ToString("MMM dd, yyyy")"
+                                                        data-price="@trip.Price"
+                                                        data-available="@trip.AvailableSeats"
+                                                        data-vehicle="@trip.vehicle?.Name"
+                                                @(trip.AvailableSeats <= 0 ? "disabled" : "")>
+                                                    @(trip.AvailableSeats <= 0 ? "Sold Out" : "Book Now")
+                                                </button>
+                                            }
                                         {
                                             @if (User.IsInRole("Admin"))
                                             {
@@ -183,6 +212,79 @@
                     <div>
                         <h5 class="mb-1">No trips available</h5>
                         <p class="mb-0">Please use the search form above to find trips between specific stations.</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Our Vehicles Section -->
+<section class="mb-5" id="vehicles-section">
+    <h2 class="h4 mb-4">Our Vehicles</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @if (Model.Vehicles != null && Model.Vehicles.Any())
+        {
+            foreach (var vehicle in Model.Vehicles)
+            {
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        @if (!string.IsNullOrEmpty(vehicle.ImgURL))
+                        {
+                            <img src="@vehicle.ImgURL" class="card-img-top" alt="@vehicle.Name" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-light text-center py-5">
+                                <i class="fas fa-bus fa-4x text-muted"></i>
+                                <p class="mt-2 text-muted">No image available</p>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@vehicle.Name</h5>
+                            <p class="card-text text-muted">@vehicle.Type</p>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><i class="fas fa-chair me-2 text-primary"></i>@vehicle.NumberOfSeats Seats</span>
+                            </div>
+                            <div class="vehicle-features">
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+                                    @if (vehicle.WiFi)
+                                    {
+                                        <span class="badge bg-light text-dark border"><i class="fas fa-wifi me-1 text-primary"></i>WiFi</span>
+                                    }
+                                    @if (vehicle.AirConditioning)
+                                    {
+                                        <span class="badge bg-light text-dark border"><i class="fas fa-snowflake me-1 text-primary"></i>AC</span>
+                                    }
+                                    @if (vehicle.TV)
+                                    {
+                                        <span class="badge bg-light text-dark border"><i class="fas fa-tv me-1 text-primary"></i>TV</span>
+                                    }
+                                    @if (vehicle.Drinks)
+                                    {
+                                        <span class="badge bg-light text-dark border"><i class="fas fa-coffee me-1 text-primary"></i>Drinks</span>
+                                    }
+                                    @if (vehicle.Snacks)
+                                    {
+                                        <span class="badge bg-light text-dark border"><i class="fas fa-cookie me-1 text-primary"></i>Snacks</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info border-0 shadow-sm">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle text-primary me-3 fs-4"></i>
+                        <div>
+                            <h5 class="mb-1">No vehicles available</h5>
+                            <p class="mb-0">Our vehicle information will be updated soon.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -386,8 +488,12 @@
                                 <label asp-for="AppUser.FullName" class="form-label">Full Name</label>
                                 @if (User.Identity.IsAuthenticated)
                                 {
+                                @if (User.Identity.IsAuthenticated)
+                                {
                                     <input type="text" class="form-control" id="ClientName" asp-for="AppUser.FullName" value="@(Model.AppUser?.FullName ?? "")" required>
                                 }
+                                else
+                                {
                                 else
                                 {
                                     <input type="text" class="form-control" id="ClientName" asp-for="AppUser.FullName" required>
@@ -395,17 +501,27 @@
                             </div>
 
                             <div class="mb-3">
+                            <div class="mb-3">
                                 <label asp-for="AppUser.Email" class="form-label">Email Address</label>
+                                @if (User.Identity.IsAuthenticated)
+                                {
                                 @if (User.Identity.IsAuthenticated)
                                 {
                                     <input type="email" class="form-control" id="ClientEmail" asp-for="AppUser.Email" value="@(Model.AppUser?.Email?? "")" required>
                                 }
                                 else
                                 {
+                                else
+                                {
                                     <input type="email" class="form-control" id="ClientEmail" asp-for="AppUser.Email" required>
                                 }
                             </div>
+                            </div>
 
+                            <div class="mb-3">
+                                <label for="ClientPhone" class="form-label">Phone Number</label>
+                                @if (User.Identity.IsAuthenticated)
+                                {
                             <div class="mb-3">
                                 <label for="ClientPhone" class="form-label">Phone Number</label>
                                 @if (User.Identity.IsAuthenticated)
@@ -414,8 +530,11 @@
                                 }
                                 else
                                 {
+                                else
+                                {
                                     <input type="tel" class="form-control" id="ClientPhone" asp-for="AppUser.PhoneNumber" required>
                                 }
+                            </div>
                             </div>
 
                             <div class="payment-method mb-3">
@@ -454,10 +573,25 @@
             <div class="modal-body">
                 <h6>Booking Policy</h6>
                 <p>All bookings are subject to availability. A booking is only confirmed once full payment has been received.</p>
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Booking Policy</h6>
+                <p>All bookings are subject to availability. A booking is only confirmed once full payment has been received.</p>
 
                 <h6>Cancellation Policy</h6>
                 <p>Cancellations made more than 48 hours before departure will receive a full refund minus a processing fee. Cancellations within 48 hours of departure are non-refundable.</p>
+                <h6>Cancellation Policy</h6>
+                <p>Cancellations made more than 48 hours before departure will receive a full refund minus a processing fee. Cancellations within 48 hours of departure are non-refundable.</p>
 
+                <h6>Refund Policy</h6>
+                <p>Refunds will be processed within 7-14 business days to the original payment method.</p>
                 <h6>Refund Policy</h6>
                 <p>Refunds will be processed within 7-14 business days to the original payment method.</p>
 
@@ -470,7 +604,28 @@
         </div>
     </div>
 </div>
+                <h6>Baggage Policy</h6>
+                <p>Each passenger is allowed one piece of luggage and one carry-on item. Additional baggage may incur extra charges.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- No Results Template -->
+<template id="no-results-template">
+    <div class="alert alert-info border-0 shadow-sm">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-info-circle text-primary me-3 fs-4"></i>
+            <div>
+                <h5 class="mb-1">No trips found</h5>
+                <p class="mb-0">No trips match your search criteria. Please try different stations or dates.</p>
+            </div>
+        </div>
+    </div>
+</template>
 <!-- No Results Template -->
 <template id="no-results-template">
     <div class="alert alert-info border-0 shadow-sm">
