@@ -2,7 +2,6 @@
 class BookingSystem {
     constructor() {
         // Initialize Stripe
-        this.stripe = Stripe('pk_test_51RFotrFddIPqGgfQI1SeawdUYy9dmgO0Kn0dshSuJPlp1XeAt5MvmVs9niSrSuDqGh06sIGAjAgn3TFUzqPmfXFR007PDvwcIB');
         
         this.initializeDatePicker();
         this.initializeSearchForm();
@@ -346,6 +345,7 @@ class BookingSystem {
         this.searchResultsContainer.appendChild(noResults);
     }
 
+
     showLoadingState() {
         this.searchButton.disabled = true;
         this.searchButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...';
@@ -371,6 +371,26 @@ class BookingSystem {
             if (this.bookingModal) {
                 this.bookingModal.show();
             }
+        }
+    }
+    updateTotalPrice() {
+        const seatCount = parseInt(this.seatsDropdown.value, 10);
+        const pricePerSeatText = document.getElementById('modal-price').textContent;
+
+        // Extract the number from "$20", remove "$"
+        const pricePerSeat = parseFloat(pricePerSeatText.replace('$', '').trim());
+
+        const totalPrice = seatCount * pricePerSeat;
+
+        // Update total price display and hidden input
+        const modalTotalPrice = document.getElementById('modal-total-price');
+        const totalPriceInput = document.getElementById('TotalPrice');
+
+        if (modalTotalPrice) {
+            modalTotalPrice.textContent = `$${totalPrice.toFixed(2)}`;
+        }
+        if (totalPriceInput) {
+            totalPriceInput.value = totalPrice.toFixed(2);
         }
     }
 
@@ -422,6 +442,10 @@ class BookingSystem {
         if (this.searchForm) {
             this.searchForm.addEventListener('submit', (e) => this.handleSearch(e));
         }
+        if (this.seatsDropdown) {
+            this.seatsDropdown.addEventListener('change', () => this.updateTotalPrice());
+        }
+
 
         if (this.clearSearchBtn) {
             this.clearSearchBtn.addEventListener('click', () => {
