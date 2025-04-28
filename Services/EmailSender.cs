@@ -8,8 +8,10 @@ namespace Transport__system_prototype.Services
 {
     public class EmailSender : IEmailSender
     {
+
         public async Task SendEmailAsync(string email, string subject, string message)
         {
+           
             var fromAddress = new MailAddress("biocodeocteam4010@gmail.com", "RailRoads & Routes");
             var toAddress = new MailAddress(email);
             const string fromPassword = "hmrj gfwn kdhx cljl";
@@ -37,6 +39,11 @@ namespace Transport__system_prototype.Services
 
         public async Task SendEmailWithAttachmentAsync(string email, string subject, string message, byte[] attachment, string attachmentName)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
+
+                // Enable debugging to get more detailed error information
+                QuestPDF.Settings.EnableDebugging = true;
+
             var fromAddress = new MailAddress("biocodeocteam4010@gmail.com", "RailRoads & Routes");
             var toAddress = new MailAddress(email);
             const string fromPassword = "hmrj gfwn kdhx cljl";
