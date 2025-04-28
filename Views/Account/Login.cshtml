@@ -40,12 +40,14 @@
                     <p class="login-subtext">Sign in to access your account</p>
                 </div>
 
-                <div class="social-login">
-                    <a href="/Account/LoginGoolge" class="social-btn google-btn">
-                        <i class="fab fa-google"></i>
-                        <span>Continue with Google</span>
+                <div class="social-login mt-5">
+                <p>SignIN with:</p>
+                <div class="social-buttons">
+                    <a href="@Url.Action("LoginGoogle", "Account")" class="btn btn-social btn-google">
+                        <i class="fab fa-google"></i> Continue with Google
                     </a>
                 </div>
+            </div>
 
                 <div class="divider">
                     <span>or sign in with Email</span>
@@ -638,6 +640,49 @@
                 font-size: 0.875rem;
             }
         }
+
+        .social-login {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #e9ecef;
+        }
+
+            .social-login p {
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-social {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn-google {
+            background-color: #ea4335;
+            color: white;
+        }
+
+            .btn-google:hover {
+                transform: translateY(-3px);
+                background-color: #d73125;
+            }
+
+            .btn-google i {
+                margin-right: 0.5rem;
+            }
     </style>
 }
 

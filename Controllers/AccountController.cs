@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using NuGet.Protocol.Core.Types;
 using Stripe;
+using System.Security.Claims;
 using Transport__system_prototype.Models;
 using Transport__system_prototype.Repository;
 using Transport__system_prototype.Services;  
 using Transport__system_prototype.ViewModels;
+using System.Text.Json;
 
 namespace Transport__system_prototype.Controllers
 {
@@ -30,6 +32,12 @@ namespace Transport__system_prototype.Controllers
         //register
         public IActionResult RegisterView()
         {
+            var googleData = TempData["GoogleRegisterData"]?.ToString();
+            if (googleData != null)
+            {
+                var registerVM = JsonSerializer.Deserialize<RegisterVM>(googleData);
+                return View("Register", registerVM);
+            }
             return View("Register");
         }
         //register post
@@ -75,9 +83,9 @@ namespace Transport__system_prototype.Controllers
             return View(VM);
         }
         //login
-        public IActionResult Login()
+        public IActionResult LoginView()
         {
-            return View();
+            return View("Login");
         }
         //login post
         [HttpPost]
@@ -110,11 +118,49 @@ namespace Transport__system_prototype.Controllers
             }
             return View(VM);
         }
-        public IActionResult LoginGoolge()
+        public IActionResult LoginGoogle()
         {
-            var redirectUrl = Url.Action("Index", "Home");
-            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            var properties = new AuthenticationProperties 
+            { 
+                RedirectUri = Url.Action("GoogleResponse", "Account") 
+            };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            if (!result.Succeeded)
+                return RedirectToAction("Login");
+
+            var googleUser = result.Principal;
+            var email = googleUser.FindFirstValue(ClaimTypes.Email);
+            var name = googleUser.FindFirstValue(ClaimTypes.Name);
+            var firstName = googleUser.FindFirstValue(ClaimTypes.GivenName);
+            var lastName = googleUser.FindFirstValue(ClaimTypes.Surname);
+
+            // Check if user exists
+            var user = await userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                // User exists, sign them in
+                await signInManager.SignInAsync(user, false);
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                // User doesn't exist, redirect to register with pre-filled data
+                var registerVM = new RegisterVM
+                {
+                    Email = email,
+                    FullName = name,
+                    UserName = email.Split('@')[0], // Create username from email
+                };
+
+                // Store the VM in TempData
+                TempData["GoogleRegisterData"] = JsonSerializer.Serialize(registerVM);
+                return RedirectToAction("RegisterView");
+            }
         }
         //logout
         public async Task<IActionResult> Logout()
