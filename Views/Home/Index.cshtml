@@ -202,7 +202,7 @@
                     <div class="card h-100 border-0 shadow-sm">
                         @if (!string.IsNullOrEmpty(vehicle.ImgURL))
                         {
-                            <img src="@vehicle.ImgURL" class="card-img-top" alt="@vehicle.Name" style="height: 200px; object-fit: cover;">
+                            <img src="@Url.Content(vehicle.ImgURL)" class="card-img-top" alt="@vehicle.Name" style="height: 200px; object-fit: cover;">
                         }
                         else
                         {

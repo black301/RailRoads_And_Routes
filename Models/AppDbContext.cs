@@ -45,11 +45,11 @@ namespace Transport_system_prototype.Models
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Station>().HasData(
-                new Station { Id = 1, Name = "Alexandria", Location = "Alexandria, Egypt", ImgURL = "/uploads/Alex.jpeg" },
-                new Station { Id = 2, Name = "Dahab", Location = "Dahab, Egypt", ImgURL = "/uploads/Dahab.jpeg" },
-                new Station { Id = 3, Name = "Hurghada", Location = "Hurghada, Egypt", ImgURL = "/uploads/hurghada.jpeg" },
-                new Station { Id = 4, Name = "Marsa Alam", Location = "Marsa Alam, Egypt", ImgURL = "/uploads/Marsa-Alam.jpeg" },
-                new Station { Id = 5, Name = "Nuweiba", Location = "Nuweiba, Egypt", ImgURL = "/uploads/Nuweiba.jpeg" }
+                new Station { Id = 1, Name = "Alexandria", Location = "Alexandria, Egypt", ImgURL = "uploads/Alex.jpeg" },
+                new Station { Id = 2, Name = "Dahab", Location = "Dahab, Egypt", ImgURL = "uploads/Dahab.jpeg" },
+                new Station { Id = 3, Name = "Hurghada", Location = "Hurghada, Egypt", ImgURL = "uploads/hurghada.jpeg" },
+                new Station { Id = 4, Name = "Marsa Alam", Location = "Marsa Alam, Egypt", ImgURL = "uploads/Marsa-Alam.jpeg" },
+                new Station { Id = 5, Name = "Nuweiba", Location = "Nuweiba, Egypt", ImgURL = "uploads/Nuweiba.jpeg" }
             );
 
             modelBuilder.Entity<Vehicle>().HasData(

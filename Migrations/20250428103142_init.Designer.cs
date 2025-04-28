@@ -12,8 +12,8 @@ using Transport_system_prototype.Models;
 namespace Transport__system_prototype.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250427151238_inti")]
-    partial class inti
+    [Migration("20250428103142_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -314,7 +314,6 @@ namespace Transport__system_prototype.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ImgURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
@@ -333,35 +332,35 @@ namespace Transport__system_prototype.Migrations
                         new
                         {
                             Id = 1,
-                            ImgURL = "~/uploads/Alex.jpeg",
+                            ImgURL = "uploads/Alex.jpeg",
                             Location = "Alexandria, Egypt",
                             Name = "Alexandria"
                         },
                         new
                         {
                             Id = 2,
-                            ImgURL = "~/uploads/Dahab.jpeg",
+                            ImgURL = "uploads/Dahab.jpeg",
                             Location = "Dahab, Egypt",
                             Name = "Dahab"
                         },
                         new
                         {
                             Id = 3,
-                            ImgURL = "~/uploads/hurghada.jpeg",
+                            ImgURL = "uploads/hurghada.jpeg",
                             Location = "Hurghada, Egypt",
                             Name = "Hurghada"
                         },
                         new
                         {
                             Id = 4,
-                            ImgURL = "~/uploads/Marsa-Alam.jpeg",
+                            ImgURL = "uploads/Marsa-Alam.jpeg",
                             Location = "Marsa Alam, Egypt",
                             Name = "Marsa Alam"
                         },
                         new
                         {
                             Id = 5,
-                            ImgURL = "~/uploads/Nuweiba.jpeg",
+                            ImgURL = "uploads/Nuweiba.jpeg",
                             Location = "Nuweiba, Egypt",
                             Name = "Nuweiba"
                         });
@@ -468,7 +467,6 @@ namespace Transport__system_prototype.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ImgURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -621,13 +619,13 @@ namespace Transport__system_prototype.Migrations
                     b.HasOne("Transport_system_prototype.Models.Trip", "Trip")
                         .WithMany("Bookings")
                         .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Transport__system_prototype.Models.AppUser", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Trip");

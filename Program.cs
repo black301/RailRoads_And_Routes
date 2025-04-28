@@ -33,7 +33,7 @@ namespace Transport_system_prototype
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 6;
+                options.Password.RequiredLength = 1;
                 options.Lockout.MaxFailedAccessAttempts = 10;
             })
             .AddEntityFrameworkStores<AppDbContext>()

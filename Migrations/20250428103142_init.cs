@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Transport__system_prototype.Migrations
 {
     /// <inheritdoc />
-    public partial class inti : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,7 +62,7 @@ namespace Transport__system_prototype.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImgURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ImgURL = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -83,7 +83,7 @@ namespace Transport__system_prototype.Migrations
                     WiFi = table.Column<bool>(type: "bit", nullable: false),
                     Drinks = table.Column<bool>(type: "bit", nullable: false),
                     Snacks = table.Column<bool>(type: "bit", nullable: false),
-                    ImgURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ImgURL = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -286,8 +286,7 @@ namespace Transport__system_prototype.Migrations
                         name: "FK_Bookings_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Bookings_Clients_ClientId",
                         column: x => x.ClientId,
@@ -297,8 +296,7 @@ namespace Transport__system_prototype.Migrations
                         name: "FK_Bookings_Trips_TripId",
                         column: x => x.TripId,
                         principalTable: "Trips",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -306,11 +304,11 @@ namespace Transport__system_prototype.Migrations
                 columns: new[] { "Id", "ImgURL", "Location", "Name" },
                 values: new object[,]
                 {
-                    { 1, "~/uploads/Alex.jpeg", "Alexandria, Egypt", "Alexandria" },
-                    { 2, "~/uploads/Dahab.jpeg", "Dahab, Egypt", "Dahab" },
-                    { 3, "~/uploads/hurghada.jpeg", "Hurghada, Egypt", "Hurghada" },
-                    { 4, "~/uploads/Marsa-Alam.jpeg", "Marsa Alam, Egypt", "Marsa Alam" },
-                    { 5, "~/uploads/Nuweiba.jpeg", "Nuweiba, Egypt", "Nuweiba" }
+                    { 1, "uploads/Alex.jpeg", "Alexandria, Egypt", "Alexandria" },
+                    { 2, "uploads/Dahab.jpeg", "Dahab, Egypt", "Dahab" },
+                    { 3, "uploads/hurghada.jpeg", "Hurghada, Egypt", "Hurghada" },
+                    { 4, "uploads/Marsa-Alam.jpeg", "Marsa Alam, Egypt", "Marsa Alam" },
+                    { 5, "uploads/Nuweiba.jpeg", "Nuweiba, Egypt", "Nuweiba" }
                 });
 
             migrationBuilder.InsertData(
