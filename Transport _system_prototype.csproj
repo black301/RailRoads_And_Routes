@@ -16,6 +16,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+    <PackageReference Include="QuestPDF" Version="2025.4.0" />
+    <PackageReference Include="SkiaSharp" Version="3.116.1" />
     <PackageReference Include="Stripe.net" Version="48.0.2" />
   </ItemGroup>
 
