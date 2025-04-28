@@ -1,5 +1,4 @@
-﻿// Initialize Stripe using data attribute from layout
-const stripe = Stripe(document.querySelector('meta[name="stripe-public-key"]').getAttribute('content'));
+﻿const stripe = Stripe('pk_test_51RFotYCSOPGzLKGt8El4ZheVsf9Aik9U7cuP7u5o6YQJWDRljL3S5TBVSaseF65ufFTKIrxH702mB1wg5wuRN3s000ehWCyJVG');
 
 document.getElementById('booking-form')?.addEventListener('submit', async function(e) {
     e.preventDefault();

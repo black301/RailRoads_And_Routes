@@ -50,13 +50,10 @@ namespace Transport_system_prototype
             .AddCookie()
             .AddGoogle(options =>
             {
-                options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                options.ClientId ="628563211093-t2dusjap4jr02k44pfa2ojov6e207u69.apps.googleusercontent.com";
+                options.ClientSecret= "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";
                 options.CallbackPath = "/signin-google";
             });
-            // Configure Stripe
-            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
             //builder.Services.Configure<CookiePolicyOptions>(options =>
             //{
             //    options.MinimumSameSitePolicy = SameSiteMode.Lax;

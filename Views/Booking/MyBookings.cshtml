@@ -1,49 +1,58 @@
-@model IEnumerable<Transport__system_prototype.Models.Booking>
+@model List<BookingViewModel>
 
 @{
     ViewData["Title"] = "My Bookings";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">My Bookings</h2>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["Success"]
-        </div>
-    }
-
-    <div class="row">
-        @foreach (var booking in Model)
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+        <h4 class="mb-0">My Bookings</h4>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Any())
         {
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            @booking.Trip?.FromStation?.Name to @booking.Trip?.TOStation?.Name
-                        </h5>
-                        <div class="booking-details">
-                            <p><i class="fas fa-calendar"></i> Travel Date: @booking.Trip?.TripDate.ToString("MMM dd, yyyy HH:mm")</p>
-                            <p><i class="fas fa-ticket-alt"></i> Number of Seats: @booking.NumberOfSeats</p>
-                            <p><i class="fas fa-money-bill"></i> Total Price: $@booking.ComputedTotalPrice</p>
-                            <p><i class="fas fa-clock"></i> Booked on: @booking.BookingDate.ToString("MMM dd, yyyy HH:mm")</p>
-                        </div>
-                        <div class="vehicle-details mt-3">
-                            <h6>Vehicle Details:</h6>
-                            <p><i class="fas fa-bus"></i> @booking.Trip?.vehicle?.Name (@booking.Trip?.vehicle?.Type)</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Date</th>
+                            <th>Vehicle</th>
+                            <th>Seats</th>
+                            <th>Total Price</th>
+                            <th>Booked On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model)
+                        {
+                            <tr>
+                                <td>#@booking.BookingId</td>
+                                <td>@booking.FromStation</td>
+                                <td>@booking.ToStation</td>
+                                <td>@booking.TripDate.ToString("MMM dd, yyyy HH:mm")</td>
+                                <td>@booking.VehicleName</td>
+                                <td>@booking.NumberOfSeats</td>
+                                <td>$@booking.TotalPrice</td>
+                                <td>@booking.BookingDate.ToString("MMM dd, yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
+                <h5>No Bookings Found</h5>
+                <p class="text-muted">You haven't made any bookings yet.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-search me-2"></i>Browse Trips
+                </a>
             </div>
         }
     </div>
-
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info">
-            <p>You haven't made any bookings yet.</p>
-            <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-2">Browse Available Trips</a>
-        </div>
-    }
 </div>

@@ -83,5 +83,32 @@ namespace Transport_system_prototype.Controllers
             }
         }
 
+        public IActionResult MyBookings()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            var bookings = _bookingRepository.GetAll()
+                .Where(b => b.UserId == userId)
+                .Select(b =>
+                {
+                    var trip = _tripRepository.GetAll().FirstOrDefault(t => t.Id == b.TripId);
+                    return new BookingViewModel
+                    {
+                        BookingId = b.Id,
+                        FromStation = trip!.FromStation!.Name,
+                        ToStation = trip.TOStation!.Name,
+                        TripDate = trip.TripDate,
+                        VehicleName = trip.vehicle!.Name,
+                        NumberOfSeats = b.NumberOfSeats,
+                        TotalPrice = trip.Price * b.NumberOfSeats,
+                        BookingDate = b.BookingDate
+                    };
+                })
+                .OrderByDescending(b => b.BookingDate)
+                .ToList();
+
+            return View(bookings);
+        }
     }
 }

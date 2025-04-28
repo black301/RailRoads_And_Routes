@@ -241,9 +241,14 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
                                         <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile"><i class="fas fa-user me-2"></i> My Profile</a></li>
+                                        <!-- Update the My Bookings link in the user dropdown menu -->
                                         @if (!User.IsInRole("Admin"))
                                         {
-                                            <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile"><i class="fas fa-ticket-alt me-2"></i> My Bookings</a></li>
+                                            <li>
+                                                <a class="dropdown-item" asp-controller="Booking" asp-action="MyBookings">
+                                                    <i class="fas fa-ticket-alt me-2"></i> My Bookings
+                                                </a>
+                                            </li>
                                         }
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
