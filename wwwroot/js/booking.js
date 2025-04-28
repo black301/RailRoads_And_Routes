@@ -2,7 +2,7 @@
 class BookingSystem {
     constructor() {
         // Initialize Stripe
-        this.stripe = Stripe('pk_test_51RFotYCSOPGzLKGt8El4ZheVsf9Aik9U7cuP7u5o6YQJWDRljL3S5TBVSaseF65ufFTKIrxH702mB1wg5wuRN3s000ehWCyJVG');
+        this.stripe = Stripe('pk_test_51RFotrFddIPqGgfQI1SeawdUYy9dmgO0Kn0dshSuJPlp1XeAt5MvmVs9niSrSuDqGh06sIGAjAgn3TFUzqPmfXFR007PDvwcIB');
         
         this.initializeDatePicker();
         this.initializeSearchForm();

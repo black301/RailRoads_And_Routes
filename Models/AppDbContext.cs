@@ -60,10 +60,10 @@ namespace Transport_system_prototype.Models
             );
 
             modelBuilder.Entity<Trip>().HasData(
-               new Trip { Id = 1, vehicleId = 1, FromStationId = 1, Price = 300, NumberOfSeats = 10, AvailableSeats = 10, TOStationId = 3, TripDate = new DateTime(2025, 3, 14, 10, 00, 00) }, // March 14, 2025, 10:00 AM
-                new Trip { Id = 2, vehicleId = 2, FromStationId = 3, Price = 300, NumberOfSeats = 50, AvailableSeats = 50, TOStationId = 5, TripDate = new DateTime(2025, 3, 15, 12, 30, 00) }, // March 15, 2025, 12:30 PM
-                new Trip { Id = 3, vehicleId = 3, FromStationId = 2, Price = 300, NumberOfSeats = 30, AvailableSeats = 30, TOStationId = 4, TripDate = new DateTime(2025, 3, 16, 14, 45, 00) }, // March 16, 2025, 2:45 PM
-                new Trip { Id = 4, vehicleId = 4, FromStationId = 5, Price = 300, NumberOfSeats = 20, AvailableSeats = 20, TOStationId = 1, TripDate = new DateTime(2025, 3, 17, 16, 00, 00) }  // March 17, 2025, 4:00 PM
+               new Trip { Id = 1, vehicleId = 1, FromStationId = 1, Price = 300, NumberOfSeats = 10, AvailableSeats = 10, TOStationId = 3, TripDate = new DateTime(2025,  8, 14, 10, 00, 00) }, 
+                new Trip { Id = 2, vehicleId = 2, FromStationId = 3, Price = 300, NumberOfSeats = 50, AvailableSeats = 50, TOStationId = 5, TripDate = new DateTime(2025, 8, 15, 12, 30, 00) },
+                new Trip { Id = 3, vehicleId = 3, FromStationId = 2, Price = 300, NumberOfSeats = 30, AvailableSeats = 30, TOStationId = 4, TripDate = new DateTime(2025, 8, 16, 14, 45, 00) },
+                new Trip { Id = 4, vehicleId = 4, FromStationId = 5, Price = 300, NumberOfSeats = 20, AvailableSeats = 20, TOStationId = 1, TripDate = new DateTime(2025, 8, 17, 16, 00, 00) } 
             );
             base.OnModelCreating(modelBuilder);
         }

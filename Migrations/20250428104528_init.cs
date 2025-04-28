@@ -327,10 +327,10 @@ namespace Transport__system_prototype.Migrations
                 columns: new[] { "Id", "AvailableSeats", "FromStationId", "NumberOfSeats", "Price", "TOStationId", "TripDate", "vehicleId" },
                 values: new object[,]
                 {
-                    { 1, 10, 1, 10, 300, 3, new DateTime(2025, 3, 14, 10, 0, 0, 0, DateTimeKind.Unspecified), 1 },
-                    { 2, 50, 3, 50, 300, 5, new DateTime(2025, 3, 15, 12, 30, 0, 0, DateTimeKind.Unspecified), 2 },
-                    { 3, 30, 2, 30, 300, 4, new DateTime(2025, 3, 16, 14, 45, 0, 0, DateTimeKind.Unspecified), 3 },
-                    { 4, 20, 5, 20, 300, 1, new DateTime(2025, 3, 17, 16, 0, 0, 0, DateTimeKind.Unspecified), 4 }
+                    { 1, 10, 1, 10, 300, 3, new DateTime(2025, 8, 14, 10, 0, 0, 0, DateTimeKind.Unspecified), 1 },
+                    { 2, 50, 3, 50, 300, 5, new DateTime(2025, 8, 15, 12, 30, 0, 0, DateTimeKind.Unspecified), 2 },
+                    { 3, 30, 2, 30, 300, 4, new DateTime(2025, 8, 16, 14, 45, 0, 0, DateTimeKind.Unspecified), 3 },
+                    { 4, 20, 5, 20, 300, 1, new DateTime(2025, 8, 17, 16, 0, 0, 0, DateTimeKind.Unspecified), 4 }
                 });
 
             migrationBuilder.CreateIndex(

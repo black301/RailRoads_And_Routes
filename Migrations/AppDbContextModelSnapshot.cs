@@ -411,7 +411,7 @@ namespace Transport__system_prototype.Migrations
                             NumberOfSeats = 10,
                             Price = 300,
                             TOStationId = 3,
-                            TripDate = new DateTime(2025, 3, 14, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            TripDate = new DateTime(2025, 8, 14, 10, 0, 0, 0, DateTimeKind.Unspecified),
                             vehicleId = 1
                         },
                         new
@@ -422,7 +422,7 @@ namespace Transport__system_prototype.Migrations
                             NumberOfSeats = 50,
                             Price = 300,
                             TOStationId = 5,
-                            TripDate = new DateTime(2025, 3, 15, 12, 30, 0, 0, DateTimeKind.Unspecified),
+                            TripDate = new DateTime(2025, 8, 15, 12, 30, 0, 0, DateTimeKind.Unspecified),
                             vehicleId = 2
                         },
                         new
@@ -433,7 +433,7 @@ namespace Transport__system_prototype.Migrations
                             NumberOfSeats = 30,
                             Price = 300,
                             TOStationId = 4,
-                            TripDate = new DateTime(2025, 3, 16, 14, 45, 0, 0, DateTimeKind.Unspecified),
+                            TripDate = new DateTime(2025, 8, 16, 14, 45, 0, 0, DateTimeKind.Unspecified),
                             vehicleId = 3
                         },
                         new
@@ -444,7 +444,7 @@ namespace Transport__system_prototype.Migrations
                             NumberOfSeats = 20,
                             Price = 300,
                             TOStationId = 1,
-                            TripDate = new DateTime(2025, 3, 17, 16, 0, 0, 0, DateTimeKind.Unspecified),
+                            TripDate = new DateTime(2025, 8, 17, 16, 0, 0, 0, DateTimeKind.Unspecified),
                             vehicleId = 4
                         });
                 });
