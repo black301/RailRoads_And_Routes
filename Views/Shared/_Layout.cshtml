@@ -158,19 +158,16 @@
 
         /* Responsive */
         @@media (max-width: 767.98px) {
-            .navbar-auth-links
+            .navbar-auth-links {
+                flex-direction: column;
+                margin-top: 1rem;
+                width: 100%;
+            }
 
-        {
-            flex-direction: column;
-            margin-top: 1rem;
-            width: 100%;
-        }
-
-        .navbar-auth-link {
-            display: flex;
-            justify-content: center;
-        }
-
+            .navbar-auth-link {
+                display: flex;
+                justify-content: center;
+            }
         }
     </style>
 
@@ -192,31 +189,31 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                            <ul class="navbar-nav flex-grow-1">
-                                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vehicle" ? "active" : "")" asp-controller="Vehicle" asp-action="Index">
-                                            <i class="fas fa-train"></i> Vehicles
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Station" ? "active" : "")" asp-controller="Station" asp-action="Index">
-                                            <i class="fas fa-building"></i> Station
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trip" ? "active" : "")" asp-controller="Trip" asp-action="Index">
-                                            <i class="fas fa-route"></i> Trip
-                                        </a>
-                                    </li>
-                                     <li class="nav-item">
+                        <ul class="navbar-nav flex-grow-1">
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vehicle" ? "active" : "")" asp-controller="Vehicle" asp-action="Index">
+                                        <i class="fas fa-train"></i> Vehicles
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Station" ? "active" : "")" asp-controller="Station" asp-action="Index">
+                                        <i class="fas fa-building"></i> Station
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trip" ? "active" : "")" asp-controller="Trip" asp-action="Index">
+                                        <i class="fas fa-route"></i> Trip
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Booking" asp-action="Index">
                                         <i class="fas fa-ticket-alt"></i> Dashboard
                                     </a>
-                                    </li>
-                                }
-                            </ul>
+                                </li>
+                            }
+                        </ul>
 
                         </ul>
 
@@ -225,7 +222,7 @@
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <div class="dropdown">
-                                    <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button" id="navbarUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2" type="button" id="navbarUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                         <div class="navbar-user-initial">
                                             @{
                                                 var name = User.Identity.Name;
@@ -236,16 +233,11 @@
                                         <span>@User.Identity.Name</span>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
-
-                                        
-
                                         <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile"><i class="fas fa-user me-2"></i> My Profile</a></li>
-                                        <!-- Only show "My Bookings" if the user is not an admin -->
                                         @if (!User.IsInRole("Admin"))
                                         {
                                             <li><a class="dropdown-item" asp-controller="Account" asp-action="EditProfile"><i class="fas fa-ticket-alt me-2"></i> My Bookings</a></li>
                                         }
-
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <form asp-controller="Account" asp-action="Logout" method="post">
@@ -293,13 +285,32 @@
             </div>
         </footer>
     </div>
-
-    
+    <script src="~/js/booking.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.8/signalr.min.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <meta name="stripe-public-key" content="@Configuration["Stripe:PublicKey"]" />
+   
 
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/bookingHub") 
+        .build();
+
+    connection.on("ReceiveSeatUpdate", (tripId, availableSeats) => {
+        const seatElement = document.getElementById(`available-seats-${tripId}`);
+        if (seatElement) {
+            seatElement.innerText = availableSeats;
+        }
+    });
+
+    connection.start()
+        .then(() => console.log("Connected to BookingHub"))
+        .catch(err => console.error(err));
+</script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

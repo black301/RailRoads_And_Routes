@@ -1,5 +1,5 @@
-﻿
-let stripe = Stripe('pk_test_51RFotYCSOPGzLKGt8El4ZheVsf9Aik9U7cuP7u5o6YQJWDRljL3S5TBVSaseF65ufFTKIrxH702mB1wg5wuRN3s000ehWCyJVG');
+﻿// Initialize Stripe using data attribute from layout
+const stripe = Stripe(document.querySelector('meta[name="stripe-public-key"]').getAttribute('content'));
 
 document.getElementById('booking-form')?.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -28,10 +28,11 @@ document.getElementById('booking-form')?.addEventListener('submit', async functi
         });
 
         if (result.error) {
+            console.error('Stripe Error:', result.error);
             alert(result.error.message);
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Payment Error:', error);
         alert('An error occurred during payment processing.');
     }
 });

@@ -45,14 +45,10 @@
                         <i class="fab fa-google"></i>
                         <span>Continue with Google</span>
                     </a>
-                    <button type="button" class="social-btn facebook-btn">
-                        <i class="fab fa-facebook-f"></i>
-                        <span>Continue with Facebook</span>
-                    </button>
                 </div>
 
                 <div class="divider">
-                    <span>or sign in with email</span>
+                    <span>or sign in with Email</span>
                 </div>
 
                 <form asp-action="Login" method="post" id="loginForm" class="needs-validation" novalidate>
@@ -79,16 +75,14 @@
                         <div class="invalid-feedback">
                             <span asp-validation-for="Password"></span>
                         </div>
+
                     </div>
 
-                    <div class="form-options">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe" asp-for="RememberMe">
-                            <label class="form-check-label" asp-for="RememberMe">
-                                Remember me
-                            </label>
-                        </div>
-                        <a href="#" class="forgot-password">Forgot password?</a>
+                    <div class="form-check mb-3">
+                        <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" asp-for="@Model.RememberMe">
+                            Remember me
+                        </label>
                     </div>
 
                     <button type="submit" class="btn btn-primary login-btn">

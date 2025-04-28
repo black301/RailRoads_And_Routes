@@ -16,22 +16,15 @@ namespace Transport_system_prototype.Controllers
         private readonly IGenaricRepository<Station> stationRepo;
         private readonly IGenaricRepository<AppUser> userRepo;
         private readonly IGenaricRepository<Booking> bookingRepo;
-        private readonly IGenaricRepository<Client> clientRepo;
+        private readonly IGenaricRepository<Vehicle> vehicleRepo;
 
-        public HomeController(
-            ILogger<HomeController> logger, 
-            IGenaricRepository<Trip> _tripRepo, 
-            IGenaricRepository<Station> _stationRepo, 
-            IGenaricRepository<AppUser> _userRepo,
-            IGenaricRepository<Booking> _bookingRepo,
-            IGenaricRepository<Client> _clientRepo)
+        public HomeController(ILogger<HomeController> logger, IGenaricRepository<Trip> _tripRepo, IGenaricRepository<Station> _stationRepo, IGenaricRepository<AppUser> _userRepo, IGenaricRepository<Vehicle> _vehicleRepo)
         {
             _logger = logger;
-            tripRepo = _tripRepo;
-            stationRepo = _stationRepo;
-            userRepo = _userRepo;
-            bookingRepo = _bookingRepo;
-            clientRepo = _clientRepo;
+            tripRepo=_tripRepo;
+            stationRepo=_stationRepo;
+            vehicleRepo = _vehicleRepo;
+            userRepo =_userRepo;
         }
 
         public IActionResult Index()
@@ -53,7 +46,8 @@ namespace Transport_system_prototype.Controllers
                 Stations = stationRepo.GetAll(),
                 Trips = tripRepo.GetAll(),
                 AppUser = appUser,
-                UserBookings = userBookings
+                UserBookings = userBookings,
+                Vehicles = vehicleRepo.GetAll(),
             };
           
             return View(usertripsStations);

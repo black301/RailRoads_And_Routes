@@ -6,18 +6,27 @@ using Transport__system_prototype.Settings;
 using Microsoft.Extensions.Options;
 using Transport__system_prototype.Repository;
 using Transport_system_prototype.Models;
+using Transport__system_prototype.Models;
+using RailRoads_And_Routes.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 public class PaymentController : Controller
 {
     private readonly IGenaricRepository<Trip> _tripRepository;
+    private readonly IGenaricRepository<Booking> _bookingRepository;
     private readonly StripeSettings _stripeSettings;
+    private readonly IHubContext<BookingHub> _hubContext;
 
     public PaymentController(
+        IOptions<StripeSettings> stripeSettings,
         IGenaricRepository<Trip> tripRepository,
-        IOptions<StripeSettings> stripeSettings)
+        IGenaricRepository<Booking> bookingRepository,
+        IHubContext<BookingHub> hubContext)
     {
-        _tripRepository = tripRepository;
         _stripeSettings = stripeSettings.Value;
+        _tripRepository = tripRepository;
+        _bookingRepository = bookingRepository;
+        _hubContext = hubContext;
     }
 
     [HttpPost]
@@ -67,6 +76,13 @@ public class PaymentController : Controller
 
     public IActionResult Cancel()
     {
-        return View();
+        return RedirectToAction("Index","Home");
+    }
+
+    // Add after successful payment
+    private async Task NotifyTripUpdate(string tripId, int availableSeats, string clientName)
+    {
+        await _hubContext.Clients.All.SendAsync("ReceiveTripUpdate", tripId, availableSeats);
+        await _hubContext.Clients.All.SendAsync("ReceiveBookingConfirmation", tripId, clientName, availableSeats);
     }
 }

@@ -8,6 +8,8 @@ using Transport__system_prototype.Repository;
 using NuGet.Protocol.Core.Types;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.SignalR;
+using RailRoads_And_Routes.Hubs;
 
 namespace Transport_system_prototype
 {
@@ -48,14 +50,20 @@ namespace Transport_system_prototype
             .AddCookie()
             .AddGoogle(options =>
             {
-                options.ClientId ="628563211093-t2dusjap4jr02k44pfa2ojov6e207u69.apps.googleusercontent.com";
-                options.ClientSecret= "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";
+                options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
                 options.CallbackPath = "/signin-google";
             });
+            // Configure Stripe
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
             //builder.Services.Configure<CookiePolicyOptions>(options =>
             //{
             //    options.MinimumSameSitePolicy = SameSiteMode.Lax;
             //});
+
+            // Add SignalR services
+            builder.Services.AddSignalR();
 
             var app = builder.Build();
             //app.UseCookiePolicy();
@@ -65,20 +73,25 @@ namespace Transport_system_prototype
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}"
             ).WithStaticAssets();
 
+            app.MapHub<BookingHub>("/bookingHub");
+           
             // Seed roles and admin account
             using (var scope = app.Services.CreateScope())
             {

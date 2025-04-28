@@ -4,6 +4,9 @@ using Transport_system_prototype.Models;
 using Transport__system_prototype.Models;
 using Transport__system_prototype.Repository;
 using System.Security.Claims;
+using Microsoft.AspNetCore.SignalR;
+using RailRoads_And_Routes.Hubs;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Transport_system_prototype.Controllers
 {
@@ -15,20 +18,25 @@ namespace Transport_system_prototype.Controllers
         private readonly IGenaricRepository<Client> _clientRepository;
         private readonly IGenaricRepository<AppUser> _userRepository;
 
+        private readonly IHubContext<BookingHub> _hubContext;
+
         public BookingController(
             IGenaricRepository<Booking> bookingRepository,
             IGenaricRepository<Trip> tripRepository,
             IGenaricRepository<Client> clientRepository,
-            IGenaricRepository<AppUser> userRepository)
+            IGenaricRepository<AppUser> userRepository,
+            IHubContext<BookingHub> hubContext)
         {
             _bookingRepository = bookingRepository;
             _tripRepository = tripRepository;
             _clientRepository = clientRepository;
             _userRepository = userRepository;
+            _hubContext = hubContext;
         }
-
+        
+        [ValidateAntiForgeryToken]
         [HttpPost]
-        public IActionResult Create(int tripId, int numberOfSeats)
+        public async Task<IActionResult> Create(int tripId, int numberOfSeats)
         {
             var trip = _tripRepository.GetAll().FirstOrDefault(c => c.Id == tripId);
             if (trip == null || trip.AvailableSeats < numberOfSeats)
@@ -59,13 +67,14 @@ namespace Transport_system_prototype.Controllers
                 // Update available seats
                 trip.AvailableSeats -= numberOfSeats;
                 _tripRepository.Update(trip);
-
-                // Create booking
                 _bookingRepository.Add(booking);
                 _bookingRepository.Save();
 
+                
+                await _hubContext.Clients.All.SendAsync("ReceiveSeatUpdate", trip.Id, trip.AvailableSeats);
+
                 TempData["Success"] = "Booking confirmed successfully!";
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception)
             {
@@ -73,5 +82,6 @@ namespace Transport_system_prototype.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
     }
 }

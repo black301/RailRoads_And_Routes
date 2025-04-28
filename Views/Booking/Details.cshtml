@@ -1,0 +1,73 @@
+@model Transport__system_prototype.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>Booking Details</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Booking Information</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4">Booking ID</dt>
+                        <dd class="col-sm-8">@Model.Id</dd>
+
+                        <dt class="col-sm-4">Booking Date</dt>
+                        <dd class="col-sm-8">@Model.BookingDate.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-4">Number of Seats</dt>
+                        <dd class="col-sm-8">@Model.NumberOfSeats</dd>
+
+                        <dt class="col-sm-4">Total Price</dt>
+                        <dd class="col-sm-8">@Model.ComputedTotalPrice EGP</dd>
+                    </dl>
+                </div>
+
+                <div class="col-md-6">
+                    <h4>Trip Information</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4">From</dt>
+                        <dd class="col-sm-8">@Model.Trip?.FromStation?.Name</dd>
+
+                        <dt class="col-sm-4">To</dt>
+                        <dd class="col-sm-8">@Model.Trip?.TOStation?.Name</dd>
+
+                        <dt class="col-sm-4">Trip Date</dt>
+                        <dd class="col-sm-8">@Model.Trip?.TripDate.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                        <dt class="col-sm-4">Vehicle</dt>
+                        <dd class="col-sm-8">@Model.Trip?.vehicle?.Name</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h4>Passenger Information</h4>
+                    <dl class="row">
+                        <dt class="col-sm-2">Name</dt>
+                        <dd class="col-sm-10">@Model.User?.FullName</dd>
+
+                        <dt class="col-sm-2">Email</dt>
+                        <dd class="col-sm-10">@Model.User?.Email</dd>
+
+                        <dt class="col-sm-2">Phone</dt>
+                        <dd class="col-sm-10">@Model.User?.PhoneNumber</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Booking</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
