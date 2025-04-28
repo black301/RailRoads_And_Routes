@@ -148,7 +148,7 @@ namespace Transport__system_prototype.Controllers
                 PhoneNumber = user.PhoneNumber,
                 City = user.City,
                 FullName = user.FullName
-            };
+            };  
 
             return View(profileVM);
         }
